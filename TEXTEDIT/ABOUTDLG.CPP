@@ -4,10 +4,10 @@
 
 #define Uses_TEvent
 
-#ifdef __DJGPP__
-   #include <tv.h>
+#if defined(__DJGPP__) || defined(__LINUX__)
+  #include <tv.h>
 #else
-   #include <tvision\tv.h>
+  #include <tvision\tv.h>
 #endif
 
 #if !defined( __ABOUTDLG_H )
@@ -25,7 +25,7 @@ TAboutDialog::TAboutDialog() :
  control = new TStaticText(TRect(2, 1, 48, 7), "OSPlus Text Editor\n"
      "Open Source\n"
      "\n"
-     "Version 1.1\n"
+     "Version 1.1, Build 20001226\n"
      "\n"
      "Copyright (c) Owen Rudge 2000");
  insert(control);
@@ -76,3 +76,15 @@ TStreamable *TAboutDialog::build()
 {
     return new TAboutDialog( streamableInit );
 }
+
+// From here to end of file may be removed if TAboutDialog will not be streamed.
+
+TStreamableClass RAboutDialog( TAboutDialog::name,
+                        TAboutDialog::build,
+                        __DELTA(TAboutDialog)
+                      );
+
+__link(RAboutDialog)
+__link(RButton)
+__link(RStaticText)
+

@@ -38,7 +38,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 #define Uses_TSItem
 #define Uses_TEditor
 
-#ifdef __DJGPP__
+#if defined(__DJGPP__) || defined(__LINUX__)
    #include <tv.h>
 #else
    #include <tvision\tv.h>

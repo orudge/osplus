@@ -15,11 +15,13 @@
 #define Uses_TButton
 #define Uses_TStaticText
 
-#ifdef __DJGPP__
-   #include <tv.h>
+#if defined(__DJGPP__) || defined(__LINUX__)
+  #include <tv.h>
 #else
-   #include <tvision\tv.h>
+  #include <tvision\tv.h>
 #endif
+
+
 
 class TAboutDialog : public TDialog
 {
