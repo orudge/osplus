@@ -1,12 +1,12 @@
-/************************************************************/
-/* OSPlus Utility Kit 1.2                                   */
-/* Copyright (c) Owen Rudge 2000-2001. All Rights Reserved. */
-/************************************************************/
-/* OSPlus Text Editor - Standalone                          */
-/* OSPEDIT.EXE                                              */
-/************************************************************/
-/* Dialogs and menus                                        */
-/************************************************************/
+/*************************************************************/
+/* OSPlus - Open Source version                              */
+/* Copyright (c) Owen Rudge 2000-2001. All Rights Reserved.  */
+/*************************************************************/
+/* OSPlus Text Editor - Standalone                           */
+/* OSPEDIT.EXE                                               */
+/*************************************************************/
+/* Dialogs and menus                                         */
+/*************************************************************/
 
 /* This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -21,6 +21,11 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
+
+/* Revision History:
+ *
+ *  19/05/2001:   Added Save/Restore Desktop
+ */
 
 #define Uses_TApplication
 #define Uses_TMenuBar
@@ -53,7 +58,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 TMenuBar *TEditorApp::initMenuBar( TRect r )
 {
 
-      TSubMenu&	sub0 = *new TSubMenu( "~ð~", kbAltSpace	) +
+		TSubMenu&	sub0 = *new TSubMenu( "~ð~", kbAltSpace	) +
 		  *new TMenuItem( "~A~bout OSPlus...", cmAbout,	kbNoKey) +
 		  newLine() +
 #ifdef __LINUX__
@@ -66,13 +71,24 @@ TMenuBar *TEditorApp::initMenuBar( TRect r )
 		  *new TMenuItem( "~S~elect WAV...", cmSelectWAV, kbNoKey) +
 		  *new TMenuItem( "~P~lay WAV",	cmPlayWAV, kbNoKey) +
 		  *new TMenuItem(	"S~t~op WAV", cmStopWAV, kbNoKey)
-#if defined(__MSDOS__) && !defined(__DJGPP__)
-              ;
+#if defined(__MSDOS__) && defined(__BORLANDC__)
+  #ifndef SAVE_RESTORE_DESKTOP
+		  ;
+  #else
+		  +
+  #endif
 #else
 		  + newLine() +
 		  *new TMenuItem( "S~e~lect MID...", cmSelectMID, kbNoKey) +
 		  *new TMenuItem( "Pla~y~ MID", cmPlayMID, kbNoKey) +
-		  *new TMenuItem(	"Stop M~I~D", cmStopMID, kbNoKey);
+		  *new TMenuItem(	"Stop M~I~D", cmStopMID, kbNoKey)
+  #ifdef SAVE_RESTORE_DESKTOP
+		  + newLine() +
+		  *new TMenuItem( "Sa~v~e Desktop", cmSaveDesktop, kbNoKey) +
+		  *new TMenuItem( "Res~t~ore Desktop", cmRestoreDesktop, kbNoKey);
+  #else
+		  ;
+  #endif
 #endif
 
 		TSubMenu& sub1 = *new TSubMenu(	"~F~ile", kbAltF ) +
@@ -87,22 +103,22 @@ TMenuBar *TEditorApp::initMenuBar( TRect r )
 				 newLine() +
 		  *new TMenuItem( "E~x~it", cmQuit, kbAltX, hcNoContext, "Alt-X" );
 
-      TSubMenu&	sub2 = *new TSubMenu( "~E~dit",	kbAltE ) +
+		TSubMenu&	sub2 = *new TSubMenu( "~E~dit",	kbAltE ) +
 	*new TMenuItem(	"~U~ndo", cmUndo, kbNoKey ) +
-	     newLine() +
+		  newLine() +
 	*new TMenuItem(	"Cu~t~", cmCut,	kbShiftDel, hcNoContext, "Shift-Del" ) +
 	*new TMenuItem(	"~C~opy", cmCopy, kbCtrlIns, hcNoContext, "Ctrl-Ins" ) +
 	*new TMenuItem(	"~P~aste", cmPaste, kbShiftIns,	hcNoContext, "Shift-Ins" ) +
 		  *new TMenuItem( "~S~how Clipboard", cmShowClip, kbNoKey ) +
-	     newLine() +
+		  newLine() +
 	*new TMenuItem(	"~C~lear", cmClear, kbCtrlDel, hcNoContext, "Ctrl-Del" );
 
-      TSubMenu&	sub3 = *new TSubMenu( "~S~earch", kbAltS ) +
+		TSubMenu&	sub3 = *new TSubMenu( "~S~earch", kbAltS ) +
 	*new TMenuItem(	"~F~ind...", cmFind, kbNoKey ) +
 	*new TMenuItem(	"~R~eplace...",	cmReplace, kbNoKey ) +
 	*new TMenuItem(	"~S~earch again", cmSearchAgain, kbNoKey );
 
-      TSubMenu&	sub4 = *new TSubMenu( "~W~indows", kbAltW ) +
+		TSubMenu&	sub4 = *new TSubMenu( "~W~indows", kbAltW ) +
 	*new TMenuItem(	"~S~ize/move",cmResize,	kbCtrlF5, hcNoContext, "Ctrl-F5" ) +
 	*new TMenuItem(	"~Z~oom", cmZoom, kbF5,	hcNoContext, "F5" ) +
 	*new TMenuItem(	"~T~ile", cmTile, kbNoKey ) +
@@ -113,23 +129,23 @@ TMenuBar *TEditorApp::initMenuBar( TRect r )
 
 		TSubMenu& sub5 = *new TSubMenu(	"~H~elp", kbAltH ) +
 		  *new TMenuItem( "~A~bout Text Editor...", cmAboutApp,	kbAltA );
-    r.b.y = r.a.y+1;
-    return new TMenuBar( r, sub0 + sub1	+ sub2 + sub3 +	sub4 + sub5);
+	 r.b.y = r.a.y+1;
+	 return new TMenuBar( r, sub0 + sub1	+ sub2 + sub3 +	sub4 + sub5);
 }
 
 TStatusLine *TEditorApp::initStatusLine( TRect r )
 {
-    r.a.y = r.b.y-1;
-    return new TStatusLine( r,
+	 r.a.y = r.b.y-1;
+	 return new TStatusLine( r,
 	*new TStatusDef( 0, 0xFFFF ) +
-	    *new TStatusItem("~F2~ Save", kbF2,	cmSave ) +
-	    *new TStatusItem( "~F3~ Open", kbF3, cmOpen	) +
-	    *new TStatusItem( "~Alt-F3~ Close",	kbAltF3, cmClose ) +
-	    *new TStatusItem( "~F5~ Zoom", kbF5, cmZoom	) +
-	    *new TStatusItem( "~F6~ Next", kbF6, cmNext	) +
-	    *new TStatusItem( "~F10~ Menu", kbF10, cmMenu ) +
+		 *new TStatusItem("~F2~ Save", kbF2,	cmSave ) +
+		 *new TStatusItem( "~F3~ Open", kbF3, cmOpen	) +
+		 *new TStatusItem( "~Alt-F3~ Close",	kbAltF3, cmClose ) +
+		 *new TStatusItem( "~F5~ Zoom", kbF5, cmZoom	) +
+		 *new TStatusItem( "~F6~ Next", kbF6, cmNext	) +
+		 *new TStatusItem( "~F10~ Menu", kbF10, cmMenu ) +
 	    *new TStatusItem( 0, kbCtrlF5, cmResize )
-	    );
+		 );
 
 }
 

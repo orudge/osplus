@@ -14,3 +14,9 @@ CHANGES
 26/12/2000: Reimplemented converter support in Text Editor for Linux (orudge)
 04/02/2001: Added MIDI player for DJGPP, Win32 and Linux (orudge)
 04/02/2001: Moved all platform-specific sound code into separate files (orudge)
+19/05/2001: Created new About OSPlus dialog to replace old dialog (orudge)
+19/05/2001: Added build version to About dialog (orudge)
+19/05/2001: Uprooted and replaced build files (orudge)
+19/05/2001: Dropped Win32 support. When the new Win32 version of TV is out, I may bring it back
+            again. (orudge)
+19/05/2001: Attempted to add Save Desktop and Restore Desktop commands (orudge)

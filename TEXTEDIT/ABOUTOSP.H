@@ -1,11 +1,11 @@
 //-------------------------------------------------------
 //
-//   aboutdlg.h: Header file for aboutdlg.cpp
+//   aboutosp.h: Header file for aboutosp.cpp
 //
 //-------------------------------------------------------
 
-#if !defined( __ABOUTDLG_H )
-#define __ABOUTDLG_H
+#if !defined( __ABOUTOSP_H )
+#define __ABOUTOSP_H
 
 #define Uses_TStreamable
 #define Uses_TStreamableClass
@@ -22,19 +22,18 @@
 #endif
 
 
-class TAboutDialog : public TDialog
+class TAboutOSPlus : public TDialog
 {
 
 public:
 
-    TAboutDialog( );
-    TAboutDialog( StreamableInit ) :
+    TAboutOSPlus( );
+    TAboutOSPlus( StreamableInit ) :
            TDialog (streamableInit),
-           TWindowInit(TAboutDialog::initFrame) {};
+           TWindowInit(TAboutOSPlus::initFrame) {};
     virtual void handleEvent( TEvent& );
     virtual Boolean valid( ushort );
 
-    TStaticText *build_version;
 
 
 private:
@@ -54,15 +53,15 @@ public:
 
 };
 
-inline ipstream& operator >> ( ipstream& is, TAboutDialog& cl )
+inline ipstream& operator >> ( ipstream& is, TAboutOSPlus& cl )
     { return is >> (TStreamable&)cl; }
-inline ipstream& operator >> ( ipstream& is, TAboutDialog*& cl )
+inline ipstream& operator >> ( ipstream& is, TAboutOSPlus*& cl )
     { return is >> (void *&)cl; }
-inline opstream& operator << ( opstream& os, TAboutDialog& cl )
+inline opstream& operator << ( opstream& os, TAboutOSPlus& cl )
     { return os << (TStreamable&)cl; }
-inline opstream& operator << ( opstream& os, TAboutDialog* cl )
+inline opstream& operator << ( opstream& os, TAboutOSPlus* cl )
     { return os << (TStreamable *)cl; }
 
 
-#endif  // __ABOUTDLG_H
+#endif  // __ABOUTOSP_H
 

@@ -1,38 +1,48 @@
 @ECHO OFF
-ECHO OSPlus Utility Kit - Editor Build Process
+ECHO OSPlus Text Editor Build Process
 ECHO.
 ECHO DJMAKE must be set to your DJGPP\BIN\MAKE.EXE path.
-ECHO Current value: %DJMAKE%
+ECHO BCMAKE must be set to your BC4*\BIN\MAKE.EXE path.
 ECHO.
-ECHO If this is not your DJGPP MAKE utility, please SET DJMAKE to the path.
-ECHO If you do not have DJGPP, or don't want to build the DJGPP version,
-ECHO type "BUILD BCC". If you do not want to build the Borland C++ version,
-ECHO type "BUILD DJGPP". If you do not want to build the Win32 version,
-ECHO type "BUILD NOWIN32". The DJGPP and BCC versions will be built.
+ECHO DJMAKE: %DJMAKE%
+ECHO BCMAKE: %BCMAKE%
 ECHO.
-ECHO If you do not want Allegro support, edit TEXTEDIT.MAK. There are
-ECHO instructions in the file on how to do this.
+ECHO If these paths are not correct, please press CONTROL+C to return to
+ECHO the command prompt, and correct them using SET.
+ECHO.
+ECHO This batch file will build all versions of Text Editor except Linux.
+ECHO These are:
+ECHO.
+ECHO * DOS (Borland C++)
+ECHO * DOS (DJGPP, with Allegro)
+ECHO * DOS (DJGPP, without Allegro)
+ECHO.
+ECHO Win32 support has been dropped until the new version of Turbo Vision
+ECHO compatible with Win32 comes out.
 ECHO.
 ECHO Press any key to continue, or CTRL-C to abort.
 PAUSE > NUL
 
-REM *** Build Borland C++ version ***
-IF "%1" == "DJGPP" GOTO DJGPP
-MAKE
+ECHO Building Borland C++ version...
+ECHO.
+CALL BUILDBC.BAT NOWARNING
+ECHO.
+ECHO Cleaning up...
+ECHO.
+CALL CLEANUP.BAT
 
-REM *** Build Win32 version ***
-:WIN32
-IF "%1" == "NOWIN32" GOTO DJGPP
-MAKE -f OSPEDT32.MAK
+ECHO Building DJGPP version...
+ECHO.
+CALL BUILDDJ.BAT NOWARNING
+ECHO.
+ECHO Cleaning up...
+ECHO.
+CALL CLEANUP.BAT
 
-REM *** Build DJGPP version ***
-:DJGPP
-IF "%1" == "BCC" GOTO UPX
-%DJMAKE% -f TEXTEDIT.MAK
-
-DEL *.O
-%DJMAKE% -f TEXTEDNA.MAK
-
-REM *** Compress them, and the converters ***
-:UPX
-UPX OSPEDIT.EXE TEXTEDIT.EXE TEXTEDNA.EXE OSPEDT32.EXE *.CNV
+ECHO Building DJGPP version without Allegro...
+ECHO.
+CALL BUILDDNA.BAT NOWARNING
+ECHO.
+ECHO Cleaning up...
+ECHO.
+CALL CLEANUP.BAT

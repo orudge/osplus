@@ -1,12 +1,12 @@
-/**********************************************************/
-/* OSPlus Utility Kit 1.1                                 */
-/* Copyright (c) Owen Rudge 2000. All Rights Reserved.    */
-/**********************************************************/
-/* OSPlus Text Editor - Standalone                        */
-/* OSPEDIT.EXE                                            */
-/**********************************************************/
-/* Dialog routines, including Find and Replace            */
-/**********************************************************/
+/*************************************************************/
+/* OSPlus - Open Source version                              */
+/* Copyright (c) Owen Rudge 2000-2001. All Rights Reserved.  */
+/*************************************************************/
+/* OSPlus Text Editor - Standalone                           */
+/* OSPEDIT.EXE                                               */
+/*************************************************************/
+/* Dialog routines, including Find and Replace               */
+/*************************************************************/
 
 /* This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
