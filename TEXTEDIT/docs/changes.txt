@@ -1,6 +1,9 @@
 CHANGES
 =======
 
+Old Versions
+------------
+
 17/12/2000: Made compatible with DJGPP  (orudge)
 18/12/2000: Fixed DJGPP link problem (orudge)
 19/12/2000: Added support for Allegro and sound (orudge)
@@ -20,6 +23,10 @@ CHANGES
 19/05/2001: Dropped Win32 support. When the new Win32 version of TV is out, I may bring it back
             again. (orudge)
 19/05/2001: Attempted to add Save Desktop and Restore Desktop commands (orudge)
+
+Version 2.1
+-----------
+
 02/10/2001: Attempted to use new Win32 Turbo Vision. There are some bugs which will be fixed in
             the next version of TV, so I will wait. (orudge)
 12/10/2001: Improved build structure (obj/platform, bin/platform dirs, etc) (orudge)
@@ -28,3 +35,18 @@ CHANGES
 13/10/2001: Started work on improved converter system (orudge)
 23/12/2001: Did some work on converter system (orudge)
 24/12/2001: Finished off new build structure and improved makefile system (orudge)
+24/12/2001: Made sound-related menu items hidden if platform didn't support sound (orudge)
+05/01/2002: Cleaned up indentation, changed copyright to 2002, other updates (orudge)
+17/01/2002: Removed -IC:\DJGPP\contrib\tvision\include from DJGPP targets (orudge)
+18/01/2002: Upgraded to TV 1.1.4 (no code changes required) (orudge)
+31/01/2002: Updated Linux build script (untested) (orudge)
+07/02/2002: Implemented MS converter for Win32 version (but not used from OSPEDIT yet) (orudge)
+25/05/2002: Got ready for 2.1 release (orudge)
+13/10/2002: Upgraded to TV 2.0 and Allegro 4.1.3 WIP (orudge)
+13/10/2002: Added MSVC support (orudge)
+14/10/2002: Tested compilation on Linux, and fixed a couple of issues (orudge)
+27/10/2004: Various updates to version checking code (orudge)
+27/10/2004: Completed new converter system (orudge)
+27/10/2004: Fixed bug in msconv.cnv (orudge)
+28/10/2004: Created unified gcc-based makefile (orudge)
+28/10/2004: Cleaned up CVS repository a bit (orudge)

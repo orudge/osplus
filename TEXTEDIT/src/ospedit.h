@@ -1,18 +1,18 @@
 /*************************************************************/
 /* OSPlus - Open Source version                              */
-/* Copyright (c) Owen Rudge 2000-2001. All Rights Reserved.  */
+/* Copyright (c) Owen Rudge 2000-2002. All Rights Reserved.  */
 /*************************************************************/
 /* OSPlus Text Editor - Standalone                           */
 /* OSPEDIT.EXE                                               */
 /*************************************************************/
 
-#define OSP_MAJOR_VERSION          2
-#define OSP_MINOR_VERSION          0
-#define OSP_VERSION_STR            "2.00"
+/* Revision History:
+ *
+ * 05/01/2002: Cleaned up indentation
+ * 13/10/2002: Added MSVC support
+ */
 
-#define OSP_TXT_MAJOR_VERSION      2
-#define OSP_TXT_MINOR_VERSION      1
-#define OSP_TXT_VERSION_STR        "2.1"
+#include "ospver.h"
 
 #ifndef RES_INFO_ONLY
 
@@ -27,47 +27,66 @@ extern char __os_ver[50];
 #define OSP_OS_VER     __os_ver
 
 #if defined(__MSDOS__) && defined(__BORLANDC__)
-	#define BUILD_VERSION     "Borland C++ version (DOS)"
-	#define OSP_COMPILER      "Borland C++"
-	#define OSP_COMPILER_VER  __bc_compiler_ver
-   #define SOUND_SUPPORT     1
+      #define BUILD_VERSION     "Borland C++ version (DOS)"
+      #define OSP_COMPILER      "Borland C++"
+      #define OSP_COMPILER_VER  __bc_compiler_ver
+      #define SOUND_SUPPORT     1
 
-	extern char __bc_compiler_ver[50];
+      extern char __bc_compiler_ver[50];
 #elif defined(__DJGPP__)
-	#ifdef DJGPP_NO_SOUND_SUPPORT
-		#define BUILD_VERSION   "DJGPP version (DOS), no sound"
-      #define SOUND_SUPPORT   0
-	#else
-		#define BUILD_VERSION   "DJGPP version (DOS), with sound"
-		#define SOUND_SUPPORT     1
-	#endif
+      #ifdef DJGPP_NO_SOUND_SUPPORT
+         #define BUILD_VERSION   "DJGPP version (DOS), no sound"
+         #define SOUND_SUPPORT   0
+      #else
+         #define BUILD_VERSION   "DJGPP version (DOS), with sound"
+         #define SOUND_SUPPORT     1
+      #endif
 
-	#define OSP_COMPILER      "DJGPP"
-	#define OSP_COMPILER_VER  __dj_compiler_ver
+      #define OSP_COMPILER      "DJGPP"
+      #define OSP_COMPILER_VER  __dj_compiler_ver
 
-   extern char __dj_compiler_ver[50];
+      extern char __dj_compiler_ver[50];
 #elif defined(__WIN32__)
-	#define BUILD_VERSION     "Borland C++ version (Win32)"
-	#define OSP_COMPILER      "Borland C++"
-	#define OSP_COMPILER_VER  __bc_compiler_ver
-	#define SOUND_SUPPORT     1
+	#ifdef __BORLANDC__
+          #define BUILD_VERSION     "Borland C++ version (Win32)"
+          #define OSP_COMPILER      "Borland C++"
+          #define OSP_COMPILER_VER  __bc_compiler_ver
+          #define SOUND_SUPPORT     1
 
-	extern char __bc_compiler_ver[50];
-#elif defined(__LINUX__)
-	#ifdef LINUX_NO_SOUND_SUPPORT
-		#define BUILD_VERSION   "Linux version, no sound"
-      #define SOUND_SUPPORT   0
+          extern char __bc_compiler_ver[50];
+	#elif defined(__MINGW32__)
+          #define BUILD_VERSION	"MinGW32 version (Win32)"
+          #define OSP_COMPILER      "MinGW32"
+          #define OSP_COMPILER_VER  __gcc_ver
+
+          extern char __gcc_ver[50];
 	#else
-		#define BUILD_VERSION   "Linux version, with sound"
-		#define SOUND_SUPPORT   1
+          #define BUILD_VERSION     "MSVC version (Win32)"
+          #define OSP_COMPILER      "Microsoft Visual C++"
+          #define OSP_COMPILER_VER  __msvc_compiler_ver
+          #define SOUND_SUPPORT     1
+
+          #define __MSVC__          1
+          extern char __msvc_compiler_ver[50];
 	#endif
 
-	#define OSP_COMPILER      "gcc"
-	#define OSP_COMPILER_VER  "Unknown (how do you find it?)"
+#elif defined(__LINUX__)
+      #ifdef LINUX_NO_SOUND_SUPPORT
+            #define BUILD_VERSION   "Linux version, no sound"
+            #define SOUND_SUPPORT   0
+	#else
+            #define BUILD_VERSION   "Linux version, with sound"
+            #define SOUND_SUPPORT   1
+      #endif
+
+      #define OSP_COMPILER      "GNU GCC"
+      #define OSP_COMPILER_VER  __gcc_ver
+
+      extern char __gcc_ver[50];
 #else
-	#define BUILD_VERSION     "Build unknown"
-	#define OSP_COMPILER      "Unknown"
-	#define OSP_COMPILER_VER  "Unknown"
+      #define BUILD_VERSION     "Build unknown"
+      #define OSP_COMPILER      "Unknown"
+      #define OSP_COMPILER_VER  "Unknown"
 #endif
 
 #ifndef VERSION_INFORMATION_ONLY
@@ -101,40 +120,40 @@ class TEditorApp : public TApplication
 
 public:
 
-	 TEditorApp();
+   TEditorApp();
 
-    virtual void handleEvent( TEvent& event );
-    static TMenuBar *initMenuBar( TRect );
-    static TStatusLine *initStatusLine( TRect );
-    virtual void outOfMemory();
+   virtual void handleEvent( TEvent& event );
+   static TMenuBar *initMenuBar( TRect );
+   static TStatusLine *initStatusLine( TRect );
+   virtual void outOfMemory();
 
 private:
 
-    TEditWindow *openEditor( const char *fileName, Boolean visible );
-    void fileOpen();
-    void fileNew();
-    void changeDir();
-    void dosShell();
-    void showClip();
-    void tile();
-	 void cascade();
-    void calculator();
-    void aboutBox();
-	 void aboutProg();
-    void verInfo();
+   TEditWindow *openEditor( const char *fileName, Boolean visible );
+   void fileOpen();
+   void fileNew();
+   void changeDir();
+   void dosShell();
+   void showClip();
+   void tile();
+   void cascade();
+   void calculator();
+   void aboutBox();
+   void aboutProg();
+   void verInfo();
 
-    void selectWAV();
-    void playWAV();
-    void stopWAV();
+   void selectWAV();
+   void playWAV();
+   void stopWAV();
 
-    void selectMID();
-    void playMID();
-	 void stopMID();
+   void selectMID();
+   void playMID();
+   void stopMID();
 
-	 void retrieveDesktop();
-	 void saveDesktop();
-	 void loadDesktop(fpstream &r);
-	 void storeDesktop(fpstream &r);
+   void retrieveDesktop();
+   void saveDesktop();
+   void loadDesktop(fpstream &r);
+   void storeDesktop(fpstream &r);
 };
 
 extern TEditWindow *clipWindow;
@@ -145,8 +164,8 @@ TDialog *createReplaceDialog();
 ushort doEditDialog( int dialog, ... );
 
 #ifdef SAVE_RESTORE_DESKTOP
-static void writeView(TView *p, void *strm);
-static void closeView(TView *p, void *p1);
+   static void writeView(TView *p, void *strm);
+   static void closeView(TView *p, void *p1);
 #endif
 
 #endif // VERSION_INFORMATION_ONLY

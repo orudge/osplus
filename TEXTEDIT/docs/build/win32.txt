@@ -7,7 +7,8 @@ To build the Win32 version of the Text Editor, you need:
   to be version 5.4 or higher (may work with earlier versions). The free
   command line tools should work.
 
-- Turbo Vision 1.1.3 or better, available from http://sourceforge.net/projects/setedit/.
+- Turbo Vision 1.1.3 or better, available from http://tvision.sourceforge.net/.
+  Turbo Vision 2.0 is recommended.
 
 - Dialog Designer, available from
   www.simtel.net/simtel.net/msdos/turbovis.html, to modify the About dialogs

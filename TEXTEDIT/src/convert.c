@@ -1,6 +1,6 @@
 /*************************************************************/
 /* OSPlus - Open Source version                              */
-/* Copyright (c) Owen Rudge 2000-2001. All Rights Reserved.  */
+/* Copyright (c) Owen Rudge 2000-2004. All Rights Reserved.  */
 /*************************************************************/
 /* OSPlus Text Editor                                        */
 /* OSPEDIT.EXE                                               */
@@ -9,15 +9,29 @@
 /* Based on Allegro's readbmp.c                              */
 /*************************************************************/
 
-/* UNDER CONSTRUCTION! */
+/* Revision History:
+ *
+ * 05/01/2002: Cleaned up indentation, etc (orudge)
+ * 27/12/2004: Finished new converter system (orudge)
+ */
 
 #include <string.h>
 #include <stdlib.h>
 #include <process.h>
 #include <stdio.h>
+#include <limits.h>
+#include <errno.h>
 
 #ifdef __WIN32__
 	#include <windows.h>
+#endif
+
+#ifndef MAXPATH
+	#ifdef PATH_MAX
+		#define MAXPATH PATH_MAX
+	#else
+		#define MAXPATH  255
+	#endif
 #endif
 
 #include "write.h"
@@ -26,11 +40,12 @@
 #include "convert.h"
 
 static CONVERTER_INFO *converter_type_list = NULL;
+static int num_converters = 0;
 
 /* register_converter_file_type:
  *  Registers a new converter.
  */
-void register_converter_file_type(char *ext, char *load_fn)
+void register_converter_file_type(char *ext, char *load_fn, char *params)
 {
 	char tmp[32], *aext;
 	CONVERTER_INFO *iter = converter_type_list;
@@ -43,35 +58,131 @@ void register_converter_file_type(char *ext, char *load_fn)
 	else
 	{
 		for (iter = converter_type_list; iter->next; iter = iter->next);
-		iter = iter->next = (CONVERTER_INFO *) malloc(sizeof(struct CONVERTER_INFO));
+			iter = iter->next = (CONVERTER_INFO *) malloc(sizeof(struct CONVERTER_INFO));
 	}
 
 	if (iter)
 	{
-		iter->load_fn = load_fn;
-		iter->ext = strdup(aext);
+		iter->id = num_converters++;
+		iter->load_fn = strdup(load_fn);
+		iter->ext = strdup(ext);
+
+		if (params == NULL)
+			iter->params = NULL;
+		else
+			iter->params = strdup(params);
+
 		iter->next = NULL;
 	}
 }
 
+void register_microsoft_converters()
+{
+#ifdef WIN32
+	LONG ret;
+	HKEY hKey, hSubKey;
+	BOOL stop = FALSE;
+	char subkey_name[255];
+	DWORD len = 255;
+	FILETIME ignore;
+	int i = 0;
+	char extensions[255];
+	char path[MAXPATH];
+	char *pos, *lastpos;
+	char ext_tmp[255];
+	char tmplen;
+	char short_path[MAXPATH];
+
+	ret = RegOpenKeyEx(HKEY_LOCAL_MACHINE, "Software\\Microsoft\\Shared Tools\\Text Converters\\Import", 0, KEY_READ, &hKey);
+
+	if (ret != ERROR_SUCCESS)
+		return;
+
+	do {
+		ret = RegEnumKeyEx(hKey, i, subkey_name, &len, NULL, NULL, NULL, &ignore);
+
+		if (ret == ERROR_NO_MORE_ITEMS)
+			stop = TRUE;
+		else if (ret != ERROR_SUCCESS)
+		{
+			RegCloseKey(hKey);
+			stop = TRUE;
+		}
+		else
+		{
+			ret = RegOpenKeyEx(hKey, subkey_name, 0, KEY_QUERY_VALUE, &hSubKey);
+
+			if (ret == ERROR_SUCCESS)
+			{
+				len = sizeof(extensions);
+				ret = RegQueryValueEx(hSubKey, "Extensions", NULL, NULL, extensions, &len);
+
+				if (ret == ERROR_SUCCESS)
+				{
+					len = sizeof(path);
+					ret = RegQueryValueEx(hSubKey, "Path", NULL, NULL, path, &len);
+
+					if (ret == ERROR_SUCCESS)
+					{
+						GetShortPathName(path, short_path, sizeof(short_path));
+
+						if (strcmp(extensions, "*") != 0)
+						{
+							if (strchr(extensions, ' ') == 0)
+								register_converter_file_type(extensions, "msconv.cnv", short_path);
+							else
+							{
+								tmplen = strlen(extensions);
+
+								extensions[tmplen] = ' ';  // append a space
+								extensions[tmplen+1] = 0;
+
+								lastpos = extensions;
+
+								do {
+									pos = strchr(lastpos, ' ');
+
+									if (pos != NULL)
+									{
+										ZeroMemory(ext_tmp, sizeof(ext_tmp));
+										pos++;
+										strncpy(ext_tmp, lastpos, pos-lastpos-1);
+										register_converter_file_type(ext_tmp, "msconv.cnv", short_path);
+									}
+
+									lastpos = pos;
+								} while (pos != NULL);
+							}
+						}
+					}
+				}
+
+				RegCloseKey(hSubKey);
+			}
+		}
+
+		i++;			
+	} while (stop == FALSE);
+
+	RegCloseKey(hKey);
+#endif
+}
 
 /* convert_text_file:
  *  Converts a file to plain text. Give filename_in and a pointer to a buffer
  *  in filename_out.
  */
-int convert_text_file(char *filename_in, char *filename_out, char *error_out, int *delete_file)
+int convert_text_file(char *filename_in, char *filename_out, char *error_out, int start_from)
 {
 	char tmp[16], *aext;
 	CONVERTER_INFO *iter;
+	int ret, ret2;
 
 	aext = strrchr(filename_in, '.');
-	delete_file = 0;
 
 	if (aext == NULL)
 	{
 		strcpy(filename_out, filename_in);
-		delete_file = 0;
-
 		return(0);
 	}
 	else
@@ -79,25 +190,52 @@ int convert_text_file(char *filename_in, char *filename_out, char *error_out, in
 
 	for (iter = converter_type_list; iter; iter = iter->next)
 	{
-		if (stricmp(iter->ext, aext) == 0)
+		if ((stricmp(iter->ext, aext) == 0) && (iter->id >= start_from))
 		{
 			if (iter->load_fn)
-				return(convert_file(filename_in, filename_out, iter->load_fn, error_out, delete_file));
+			{
+				char filename_out2[MAXPATH], error_out2[255];
+
+				ret = convert_file(filename_in, filename_out, iter->load_fn, iter->params, error_out);
+
+				if ((ret & ERROR_CNV_INCORRECT_FORMAT) || (ret & ERROR_CNV_LOAD))
+				{
+					ret2 = convert_text_file(filename_in, filename_out2, error_out2, iter->id + 1);
+
+					if (ret2 == -2)
+					{
+						return(ret);
+					}
+					else
+					{
+						if (ret & CONVERT_DELETE_FILE)
+							unlink(filename_out);
+
+						strcpy(filename_out, filename_out2);
+						strcpy(error_out, error_out2);
+
+						return(ret2);
+					}
+				}
+				else
+				{
+					return(ret);
+				}
+			}
 		}
 	}
 
-	strcpy(filename_out, filename_in);
-	delete_file = 0;
 
-	return(NULL);
+	strcpy(filename_out, filename_in);
+	return(-2);
 }
 
-#ifdef __WIN32__  // Win32 uses DLLs - generally better
-int convert_file(char *fn_in, char *fn_out, char *converter, char *error_out, int *delete_file)
+#if 0 ///__WIN32__  // Win32 uses DLLs - generally better
+int convert_file(char *fn_in, char *fn_out, char *converter, char *error_out)
 {
 	HINSTANCE hInstDLL;
-   int (*ConvertProc)(char *src, char *dest, char *error);
-   char error_buf[200];
+	int (*ConvertProc)(char *src, char *dest, char *error);
+	char error_buf[200];
 	char tmp_dest[MAX_PATH];
 	int ret;
 
@@ -107,7 +245,6 @@ int convert_file(char *fn_in, char *fn_out, char *converter, char *error_out, in
 	{
 		strcpy(error_out, "Unable to load converter. This file\nwill not be converted.");
 		strcpy(fn_out, fn_in);
-		*delete_file = 0;
 		return(0);
 	}
 
@@ -141,52 +278,163 @@ int convert_file(char *fn_in, char *fn_out, char *converter, char *error_out, in
 	return(ret);
 }
 #else
-int convert_file(char *fn_in, char *fn_out, char *converter, char *error_out, int *delete_file)
+int convert_file(char *fn_in, char *fn_out, char *converter, char *params, char *error_out)
 {
 	char tmp_dest[200];
-	int tmpret;
+	char error_out_rtf[200];
+	int tmpret=0, tmpret2;
 
 	// Generate temporary filename
 	tmpnam(tmp_dest);
 
 	strcpy(fn_out, tmp_dest);
-	*delete_file = 1;
 
-	// Not a very good way of checking errors, but it'll do for now.
 #ifdef __LINUX__
 	char tmp[200];
 
 	sprintf(tmp, "./%s \"%s\" \"%s\"", converter, fn_in, tmp_dest);
 	system(tmp);
 #else
-	switch(tmpret = spawnl(P_WAIT, converter, converter, fn_in, tmp_dest, NULL))
+	if (params == NULL)
 	{
-		case ERROR_RTF_CANNOT_OPEN_SRC:
-			error_out = "Unable to open source file";
+		tmpret2 = spawnl(P_WAIT, converter, converter, fn_in, tmp_dest, NULL);
+	}
+	else
+	{
+		tmpret2 = spawnl(P_WAIT, converter, converter, params, fn_in, tmp_dest, NULL);
+	}
+
+	switch(tmpret2)
+	{
+		case -1:
+			{
+			char spawn_error[50];
+
+				switch (errno)
+				{
+					case E2BIG:
+						strcpy(spawn_error, "Argument list too long");
+						break;
+
+					case EINVAL:
+						strcpy(spawn_error, "Invalid argument");
+						break;
+
+					case ENOENT:
+						strcpy(spawn_error, "Path or filename not found");
+						break;
+
+					case ENOEXEC:
+						strcpy(spawn_error, "Executable format error");
+						break;
+
+					case ENOMEM:
+						strcpy(spawn_error, "Not enough memory");
+						break;
+
+					default:
+						sprintf(spawn_error, "error number %d", errno);
+						break;
+				}
+
+				sprintf(error_out, "Unable to load converter '%s' (%s)", converter, spawn_error);
+				tmpret2 = ERROR_CNV_LOAD;
+				break;
+			}
+
+		case ERROR_CNV_CANNOT_OPEN_SRC:
+			strcpy(error_out, "Unable to open source file");
 			break;
-		case ERROR_RTF_CANNOT_OPEN_DEST:
-			error_out = "Unable to open temporary destination file.";
+
+		case ERROR_CNV_CANNOT_OPEN_DEST:
+			strcpy(error_out, "Unable to open temporary destination file.");
 			break;
-		case ERROR_WRI_UNABLE_OPEN_SRC:
-			error_out = "Unable to open source file.";
-			break;
-		case ERROR_WRI_UNABLE_OPEN_DEST:
-			error_out = "Unable to open temporary destination file.";
-			break;
-		case ERROR_NOT_WRITE_FILE:
-			error_out = "This file is not a Write file. Displaying contents anyway.";
+
+		case ERROR_CNV_INCORRECT_FORMAT:
+			strcpy(error_out, "This file is not the correct format. Displaying contents anyway.");
 
 			strcpy(fn_out, fn_in);
-			*delete_file = 0;
+			break;
+
+		case ERROR_CNV_PARSE_ERROR:
+			sprintf(error_out, "Error while parsing file.");
+			strcpy(fn_out, fn_in);
+			break;
+
+		case ERROR_CNV_PARSE_ERROR_RTF:
+			sprintf(error_out, "Error while parsing file. The resulting file may still be viewable.");
+			tmpret |= CONVERT_DELETE_FILE;
+			break;
+
+		case ERROR_CNV_FROM_RTF:
+			{
+				int rtf_ret;
+
+				tmpnam(tmp_dest);
+				rtf_ret = convert_file(fn_out, tmp_dest, "txtrtf.cnv", NULL, error_out_rtf);
+
+				if ((rtf_ret == ERROR_CNV_LOAD) || (!(rtf_ret & ERROR_CNV_OK)))
+				{
+					if (rtf_ret & ERROR_CNV_PARSE_ERROR_RTF)
+					{
+						tmpret = ERROR_CNV_OK | CONVERT_DELETE_FILE;
+						tmpret2 = ERROR_CNV_OK;
+
+						if (rtf_ret & CONVERT_DELETE_FILE) 
+							unlink(fn_out);
+
+						strcpy(fn_out, tmp_dest);
+
+#ifdef DISPLAY_2ND_PASS_ERRORS
+						strcpy(error_out, "Parse error during second-pass conversion. The resulting file may still be viewable.");
+#else
+						rtf_ret = ERROR_CNV_OK;
+#endif					
+					}
+					else
+					{
+						sprintf(error_out, "Unable to perform second-pass conversion (%s). Displaying results of first pass.", error_out_rtf);
+
+						if (rtf_ret & CONVERT_DELETE_FILE) 
+							unlink(tmp_dest);
+
+						tmpret = ERROR_CNV_RTF_ERROR | CONVERT_DELETE_FILE;
+					}
+				}
+				else
+				{
+					tmpret = ERROR_CNV_OK | CONVERT_DELETE_FILE;
+					tmpret2 = ERROR_CNV_OK;
+
+					if (rtf_ret & CONVERT_DELETE_FILE) 
+						unlink(fn_out);
+
+					strcpy(fn_out, tmp_dest);
+				}
+
+				break;
+			}
+
+		case ERROR_CNV_INIT_FAILED:
+			sprintf(error_out, "Error initialising converter ('%s')", converter);
+			strcpy(fn_out, fn_in);
+			break;
+
+		case ERROR_CNV_FAILED:
+			strcpy(error_out, "Conversion failed");
+			strcpy(fn_out, fn_in);
+			break;
+
+		case ERROR_CNV_OK:
+			tmpret |= CONVERT_DELETE_FILE;
 			break;
 
 		default:
-			if (tmpret >= ERROR_RTF_PARSE_ERROR)
-				sprintf(error_out, "Error %d while parsing RTF file", tmpret - ERROR_RTF_PARSE_ERROR);
+			sprintf(error_out, "Unknown error: %d", tmpret2);
 			break;
 	}
 #endif
 
-	return(tmpret);
+	return(tmpret | tmpret2);
 }
 #endif

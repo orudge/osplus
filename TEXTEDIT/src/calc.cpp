@@ -1,6 +1,6 @@
 /*************************************************************/
 /* OSPlus - Open Source version                              */
-/* Copyright (c) Owen Rudge 2000-2001. All Rights Reserved.  */
+/* Copyright (c) Owen Rudge 2000-2002. All Rights Reserved.  */
 /*************************************************************/
 /* OSPlus Calculator Accessory                               */
 /*************************************************************/
@@ -20,8 +20,9 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 
 /* Revision History:
-
-	19/05/2001: Updated copyright information to reflect Open Source version (orudge)
+ *
+ * 19/05/2001: Updated copyright information to reflect Open Source version (orudge)
+ * 05/01/2002: Cleaned up indentation (orudge)
 */
 
 #define Uses_TRect
@@ -58,31 +59,31 @@ const char * const TCalcDisplay::name = "TCalcDisplay";
 
 void TCalcDisplay::write( opstream& os )
 {
-    TView::write( os );
-    os.writeBytes(&status, sizeof(status));
-    os.writeString(number);
-    os.writeByte(sign);
-    os.writeByte(operate);
-    os.writeBytes(&operand, sizeof(operand));
+   TView::write( os );
+   os.writeBytes(&status, sizeof(status));
+   os.writeString(number);
+   os.writeByte(sign);
+   os.writeByte(operate);
+   os.writeBytes(&operand, sizeof(operand));
 }
 
 
 void *TCalcDisplay::read( ipstream& is )
 {
-    TView::read( is );
-    number = new char[DISPLAYLEN];
-    is.readBytes(&status, sizeof(status));
-    is.readString(number, DISPLAYLEN);
-	 sign = is.readByte();
-    operate = is.readByte();
-    is.readBytes(&operand, sizeof(operand));
-    return this;
+   TView::read( is );
+   number = new char[DISPLAYLEN];
+   is.readBytes(&status, sizeof(status));
+   is.readString(number, DISPLAYLEN);
+   sign = is.readByte();
+   operate = is.readByte();
+   is.readBytes(&operand, sizeof(operand));
+   return this;
 }
 
 
 TStreamable *TCalcDisplay::build()
 {
-    return new TCalcDisplay( streamableInit );
+   return new TCalcDisplay( streamableInit );
 }
 
 
@@ -94,11 +95,10 @@ TStreamableClass RCalcDisplay( TCalcDisplay::name,
 
 TCalcDisplay::TCalcDisplay(TRect& r) : TView ( r )
 {
-    options |= ofSelectable;
-    eventMask = (evKeyboard | evBroadcast);
-    number = new char[DISPLAYLEN];
-    clear();
-
+   options |= ofSelectable;
+   eventMask = (evKeyboard | evBroadcast);
+   number = new char[DISPLAYLEN];
+   clear();
 }
 
 TCalcDisplay::~TCalcDisplay()
@@ -108,197 +108,200 @@ TCalcDisplay::~TCalcDisplay()
 
 TPalette& TCalcDisplay::getPalette() const
 {
-    static TPalette palette( cpCalcPalette, sizeof(cpCalcPalette)-1 );
-    return palette;
+   static TPalette palette( cpCalcPalette, sizeof(cpCalcPalette)-1 );
+   return palette;
 }
 
 
 void TCalcDisplay::handleEvent(TEvent& event)
 {
-    TView::handleEvent(event);
+   TView::handleEvent(event);
 
-    switch(event.what)
-        {
-        case evKeyboard:
-            calcKey(event.keyDown.charScan.charCode);
+   switch(event.what)
+   {
+      case evKeyboard:
+         calcKey(event.keyDown.charScan.charCode);
+         clearEvent(event);
+         break;
+      case evBroadcast:
+         if (event.message.command == cmCalcButton)
+         {
+            calcKey( ((TButton *) event.message.infoPtr)->title[0]);
             clearEvent(event);
-            break;
-        case evBroadcast:
-            if(event.message.command == cmCalcButton)
-                {
-                calcKey( ((TButton *) event.message.infoPtr)->title[0]);
-                clearEvent(event);
-                }
-				break;
-        }
+         }
+         break;
+   }
 }
 
 
 void TCalcDisplay::draw()
 {
-    char color = getColor(1);
-    short i;
-    TDrawBuffer buf;
+   char color = getColor(1);
+   short i;
+   TDrawBuffer buf;
 
-    i = (short)(size.x - strlen(number) - 2);
-    buf.moveChar(0, ' ', color, (short)size.x);
-    buf.moveChar(i, sign, color, (short)1 );
-    buf.moveStr((short)(i+1), number, color);
-    writeLine(0, 0, (short)size.x, 1, buf);
+   i = (short)(size.x - strlen(number) - 2);
+   buf.moveChar(0, ' ', color, (short)size.x);
+   buf.moveChar(i, sign, color, (short)1 );
+   buf.moveStr((short)(i+1), number, color);
+   writeLine(0, 0, (short)size.x, 1, buf);
 }
 
 
 void TCalcDisplay::error()
 {
-    status = csError;
-    strcpy(number, "Error");
-    sign = ' ';
+   status = csError;
+   strcpy(number, "Error");
+   sign = ' ';
 }
 
 
 void TCalcDisplay::clear()
 {
-    status = csFirst;
-    strcpy(number, "0");
-    sign = ' ';
-    operate = '=';
+   status = csFirst;
+   strcpy(number, "0");
+   sign = ' ';
+   operate = '=';
 }
-
 
 void TCalcDisplay::setDisplay(double r)
 {
-    int  len;
-    char str[64];
-    ostrstream displayStr( str, sizeof str );
+   int  len;
+   char str[64];
+   ostrstream displayStr( str, sizeof str );
 
-    if(r < 0.0)
-        {
-        sign = '-';
-        displayStr << -r << ends;
-        }
-    else
-        {
-        displayStr << r << ends;
-        sign = ' ';
-        }
+   if (r < 0.0)
+   {
+      sign = '-';
+      displayStr << -r << ends;
+   }
+   else
+   {
+      displayStr << r << ends;
+      sign = ' ';
+   }
 
-    len = strlen(str) - 1;          // Minus one so we can use as an index.
+   len = strlen(str) - 1;          // Minus one so we can use as an index.
 
-    if(len > DISPLAYLEN)
-		  error();
-    else
-        strcpy(number, str);
+   if (len > DISPLAYLEN)
+      error();
+   else
+      strcpy(number, str);
 }
-
 
 void TCalcDisplay::checkFirst()
 {
-    if( status == csFirst)
-        {
-        status = csValid;
-        strcpy(number, "0");
-        sign = ' ';
-        }
+   if (status == csFirst)
+   {
+      status = csValid;
+      strcpy(number, "0");
+      sign = ' ';
+   }
 }
 
 
 void TCalcDisplay::calcKey(unsigned char key)
 {
-    char stub[2] = " ";
-    double r;
+   char stub[2] = " ";
+   double r;
 
-    key = (unsigned char)toupper(key);
-    if( status == csError && key != 'C')
-        key = ' ';
+   key = (unsigned char)toupper(key);
 
-    switch(key)
-        {
-		  case '0':   case '1':   case '2':   case '3':   case '4':
-        case '5':   case '6':   case '7':   case '8':   case '9':
-            checkFirst();
-            if (strlen(number) < 15) 
-                {                       // 15 is max visible display length
-                if (strcmp(number, "0") == NULL)
-                    number[0] = '\0';
-                stub[0] = key;
-                strcat(number, stub);
-                }
-            break;
+   if (status == csError && key != 'C')
+      key = ' ';
 
-        case '.':
-            checkFirst();
-            if(strchr(number, '.') == NULL)
-                {
-                stub[0] = '.';
-                strcat(number, stub);
-                }
-            break;
+   switch(key)
+   {
+      case '0':   case '1':   case '2':   case '3':   case '4':
+      case '5':   case '6':   case '7':   case '8':   case '9':
+         checkFirst();
+         if (strlen(number) < 15) 
+         {                       // 15 is max visible display length
+            if (strcmp(number, "0") == NULL)
+               number[0] = '\0';
 
-        case 8:
-        case 27:
-            int len;
+            stub[0] = key;
+            strcat(number, stub);
+         }
+         break;
 
-            checkFirst();
-            if( (len = strlen(number)) == 1 )
-                strcpy(number, "0");
-				else
-                number[len-1] = '\0';
-            break;
+      case '.':
+         checkFirst();
+         if (strchr(number, '.') == NULL)
+         {
+            stub[0] = '.';
+            strcat(number, stub);
+         }
+         break;
 
-        case '_':                   // underscore (keyboard version of +/-)
-        case 241:                   // +/- extended character.
-            if (sign==' ')
-              sign='-';
-            else
-              sign=' ';
-            break;
+      case 8:
+      case 27:
+         int len;
 
-        case '+':   case '-':   case '*':   case '/':
-        case '=':   case '%':   case 13:
-            if(status == csValid)
-                {
-                status = csFirst;
-                r = getDisplay() * ((sign == '-') ? -1.0 : 1.0);
-                if( key == '%' )
-                    {
-                    if(operate == '+' || operate == '-')
-                        r = (operand * r) / 100;
-                    else
-                        r /= 100;
-                    }
-                switch( operate )
-                    {
-                    case '+':
-								setDisplay(operand + r);
-                        break;
+         checkFirst();
 
-                    case '-':
-                        setDisplay(operand - r);
-                        break;
+         if ((len = strlen(number)) == 1)
+            strcpy(number, "0");
+         else
+            number[len-1] = '\0';
+         break;
 
-                    case '*':
-                        setDisplay(operand * r);
-                        break;
+      case '_':                   // underscore (keyboard version of +/-)
+      case 241:                   // +/- extended character.
+         if (sign == ' ')
+            sign='-';
+         else
+            sign=' ';
+         break;
 
-                    case '/':
-                        if(r == 0)
-                            error();
-                        else
-                            setDisplay(operand / r);
-                        break;
+      case '+':   case '-':   case '*':   case '/':
+      case '=':   case '%':   case 13:
+         if (status == csValid)
+         {
+            status = csFirst;
+            r = getDisplay() * ((sign == '-') ? -1.0 : 1.0);
 
-                    }
-                }
-            operate = key;
-            operand = getDisplay() * ((sign == '-') ? -1.0 : 1.0);
-            break;
+            if (key == '%')
+            {
+               if (operate == '+' || operate == '-')
+                  r = (operand * r) / 100;
+               else
+                  r /= 100;
+            }
 
-        case 'C':
-            clear();
-            break;
+            switch (operate)
+            {
+               case '+':
+                  setDisplay(operand + r);
+                  break;
 
-		  }
-    drawView();
+               case '-':
+                  setDisplay(operand - r);
+                  break;
+
+               case '*':
+                  setDisplay(operand * r);
+                  break;
+
+               case '/':
+                  if (r == 0)
+                     error();
+                  else
+                     setDisplay(operand / r);
+                  break;
+            }
+         }
+
+         operate = key;
+         operand = getDisplay() * ((sign == '-') ? -1.0 : 1.0);
+         break;
+
+      case 'C':
+         clear();
+         break;
+   }
+
+   drawView();
 }
 
 

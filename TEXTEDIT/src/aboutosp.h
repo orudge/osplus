@@ -15,7 +15,7 @@
 #define Uses_TButton
 #define Uses_TStaticText
 
-#if defined(__DJGPP__) || defined(__LINUX__)
+#if defined(__DJGPP__) || defined(__LINUX__) || defined(__WIN32__)
 	#include <tv.h>
 #else
 	#include <tvision\tv.h>

@@ -27,7 +27,7 @@ TAboutOSPlus::TAboutOSPlus() :
      "\n"
      "Version 2.0\n"
      "\n"
-     "Copyright (c) Owen Rudge 2000-2001");
+     "Copyright (c) Owen Rudge 2000-2004 ");
  insert(control);
 
  control = new TStaticText(TRect(2, 8, 48, 10), "This program is licensed und"

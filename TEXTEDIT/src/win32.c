@@ -1,6 +1,6 @@
 /*************************************************************/
 /* OSPlus - Open Source version                              */
-/* Copyright (c) Owen Rudge 2000-2001. All Rights Reserved.  */
+/* Copyright (c) Owen Rudge 2000-2002. All Rights Reserved.  */
 /*************************************************************/
 /* OSPlus Text Editor - Standalone                           */
 /* OSPEDIT.EXE                                               */
@@ -27,17 +27,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
  * 04/02/2001: Created file
  * 02/10/2001: Added midiInGetNumDevs() call to snd_Init()
  * 13/10/2001: Fixed MIDI open string to work properly with LFNs
+ * 05/01/2002: Cleaned up indentation, etc
+ * 13/10/2002: Fixed some compilation and runtime problems with MSVC, plus
+ *             silly error in snd_LoadMID()
  */
 
 #include <windows.h>
 #include <stdio.h>
-
-typedef int BOOL;
-
-#ifndef TRUE
-   #define TRUE   -1
-	#define FALSE  0
-#endif
 
 #ifndef MAXPATH
    #ifdef PATH_MAX
@@ -50,8 +46,8 @@ typedef int BOOL;
 char WAVName[MAXPATH];          // file name of WAV
 BOOL WAVLoaded = FALSE;         // WAV loaded?
 
-char MIDName[MAXPATH];          // file name of WAV
-BOOL MIDLoaded = FALSE;         // WAV loaded?
+char MIDName[MAXPATH];          // file name of MIDI
+BOOL MIDLoaded = FALSE;         // MIDI loaded?
 
 BOOL SoundEnabled = FALSE;
 
@@ -63,7 +59,7 @@ void snd_LoadWAV()
 void snd_PlayWAV()
 {
    if (WAVLoaded == TRUE)
-       sndPlaySound(WAVName, SND_ASYNC | SND_NODEFAULT);
+      sndPlaySound(WAVName, SND_ASYNC | SND_NODEFAULT);
 }
 
 void snd_StopWAV()
@@ -75,23 +71,23 @@ void snd_StopWAV()
 void snd_LoadMID()
 {
    MCIERROR ret;
-   LPSTR str;
+   char str[250];
 
    if (MIDLoaded == TRUE)
       mciSendString("close ospedtmid", NULL, NULL, NULL);
 
-	wsprintf(str, "open \"%s\" type sequencer alias ospedtmid", MIDName);
-	ret = mciSendString(str, NULL, NULL, NULL);
+   wsprintf(str, "open \"%s\" type sequencer alias ospedtmid", MIDName);
+   ret = mciSendString(str, NULL, NULL, NULL);
 
-	if (ret == 0)
-		MIDLoaded = TRUE;
-	else
-		MIDLoaded = FALSE;
+   if (ret == 0)
+      MIDLoaded = TRUE;
+   else
+      MIDLoaded = FALSE;
 }
 
 void snd_PlayMID()
 {
-	mciSendString("play ospedtmid", NULL, NULL, NULL);
+   mciSendString("play ospedtmid", NULL, NULL, NULL);
 }
 
 void snd_StopMID()

@@ -5,7 +5,8 @@ To build the DJGPP version of the Text Editor with sound support, you need:
 
 - DJGPP 2.03 or better
 
-- Turbo Vision, available from http://sourceforge.net/projects/setedit/
+- Turbo Vision, available from http://tvision.sourceforge.net/. Turbo Vision 2.0
+  is recommended.
 
 - Allegro 4.0 or better, available from http://alleg.sourceforge.net/. The Text
   Editor should still build with Allegro 3.12, but this hasn't been tested

@@ -15,10 +15,10 @@
 #define Uses_TButton
 #define Uses_TStaticText
 
-#if defined(__DJGPP__) || defined(__LINUX__)
-	#include <tv.h>
+#if defined(__DJGPP__) || defined(__LINUX__) || defined(__WIN32__)
+   #include <tv.h>
 #else
-	#include <tvision\tv.h>
+   #include <tvision\tv.h>
 #endif
 
 
@@ -27,31 +27,29 @@ class TAboutDialog : public TDialog
 
 public:
 
-    TAboutDialog( );
-    TAboutDialog( StreamableInit ) :
-           TDialog (streamableInit),
-           TWindowInit(TAboutDialog::initFrame) {};
-    virtual void handleEvent( TEvent& );
-    virtual Boolean valid( ushort );
+   TAboutDialog( );
+   TAboutDialog( StreamableInit ) :
+          TDialog (streamableInit),
+          TWindowInit(TAboutDialog::initFrame) {};
+   virtual void handleEvent( TEvent& );
+   virtual Boolean valid( ushort );
 
-    TStaticText *build_version;
-
+   TStaticText *build_version;
 
 private:
 
-    virtual const char *streamableName() const
-        { return name; }
+   virtual const char *streamableName() const
+       { return name; }
 
 protected:
 
-    virtual void write( opstream& );
-    virtual void *read( ipstream& );
+   virtual void write( opstream& );
+   virtual void *read( ipstream& );
 
 public:
 
-    static const char * const name;
-    static TStreamable *build();
-
+   static const char * const name;
+   static TStreamable *build();
 };
 
 inline ipstream& operator >> ( ipstream& is, TAboutDialog& cl )

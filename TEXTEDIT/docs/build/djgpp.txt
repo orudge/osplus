@@ -5,7 +5,8 @@ To build the DJGPP version of the Text Editor, you need:
 
 - DJGPP 2.03 or better
 
-- Turbo Vision, available from http://sourceforge.net/projects/setedit/
+- Turbo Vision, available from http://tvision.sourceforge.net/. Turbo Vision 2.0
+  is recommended.
 
 - Dialog Designer, available from
   www.simtel.net/simtel.net/msdos/turbovis.html, to modify the About dialogs

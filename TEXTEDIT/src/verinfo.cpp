@@ -5,13 +5,15 @@
 #define Uses_TEvent
 
 #if defined(__DJGPP__) || defined(__LINUX__) || defined(__WIN32__)
-	#include <tv.h>
+   #include <tv.h>
 #else
-	#include <tvision\tv.h>
+   #include <tvision\tv.h>
 #endif
 
+#include <stdio.h>
+
 #if !defined( __VERINFO_H )
-#include "verinfo.h"
+   #include "verinfo.h"
 #endif
 
 #define VERSION_INFORMATION_ONLY
@@ -24,9 +26,12 @@ TVerInfoDlg::TVerInfoDlg() :
 
 {
  TView *control;
+ char buf[30];
+
  options |= ofCenterX | ofCenterY;
 
- control = new TStaticText(TRect(2, 2, 25, 3), "OSPlus Text Editor 2.1");
+ sprintf(buf, "OSPlus Text Editor %s", OSP_TXT_VERSION_STR);
+ control = new TStaticText(TRect(2, 2, 25, 3), buf);
  insert(control);
 
  control = new TStaticText(TRect(2, 4, 24, 5), "Built with:");

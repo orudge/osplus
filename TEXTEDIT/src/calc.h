@@ -1,10 +1,16 @@
-/**********************************************************/
-/* Owen Software OSPlus                                   */
-/* Copyright (c) Owen Software 2000. All Rights Reserved. */
-/**********************************************************/
-/* OSPlus Calculator Accessory                            */
-/* Header File                                            */
-/**********************************************************/
+/************************************************************/
+/* OSPlus Text Editor - Open Source                         */
+/* Copyright (c) Owen Rudge 2000-2002. All Rights Reserved. */
+/************************************************************/
+/* OSPlus Calculator Accessory                              */
+/* Header File                                              */
+/************************************************************/
+
+/* Revision History:
+ *
+ * 05/01/2002: Cleaned up indentation, removed CreateCalc - a
+ *             hangover from the old days... (orudge)
+ */
 
 #if !defined( __CALC_H )
 #define __CALC_H
@@ -25,40 +31,40 @@ class TCalcDisplay : public TView
 
 public:
 
-	 TCalcDisplay(TRect& r);
-	 TCalcDisplay( StreamableInit ) : TView(streamableInit) { };
-	 ~TCalcDisplay();
-	 virtual TPalette& getPalette() const;
-	 virtual void handleEvent(TEvent& event);
-	 virtual void draw();
+   TCalcDisplay(TRect& r);
+   TCalcDisplay( StreamableInit ) : TView(streamableInit) { };
+   ~TCalcDisplay();
+   virtual TPalette& getPalette() const;
+   virtual void handleEvent(TEvent& event);
+   virtual void draw();
 
 private:
 
-    TCalcState status;
-    char *number;
-    char sign;
-    char operate;           // since 'operator' is a reserved word.
-    double operand;
+   TCalcState status;
+   char *number;
+   char sign;
+   char operate;           // since 'operator' is a reserved word.
+   double operand;
 
-    void calcKey(unsigned char key);
-    void checkFirst();
-    void setDisplay(double r);
-    void clear();
-    void error();
-    inline double getDisplay() { return( atof( number ) ); };
+   void calcKey(unsigned char key);
+   void checkFirst();
+   void setDisplay(double r);
+   void clear();
+   void error();
+   inline double getDisplay() { return( atof( number ) ); };
 
-    virtual const char *streamableName() const
-        { return name; }
+   virtual const char *streamableName() const
+       { return name; }
 
 protected:
 
-    virtual void write( opstream& );
-    virtual void *read( ipstream& );
+   virtual void write( opstream& );
+   virtual void *read( ipstream& );
 
 public:
 
-    static const char * const name;
-    static TStreamable *build();
+   static const char * const name;
+   static TStreamable *build();
 
 };
 
@@ -78,14 +84,14 @@ class TCalculator : public TDialog
 
 public:
 
-    TCalculator();
-    TCalculator( StreamableInit ) :
-        TDialog(streamableInit), TWindowInit(&TCalculator::initFrame) { };
+   TCalculator();
+   TCalculator( StreamableInit ) :
+       TDialog(streamableInit), TWindowInit(&TCalculator::initFrame) { };
 
 private:
 
-    virtual const char *streamableName() const
-        { return name; }
+   virtual const char *streamableName() const
+       { return name; }
 
 //protected:
 
@@ -94,8 +100,8 @@ private:
 
 public:
 
-    static const char * const name;
-    static TStreamable *build();
+   static const char * const name;
+   static TStreamable *build();
 
 };
 
@@ -111,14 +117,3 @@ inline opstream& operator << ( opstream& os, TCalculator* cl )
 
 
 #endif      // __CALC_H
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-TCalculator __pascal __export CreateCalc();
-
-#ifdef __cplusplus
-}
-#endif
-

@@ -1,17 +1,10 @@
 /*************************************************************/
 /* OSPlus - Open Source version                              */
-/* Copyright (c) Owen Rudge 2000-2001. All Rights Reserved.  */
+/* Copyright (c) Owen Rudge 2000-2004. All Rights Reserved.  */
 /*************************************************************/
 /* OSPlus RTF Converter                                      */
 /* TXTRTF.CNV                                                */
 /*************************************************************/
-
-/* Adapted from 'Sample RTF Reader' from the RTF Specification */
-/* 1.5 - Microsoft (Technical Note GC0165) */
-
-/* TODO: Change return value and make OSPEDIT display messages */
-/* TODO: depending on return value. Same with OSPWRITE.        */
-/* 12/10/2001: Done. :-) */
 
 /* This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -27,6 +20,12 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 
+/* Revision History (as of 12/10/2001):
+ *
+ * 12/10/2001: Return value indicates error message (orudge)
+ * 27/12/2004: Updates to use new converter interface (orudge)
+ */
+
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -36,7 +35,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 #include "rtftype.h"
 #include "rtfdecl.h"
 
-#include "rtferror.h"
+#include "convert.h"
 
 int cGroup;
 bool fSkipDestIfUnk;
@@ -94,7 +93,7 @@ ecRtfParse(FILE *fp)
             case '}':
                 if ((ec = ecPopRtfState()) != ecOK)
                     return ec;
-					 break;
+					break;
             case '\\':
                 if ((ec = ecParseRtfKeyword(fp)) != ecOK)
                     return ec;
@@ -108,7 +107,7 @@ ecRtfParse(FILE *fp)
                     if ((ec = ecParseChar(ch)) != ecOK)
                         return ec;
                 }
-					 else
+					else
                 {               // parsing hex data
                     if (ris != risHex)
                         return ecAssertion;
@@ -164,7 +163,7 @@ ecPushRtfState(void)
     if (!psaveNew)
         return ecStackOverflow;
 
-	 psaveNew -> pNext = psave;
+	psaveNew -> pNext = psave;
     psaveNew -> chp = chp;
     psaveNew -> pap = pap;
     psaveNew -> sep = sep;
@@ -192,7 +191,7 @@ ecPopRtfState(void)
     int ec;
 
     if (!psave)
-		  return ecStackUnderflow;
+		return ecStackUnderflow;
 
     if (rds != psave->rds)
     {
@@ -206,7 +205,7 @@ ecPopRtfState(void)
     rds = psave->rds;
     ris = psave->ris;
 
-	 psaveOld = psave;
+	psaveOld = psave;
     psave = psave->pNext;
     cGroup--;
     free(psaveOld);
@@ -234,7 +233,7 @@ ecParseRtfKeyword(FILE *fp)
 
     szKeyword[0] = '\0';
     szParameter[0] = '\0';
-	 if ((ch = getc(fp)) == EOF)
+	if ((ch = getc(fp)) == EOF)
         return ecEndOfFile;
     if (!isalpha(ch))           // a control symbol; no delimiter.
     {
@@ -248,7 +247,7 @@ ecParseRtfKeyword(FILE *fp)
     if (ch == '-')
     {
         fNeg  = fTrue;
-		  if ((ch = getc(fp)) == EOF)
+		if ((ch = getc(fp)) == EOF)
             return ecEndOfFile;
     }
     if (isdigit(ch))
@@ -290,7 +289,7 @@ ecParseChar(int ch)
         return ecPrintChar(ch);
     default:
         // handle other destinations....
-		  return ecOK;
+		return ecOK;
     }
 }
 
@@ -303,10 +302,47 @@ ecParseChar(int ch)
 int
 ecPrintChar(int ch)
 {
-	 fprintf(fhandle, "%c", ch);
+	fprintf(fhandle, "%c", ch);
 
-	 // unfortunately, we don't do a whole lot here as far as layout goes...
-	 return ecOK;
+	// unfortunately, we don't do a whole lot here as far as layout goes...
+	return ecOK;
+}
+
+int CONV_EXPORT ConvertProc(char *src, char *dest, char *error)
+{
+	FILE *fp;
+	int ec;
+
+	fp = fpIn = fopen(src, "r");
+
+	if (!fp)
+	{
+		strcpy(error, "Can't open RTF file");
+		return(ERROR_CNV_CANNOT_OPEN_SRC);
+	}
+
+	fhandle = fopen(dest, "wt");
+
+	if (!fhandle)
+	{
+		strcpy(error, "Can't open destination file");
+		fclose(fp);
+		return(ERROR_CNV_CANNOT_OPEN_DEST);
+	}
+
+	if ((ec = ecRtfParse(fp)) != ecOK)
+	{
+		fclose(fp);
+		fclose(fhandle);
+		sprintf(error, "Error %d parsing RTF file", ec);
+
+		return(ERROR_CNV_PARSE_ERROR_RTF); // + ec);
+	}
+
+	fclose(fp);
+	fclose(fhandle);
+
+	return ERROR_CNV_OK;
 }
 
 #ifdef WIN32_DLL     // temporary stuff for new converter routines - EXPERIMENTAL
@@ -314,99 +350,30 @@ ecPrintChar(int ch)
 #include <windows.h>
 
 BOOL WINAPI DllEntryPoint(
-	 HINSTANCE  hinstDLL,	// handle of DLL module
-	 DWORD  fdwReason,	// reason for calling function
-	 LPVOID  lpvReserved 	// reserved
+	HINSTANCE  hinstDLL,	// handle of DLL module
+	DWORD  fdwReason,	// reason for calling function
+	LPVOID  lpvReserved 	// reserved
 	)
 {
 	return(TRUE);
 }
 
-int __export ConvertProc(char *src, char *dest, char *error)
-{
-	 char lpSource[200];
-	 FILE *fp;
-	 int ec;
-
-	 strcpy(lpSource, src);
-	 strcpy(destfile, dest);
-
-	 fp = fpIn = fopen(lpSource, "r");
-	 if (!fp)
-	 {
-        strcpy(error, "Can't open RTF file");
-	 //		  printf("Can't open RTF file\n");
-		  return(ERROR_RTF_CANNOT_OPEN_SRC);
-	 }
-	 fhandle = fopen(destfile, "wt");
-	 if (!fhandle)
-	 {
-        strcpy(error, "Can't open destination file");
-		  //printf("Can't open destination file\n");
-		  fclose(fp);
-		  return(ERROR_RTF_CANNOT_OPEN_DEST);
-	 }
-
-	 if ((ec = ecRtfParse(fp)) != ecOK)
-	 {
-		 fclose(fp);
-		 fclose(fhandle);
-		 sprintf(error, "Error %d parsing RTF file", ec);
-		 return(ERROR_RTF_PARSE_ERROR + ec);
-		 //printf("Error %d parsing RTF file\n", ec);
-	 }
-
-	 fclose(fp);
-	 fclose(fhandle);
-
-	 return 0;
-}
 #else
 int main(int argc, char *argv[])
 {
-	 char lpSource[200];
-	 FILE *fp;
-	 int ec;
+	char buf[200];
 
-	 if (argc == 1)
-	 {
-		 printf("OSPlus RTF Converter 1.0\n");
-		 printf("Copyright (c) Owen Rudge 2000-2001\n");
-		 printf("\n");
-		 printf("Usage: sourcefile destfile\n");
-		 printf("\n");
-		 printf("The source file must be in RTF format.\n");
-		 exit(1);
-	 }
+	if (argc == 1)
+	{
+		printf("OSPlus RTF Converter 1.0\n");
+		printf("Copyright (c) Owen Rudge 2000-2004\n");
+		printf("\n");
+		printf("Usage: sourcefile destfile\n");
+		printf("\n");
+		printf("The source file must be in RTF format.\n");
+		exit(1);
+	}
 
-	 strcpy(lpSource, argv[1]);
-	 strcpy(destfile, argv[2]);
-
-	 fp = fpIn = fopen(lpSource, "r");
-	 if (!fp)
-	 {
-//		  printf("Can't open RTF file\n");
-		  return(ERROR_RTF_CANNOT_OPEN_SRC);
-	 }
-	 fhandle = fopen(destfile, "wt");
-	 if (!fhandle)
-	 {
-		  //printf("Can't open destination file\n");
-		  fclose(fp);
-		  return(ERROR_RTF_CANNOT_OPEN_DEST);
-	 }
-
-	 if ((ec = ecRtfParse(fp)) != ecOK)
-	 {
-		 fclose(fp);
-		 fclose(fhandle);
-		 return(ERROR_RTF_PARSE_ERROR + ec);
-		 //printf("Error %d parsing RTF file\n", ec);
-	 }
-
-	 fclose(fp);
-	 fclose(fhandle);
-
-	 return 0;
+	return(ConvertProc(argv[1], argv[2], buf));
 }
 #endif
