@@ -1,0 +1,30 @@
+CHANGES
+=======
+
+17/12/2000: Made compatible with DJGPP  (orudge)
+18/12/2000: Fixed DJGPP link problem (orudge)
+19/12/2000: Added support for Allegro and sound (orudge)
+19/12/2000: Added new About dialog
+20/12/2000: Added Win32 support. This uses WINMM.DLL. (orudge)
+21/12/2000: Added build number to About box
+24/12/2000: Added -s to GCC command line to strip debugging info (orudge)
+24/12/2000: Created Linux version, including Allegro support (orudge)
+24/12/2000: Added SOUND.C for sound-related routines (orudge)
+26/12/2000: Made TXTRTF.CNV and TXTWRITE.CNV more platform-independant (orudge)
+26/12/2000: Reimplemented converter support in Text Editor for Linux (orudge)
+04/02/2001: Added MIDI player for DJGPP, Win32 and Linux (orudge)
+04/02/2001: Moved all platform-specific sound code into separate files (orudge)
+19/05/2001: Created new About OSPlus dialog to replace old dialog (orudge)
+19/05/2001: Added build version to About dialog (orudge)
+19/05/2001: Uprooted and replaced build files (orudge)
+19/05/2001: Dropped Win32 support. When the new Win32 version of TV is out, I may bring it back
+            again. (orudge)
+19/05/2001: Attempted to add Save Desktop and Restore Desktop commands (orudge)
+02/10/2001: Attempted to use new Win32 Turbo Vision. There are some bugs which will be fixed in
+            the next version of TV, so I will wait. (orudge)
+12/10/2001: Improved build structure (obj/platform, bin/platform dirs, etc) (orudge)
+12/10/2001: Improved converter error reporting (orudge)
+12/10/2001: Reimplemented Win32 support with latest version of TV, created makefile, etc (orudge)
+13/10/2001: Started work on improved converter system (orudge)
+23/12/2001: Did some work on converter system (orudge)
+24/12/2001: Finished off new build structure and improved makefile system (orudge)

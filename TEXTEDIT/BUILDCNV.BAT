@@ -1,8 +1,8 @@
 @echo off
 echo Building TXTWRITE.CNV...
-gcc -o txtwrite.exe txtwrite.c
+gcc -o txtwrite.exe src/convert/txtwrite.c
 echo Building TXTRTF.CNV...
-gcc -o txtrtf.exe rtfactn.c rtfreadr.c
+gcc -o txtrtf.exe src/convert/rtfactn.c src/convert/rtfreadr.c
 upx txtwrite.exe txtrtf.exe
-ren TXTWRITE.EXE TXTWRITE.CNV
-ren TXTRTF.EXE TXTRTF.CNV
+move txtwrite.exe bin\%1\txtwrite.cnv
+move txtrtf.exe bin\%1\txtrtf.cnv

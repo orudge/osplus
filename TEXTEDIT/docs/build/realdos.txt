@@ -1,0 +1,35 @@
+BUILDING OSPLUS TEXT EDITOR WITH BORLAND C++ (REAL-MODE DOS)
+============================================================
+
+The real-mode DOS version of the Text Editor requires:
+
+- Borland C++ 4.0 or higher (may work with 3.x - untested)
+
+- Borland PowerPack for DOS. Alternatively, download Turbo Vision from
+  Borland's web site at www.borland.com.
+
+- Dialog Designer, available from
+  www.simtel.net/simtel.net/msdos/turbovis.html, to modify the About dialogs
+
+- Heinz Rath's sound drivers available from www.geocities.com/heinz_rath/ if
+  you want to be able to play WAV files from the Text Editor. These are not
+  required for building.
+
+TO BUILD
+========
+
+To build this version, you must first edit REALDOS.MAK and change the
+"BCPATH=C:\BC45" line to the appropriate value for your machine. Then type:
+
+   SET BCPATH=d:\bc_directory\BIN\MAKE.EXE
+   BUILDBC
+
+at the command prompt, where "d:\bc_directory" is the path to your Borland
+C++ directory.
+
+It is recommended that you use the IDE to build this version, as the executable
+produced is much smaller. (The Generate Makefile command must have missed some
+switches or something). The project file is called OSPEDIT.IDE.
+
+The generated object files will be placed in OBJ\REALDOS, and the binaries will
+be placed in BIN\REALDOS.

@@ -1,0 +1,5 @@
+AUTHORS
+=======
+
+Owen Rudge <orudge@freeuk.com> - Just about everything not written by someone else
+Heinz Rath <heinz.rath@gmx.at> - Real-mode sound drivers
