@@ -49,6 +49,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
  * 27/12/2004: GCC 3.x compatibility updates, converter updates (orudge)
  * 28/12/2004: Added new converter info dialog (orudge)
  * 31/12/2004: Added GCC ver for DJGPP (orudge)
+ * 28/03/2005: Fixed deletion bug (orudge)
  */
 
 //#define DJGPP_NO_SOUND_SUPPORT
@@ -289,7 +290,7 @@ TEditorApp::TEditorApp() :
 
 		openEditor(szBuf, True);
 
-		if (ret & CONVERT_DELETE_FILE)
+		if ((ret != -2) && (ret & CONVERT_DELETE_FILE))
 			unlink(szBuf);
 	}
 }
@@ -320,7 +321,7 @@ void TEditorApp::fileOpen()
 
 		openEditor(szBuf, True);
 
-		if (ret & CONVERT_DELETE_FILE)
+		if ((ret != -2) && (ret & CONVERT_DELETE_FILE))
 			unlink(szBuf);
 	}
 }
