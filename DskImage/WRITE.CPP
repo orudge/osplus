@@ -1,9 +1,10 @@
 /*************************************************/
 /* OSPlus Disk Imager                            */
-/* Version 1.0                                   */
+/* Version 1.1                                   */
 /*                                               */
-/* Copyright (c) Owen Rudge 2000                 */
-/* Disk Imaging Routines: Written by Mark Becker */
+/* Copyright (c) Owen Rudge 2000-2001            */
+/* Disk Writing Routines: Written by Mark Becker */
+/* Disk Reading Routines: (c) Hans Lermen 1995   */
 /*************************************************/
 
 /* This program is free software; you can redistribute it and/or
@@ -37,8 +38,8 @@ extern int OKPressed;
 extern char fname[128];
 extern char gdrive[3];
 
-TInputLine *fn;
-TInputLine *drive;
+TInputLine *write_fn;
+TInputLine *write_drive;
 
 TWriteDialog::TWriteDialog() :
 		 TDialog(TRect(17, 6, 62, 17), "Write Image to Disk"),
@@ -50,20 +51,20 @@ TWriteDialog::TWriteDialog() :
  options |= ofCenterX | ofCenterY;
 
  control = new TStaticText(TRect(2, 2, 42, 3), "Please choose the image file "
-     "and drive.");
+	  "and drive.");
  insert(control);
 
  control = new TStaticText(TRect(2, 4, 13, 5), "Image File:");
  insert(control);
 
- fn = new TInputLine(TRect(14, 4, 43, 5), 126);
- insert(fn);
+ write_fn = new TInputLine(TRect(14, 4, 43, 5), 126);
+ insert(write_fn);
 
  control = new TStaticText(TRect(2, 6, 13, 7), "Drive:");
  insert(control);
 
- drive = new TInputLine(TRect(14, 6, 19, 7), 3);
- insert(drive);
+ write_drive = new TInputLine(TRect(14, 6, 19, 7), 3);
+ insert(write_drive);
 
  control = new TButton(TRect(14, 8, 24, 10), "~W~rite", cmOK, bfDefault);
  insert(control);
@@ -76,7 +77,7 @@ TWriteDialog::TWriteDialog() :
 
 void TWriteDialog::handleEvent( TEvent& event)
 {
-    TDialog::handleEvent(event);
+	 TDialog::handleEvent(event);
 }
 
 Boolean TWriteDialog::valid(ushort command)
@@ -85,8 +86,8 @@ Boolean TWriteDialog::valid(ushort command)
 	if (rslt && (command == cmOK))
 	{
 		OKPressed = 1;
-		strcpy(fname, fn->data);
-		strcpy(gdrive, drive->data);
+		strcpy(fname, write_fn->data);
+		strcpy(gdrive, write_drive->data);
 	}
 
 	return rslt;

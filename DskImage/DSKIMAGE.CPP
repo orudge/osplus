@@ -1,9 +1,10 @@
 /*************************************************/
 /* OSPlus Disk Imager                            */
-/* Version 1.0                                   */
+/* Version 1.1                                   */
 /*                                               */
-/* Copyright (c) Owen Rudge 2000                 */
-/* Disk Imaging Routines: Written by Mark Becker */
+/* Copyright (c) Owen Rudge 2000-2001            */
+/* Disk Writing Routines: Written by Mark Becker */
+/* Disk Reading Routines: (c) Hans Lermen 1995   */
 /*************************************************/
 
 /* This program is free software; you can redistribute it and/or
@@ -20,8 +21,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 
-/* TODO: Implement reading functions, add Browse */
-/* TODO: dialogs.                                */
+/* TODO: Add Browse dialogs */
 
 /* RAWRITE History
  *	---------------
@@ -78,14 +78,21 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 
 #include "dskwrite.h"
 #include "write.h"
+#include "about.h"
+#include "read.h"
 
 int OKPressed;
 char fname[128];
 char gdrive[3];
 
+int ReadOKPressed;
+char ReadFN[128];
+char ReadDrive[3];
+
 const int cmWrite    = 200;
 const int cmAbout    = 201;
 const int cmAboutApp = 202;
+const int cmRead     = 203;
 
 struct DialogData
 {
@@ -110,6 +117,8 @@ DialogData *demoDialogData;
 #define	FORMAT	5
 
 int	done;
+
+extern void RawReadMain(char *fn, char *drive);
 
 class QuickMessage: public TWindow
 {
@@ -259,6 +268,9 @@ void TDiskWriter::handleEvent(TEvent& event)
 				case cmWrite:
 					 newDialog();
 					 break;
+				case cmRead:
+					 doRead();
+                break;
 				case cmDosShell:
 					 dosShell();
 					 break;
@@ -285,7 +297,9 @@ TMenuBar *TDiskWriter::initMenuBar( TRect r )
 				  newLine() +
 				  *new TMenuItem( "~D~OS Shell", cmDosShell, kbAltD) +
 		  *new TSubMenu( "~F~ile", kbAltF )+
+				*new TMenuItem( "~R~ead Image from Disk...", cmRead, cmRead, hcNoContext, "F2") +
 				*new TMenuItem( "~W~rite Image to Disk...", cmWrite, cmWrite, hcNoContext, "F3") +
+            newLine() +
 				*new TMenuItem( "E~x~it", cmQuit, cmQuit, hcNoContext, "Alt-X" ) +
 		  *new TSubMenu( "~H~elp", kbAltH ) +
 				*new TMenuItem( "~A~bout Disk Imager...", cmAboutApp, kbAltA)
@@ -324,6 +338,20 @@ void TDiskWriter::newDialog()
 
 	 if (OKPressed == 1)
 		 DoWrite();
+}
+
+void TDiskWriter::doRead()
+{
+	 TReadDialog *d = new TReadDialog();
+	 d->setData(demoDialogData);
+
+	 ReadOKPressed = 0;
+
+	 deskTop->execView( d );
+	 destroy(d);
+
+	 if (ReadOKPressed == 1)
+		 RawReadMain(ReadFN, ReadDrive);
 }
 
 void DoWrite()
@@ -378,7 +406,7 @@ void DoWrite()
 	}
 	if (eof(fdin)) {
 		TProgram::deskTop->remove( qm );
-      qm->destroy;
+		qm->destroy;
 	  biosdisk(2, drive, 0, 0, 1, 1, buffer);		/* Retract head	*/
 	}
 }
@@ -387,7 +415,7 @@ void TDiskWriter::dosShell()
 {
 	 suspend();
 	 system("cls");
-	 cout << "Type EXIT to return to Disk Writer";
+	 cout << "Type EXIT to return to Disk Imager";
 	 system( getenv( "COMSPEC"));
 	 resume();
 	 redraw();
@@ -400,7 +428,7 @@ void TDiskWriter::aboutBox( void ) {
 		new TStaticText(TRect(11, 2, 30, 10), // 9
 		  "\003OSPlus\n"
 		  "\003Version 1.1\n\n"
-		  "\003Copyright (c) Owen Rudge 2000\n"       // The \003 centers the line.
+		  "\003Copyright (c) Owen Rudge 2000-2001\n"       // The \003 centers the line.
 		  "\003All Rights Reserved\n"
 		  )
 		);
@@ -416,14 +444,14 @@ void TDiskWriter::aboutBox( void ) {
 }
 
 void TDiskWriter::aboutProg( void ) {
-	 TDialog *aboutProg = new TDialog(TRect(0, 0, 39, 13), "About Disk Writer");
+	 TDialog *aboutProg = new TAboutDialog; //Dialog(TRect(0, 0, 39, 13), "About Disk Writer");
 
-	 aboutProg->insert(
+/*	 aboutProg->insert(
 		new TStaticText(TRect(6, 2, 35, 10), // 9
 		  "\003OSPlus Disk Writer\n"
 		  "\003Version 1.0\n\n"       // These strings will be
 		  "\003Copyright (c) Owen Rudge\n"       // The \003 centers the line.
-		  "\0032000. Based on RAWRITE by\n"
+		  "\0032000-2001. Based on RAWRITE by\n"
 		  "\003Mark Becker\n"
 		  )
 		);
@@ -433,8 +461,7 @@ void TDiskWriter::aboutProg( void ) {
 		);
 
 	 aboutProg->options |= ofCentered;
-
+*/
 	 executeDialog(aboutProg);
-
 }
 

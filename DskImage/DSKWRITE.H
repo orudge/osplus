@@ -26,6 +26,7 @@ public:
 	 void newDialog();
 	 void SetOKClicked(int clicked);
 	 void dosShell();
+    void doRead();
 
 	 void aboutBox();
     void aboutProg();
