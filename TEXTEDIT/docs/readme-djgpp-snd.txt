@@ -1,10 +1,10 @@
 OSPlus Text Editor - Open Source Version
-Version 2.1
+Version 2.1.1
 
 Copyright (c) Owen Rudge 2000-2005
 ==================================
 
-Thanks for downloading the DJGPP version of OSPlus Text Editor 2.1! This
+Thanks for downloading the DJGPP version of OSPlus Text Editor 2.1.1! This
 has evolved a fair bit since it was closed source, and now includes features such
 as sound support and file format conversion.
 
@@ -15,7 +15,7 @@ will automatically try to detect your sound card on startup.
 DOWNLOADING THE SOURCE CODE
 ===========================
 
-You can download the source code of OSPlus Text Editor 2.1 from the Files
+You can download the source code of OSPlus Text Editor 2.1.1 from the Files
 section of the SourceForge project at http://sourceforge.net/projects/osplus/.
 You can also get the latest sources of OSPlus Text Editor from CVS. You can also download
 ZIPs from http://osplus.sourceforge.net/. Please go to the SourceForge address
@@ -37,7 +37,7 @@ anything missing, e-mail me! ;-)
 Happy hacking!
 
 -- 
-Owen Rudge, 1st January 2005
+Owen Rudge, 31st March 2005
 http://www.owenrudge.net/
 
 For other contact methods, see http://www.owenrudge.net/contact

@@ -55,7 +55,7 @@ TVerInfoDlg::TVerInfoDlg() :
  options |= ofCenterX | ofCenterY;
 
  sprintf(buf, "OSPlus Text Editor %s", OSP_TXT_VERSION_STR);
- control = new TStaticText(TRect(2, 2, 25, 3), buf);
+ control = new TStaticText(TRect(2, 2, 27, 3), buf);
  insert(control);
 
  control = new TStaticText(TRect(2, 4, 24, 5), "Built with:");

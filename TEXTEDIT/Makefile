@@ -1,5 +1,5 @@
 # Unified gcc-based makefile for OSPlus Text Editor
-# By Owen Rudge, 28/12/2004 - last updated 01/01/2005
+# By Owen Rudge, 28/12/2004 - last updated 31/03/2005
 
 -include makefile.cfg
 
@@ -206,7 +206,7 @@ endif
 endif
 
 $(BIN_DIR)/$(EXE_NAME): $(OBJ_LIST) $(OSPEDIT_RES)
-	gcc $(LDFLAGS) -o $@ $(OBJ_LIST) $(LD_LIBS) $(RHTV_SLIBS)
+	gcc $(LDFLAGS) -o $@ $(OBJ_LIST) $(OSPEDIT_RES) $(LD_LIBS) $(RHTV_SLIBS)
 
 $(BIN_DIR)/txtrtf.cnv: $(RTF_OBJ_LIST) $(TXTRTF_RES)
 	gcc $(LDFLAGS) -o $@ $(RTF_OBJ_LIST) $(LD_LIBS)

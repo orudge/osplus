@@ -1,5 +1,5 @@
 OSPlus Text Editor - Open Source Version
-Version 2.1
+Version 2.1.1
 
 Copyright (c) Owen Rudge 2000-2005
 ==================================
@@ -120,7 +120,7 @@ anything missing, e-mail me! ;-)
 Happy hacking!
 
 -- 
-Owen Rudge, 1st January 2005
+Owen Rudge, 31st March 2005
 http://www.owenrudge.net/
 
 For other contact methods, see http://www.owenrudge.net/contact

@@ -54,7 +54,7 @@ Version 2.1
 31/12/2004: New configuration file system, based on Allegro code (orudge)
 01/01/2005: Got release ready (orudge)
 
-Version 2.11
-------------
+Version 2.1.1
+-------------
 
 28/03/2005: Fixed deletion bug (orudge)

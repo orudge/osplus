@@ -9,6 +9,7 @@
 /* Revision History:
  *
  * 13/10/2002: Moved version information to ospver.h (orudge)
+ * 31/03/2005: Added OSP_TXT_REVISION_VERSION (orudge)
  */
 
 #define OSP_MAJOR_VERSION          2
@@ -17,5 +18,6 @@
 
 #define OSP_TXT_MAJOR_VERSION      2
 #define OSP_TXT_MINOR_VERSION      1
-#define OSP_TXT_VERSION_STR        "2.1"
-#define OSP_TXT_BUILD_DATE         "20050101"
+#define OSP_TXT_REVISION_VERSION   1
+#define OSP_TXT_VERSION_STR        "2.1.1"
+#define OSP_TXT_BUILD_DATE         "20050331"
