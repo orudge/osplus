@@ -20,3 +20,8 @@ Disk Imager Changes
 
 21/10/2000: Created Turbo Vision interface for RAWRITE (orudge)
 19/12/2000: Few changes for Open Source upload         (orudge)
+03/01/2001: Added new About dialog                     (orudge)
+03/01/2001: Added reading support                      (orudge)
+03/01/2001: Tried to implement new Browse dialog       (orudge)
+02/02/2001: Added Windows VM title change              (orudge)
+26/05/2001: Got Browse dialogs working                 (orudge)

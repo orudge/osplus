@@ -1,17 +1,18 @@
-# OSPlus Disk Imager 1.0 Makefile
+#
+# Borland C++ IDE generated makefile
+#
 .AUTODEPEND
 
 
 #
-# Borland C++ tools and paths
+# Borland C++ tools
 #
 IMPLIB  = IMPLIB
 BCCDOS  = BCC +BCCDOS.CFG
-TLINK   = TLIMK
+TLINK   = TLINK
 TLIB    = TLIB
 TASM    = TASM
-
-BCPATH  = D:\BC45
+BCPATH  = C:\BC45
 
 #
 # IDE macros
@@ -23,10 +24,10 @@ BCPATH  = D:\BC45
 #
 IDE_LFLAGSDOS =  -L$(BCPATH)\LIB
 IDE_BFLAGS = 
-LLATDOS_dskimagedexe =  -L$(BCPATH)\LIB;$(BCPATH)\LIB -P=65535 -c -Tde
+LLATDOS_dskimagedexe =  -L$(BCPATH)\LIB -P=65535 -c -Tde
 RLATDOS_dskimagedexe = 
 BLATDOS_dskimagedexe = 
-CNIEAT_dskimagedexe = -I$(BCPATH)\INCLUDE;$(BCPATH)\INCLUDE -D
+CNIEAT_dskimagedexe = -I$(BCPATH)\INCLUDE -D
 LNIEAT_dskimagedexe = -x
 LEAT_dskimagedexe = $(LLATDOS_dskimagedexe)
 REAT_dskimagedexe = $(RLATDOS_dskimagedexe)
@@ -42,6 +43,11 @@ dskimage : BccDos.cfg $(Dep_dskimage)
   echo MakeNode 
 
 Dep_dskimagedexe = \
+   aboutosp.obj\
+   window.obj\
+   about.obj\
+   read.obj\
+   rawread.obj\
    write.obj\
    dskimage.obj
 
@@ -49,12 +55,42 @@ dskimage.exe : $(Dep_dskimagedexe)
   $(TLINK)   @&&|
  /v $(IDE_LFLAGSDOS) $(LEAT_dskimagedexe) $(LNIEAT_dskimagedexe) +
 $(BCPATH)\LIB\c0l.obj+
+aboutosp.obj+
+window.obj+
+about.obj+
+read.obj+
+rawread.obj+
 write.obj+
 dskimage.obj
 $<,$*
 $(BCPATH)\LIB\tv.lib+
 $(BCPATH)\LIB\cl.lib
 
+|
+
+aboutosp.obj :  aboutosp.cpp
+  $(BCCDOS) -c @&&|
+ $(CEAT_dskimagedexe) $(CNIEAT_dskimagedexe) -o$@ aboutosp.cpp
+|
+
+window.obj :  window.c
+  $(BCCDOS) -P- -c @&&|
+ $(CEAT_dskimagedexe) $(CNIEAT_dskimagedexe) -o$@ window.c
+|
+
+about.obj :  about.cpp
+  $(BCCDOS) -c @&&|
+ $(CEAT_dskimagedexe) $(CNIEAT_dskimagedexe) -o$@ about.cpp
+|
+
+read.obj :  read.cpp
+  $(BCCDOS) -c @&&|
+ $(CEAT_dskimagedexe) $(CNIEAT_dskimagedexe) -o$@ read.cpp
+|
+
+rawread.obj :  rawread.cpp
+  $(BCCDOS) -c @&&|
+ $(CEAT_dskimagedexe) $(CNIEAT_dskimagedexe) -o$@ rawread.cpp
 |
 
 write.obj :  write.cpp
@@ -82,5 +118,3 @@ BccDos.cfg :
 -ml
 -f-
 | $@
-
-

@@ -1,5 +1,6 @@
 AUTHORS
 =======
 
-Owen Rudge <orudge@freeuk.com> - GUI, just about everything not written by someone else
-Mark Becker <???>              - Original RAWRITE routines
+Owen Rudge <orudge@freeuk.com>          - GUI, just about everything not written by someone else
+Mark Becker <???>                       - Original RAWRITE routines
+Hans Lermen <lermen@elserv.ffm.fgan.de> - Original RAWREAD routines

@@ -18,19 +18,20 @@
 
 #include <tvision\tv.h>
 
-
 class TReadDialog : public TDialog
 {
 
 public:
 
-    TReadDialog( );
-    TReadDialog( StreamableInit ) :
-           TDialog (streamableInit),
-           TWindowInit(TReadDialog::initFrame) {};
-    virtual void handleEvent( TEvent& );
-    virtual Boolean valid( ushort );
+	 TReadDialog( );
+	 TReadDialog( StreamableInit ) :
+			  TDialog (streamableInit),
+			  TWindowInit(TReadDialog::initFrame) {};
+	 virtual void handleEvent( TEvent& );
+	 virtual Boolean valid( ushort );
+	 ushort execDialog(TDialog *, void *);
 
+	 TButton *BrowseRead;
 
 
 private:

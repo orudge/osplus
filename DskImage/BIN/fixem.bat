@@ -1,0 +1,1 @@
+cvs -d:ext:orudge@cvs.osplus.sourceforge.net:/cvsroot/osplus import -I ! -W "*.DSW *.IDE *.GDT *.gdt *.GPR *.DLG -k 'b'" DskImage orudge build20010526
