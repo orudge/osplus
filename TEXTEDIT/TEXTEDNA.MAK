@@ -7,8 +7,8 @@
 # to blank and ALLEGLIB to -lalleg
 
 TVPATH=D:\DJGPP\CONTRIB\TVISION\INCLUDE
-ALLEGROSUP=
-ALLEGLIB=-lalleg
+ALLEGROSUP=-DDJGPP_NO_SOUND_SUPPORT
+ALLEGLIB=
 
 RHIDE_GCC=gcc
 RHIDE_AS=gcc
@@ -190,8 +190,8 @@ RHIDE_OS_:=$(shell uname)
 endif
 endif
 
-MAIN_TARGET=textedit.exe
-PROJECT_ITEMS=aboutdlg.cpp gemsnd.c ospedit1.cpp ospedit2.cpp ospedit3.cpp sound.c
+MAIN_TARGET=textedna.exe
+PROJECT_ITEMS=aboutdlg.cpp gemsnd.c ospedit1.cpp ospedit2.cpp ospedit3.cpp sound.cpp
 %.o: %.c
 	$(RHIDE_COMPILE.c.o)
 %.o: %.i
@@ -242,7 +242,7 @@ PROJECT_ITEMS=aboutdlg.cpp gemsnd.c ospedit1.cpp ospedit2.cpp ospedit3.cpp sound
 	$(RHIDE_COMPILE.nsm.o)
 %.o: %.adb
 	$(RHIDE_COMPILE.adb.o)
-all:: textedit.exe
+all:: textedna.exe
 DEPS_0=\
                 aboutdlg.o\
                 gemsnd.o\
@@ -252,7 +252,7 @@ DEPS_0=\
                 sound.o
 NO_LINK=
 LINK_FILES=$(filter-out $(NO_LINK),$(DEPS_0))
-textedit.exe:: $(DEPS_0)
+textedna.exe:: $(DEPS_0)
 	$(RHIDE_COMPILE_LINK)
 DEPS_1=aboutdlg.cpp
 aboutdlg.o:: $(DEPS_1)
