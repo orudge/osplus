@@ -47,6 +47,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
  * 05/02/2004: Added support for 0x0551 in BCC versions (orudge)
  * 27/12/2004: Added support for MSVC 8 (orudge)
  * 27/12/2004: GCC 3.x compatibility updates, converter updates (orudge)
+ * 28/12/2004: Added new converter info dialog (orudge)
  */
 
 //#define DJGPP_NO_SOUND_SUPPORT
@@ -125,6 +126,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 #include "aboutdlg.h"
 #include "aboutosp.h"
 #include "verinfo.h"
+#include "cnvinfo.h"
 
 #include <stdlib.h>
 #include <stdarg.h>
@@ -388,9 +390,9 @@ void TEditorApp::fileOpen()
 #endif
 	BOOL NoDelete = FALSE;
 
-	strcpy( fileName, "*.*" );
+	strcpy( fileName, "*" );
 
-	if (execDialog(new TFileDialog("*.*", "Open File",
+	if (execDialog(new TFileDialog("*", "Open File",
 				"~N~ame", fdOpenButton, 100), fileName) != cmCancel)
 	{
 #ifdef ATTEMPT_NEW_CONVERT_ROUTINES
@@ -596,6 +598,10 @@ void TEditorApp::handleEvent(TEvent& event)
 				verInfo();
 				break;
 
+			case cmCnvInfo:
+				cnvInfo();
+				break;
+
 			case cmCalcCmd:
 				calculator();
 				break;
@@ -685,6 +691,19 @@ void TEditorApp::verInfo()
 #endif
 }
 
+void TEditorApp::cnvInfo()
+{
+	TCnvInfoDialog *cnvInfoBox = new TCnvInfoDialog();
+
+	cnvInfoBox->options |= ofCentered;
+
+#if defined(__DJGPP__) || defined(__LINUX__) || defined(__WIN32__)
+	deskTop->execView(cnvInfoBox);
+#else
+	executeDialog(cnvInfoBox);
+#endif
+}
+
 void TEditorApp::calculator()
 {
 	TCalculator *calc = (TCalculator *) validView(new TCalculator);
@@ -700,9 +719,9 @@ void TEditorApp::selectWAV()
 #if (defined(DJGPP_NO_SOUND_SUPPORT) || defined(LINUX_NO_SOUND_SUPPORT)) && !defined(ALLEGRO_H)
 	messageBox("Sound is not enabled with this version.", cmOK);
 #else
-	strcpy( WAVName, "*.WAV" );
+	strcpy( WAVName, "*.wav" );
 
-	if (execDialog(new TFileDialog("*.WAV", "Select WAV File",
+	if (execDialog(new TFileDialog("*.wav", "Select WAV File",
 			"~N~ame", fdOpenButton, 100), WAVName) != cmCancel)
 		snd_LoadWAV();
 #endif
@@ -734,9 +753,9 @@ void TEditorApp::selectMID()
 #ifdef NO_MIDI_MUSIC
 	messageBox("MIDI music is not enabled with this version.", cmOK);
 #else
-	strcpy( MIDName, "*.MID" );
+	strcpy( MIDName, "*.mid" );
 
-	if (execDialog(new TFileDialog("*.MID", "Select MIDI File",
+	if (execDialog(new TFileDialog("*.mid", "Select MIDI File",
 			"~N~ame", fdOpenButton, 100), MIDName) != cmCancel)
 		snd_LoadMID();
 #endif
@@ -771,8 +790,8 @@ int main(int argc, char *argv[])
 
 #ifdef ATTEMPT_NEW_CONVERT_ROUTINES
 	// Register converters
-	register_converter_file_type("rtf", "txtrtf.cnv", NULL);
-	register_converter_file_type("wri", "txtwrite.cnv", NULL);
+	register_converter_file_type("rtf", "txtrtf.cnv", NULL, "Rich Text Format");
+	register_converter_file_type("wri", "txtwrite.cnv", NULL, "Windows Write");
 	register_microsoft_converters();
 #endif
 

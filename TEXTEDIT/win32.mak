@@ -14,6 +14,7 @@ INC      = -I. -Isrc -Isrc/convert
 
 !ifdef DEBUG
 CDEBUGFLAGS = -v -vi -y -6 -Od
+LDDEBUGFLAGS = /v
 !else
 CDEBUGFLAGS = -O2 -6 -T -DNDEBUG
 !endif
@@ -24,14 +25,14 @@ DYNRTLDFLAGS = -WR
 
 CFLAGS   = -D_BCPP -a8 $(DYNRTLDFLAGS) -WC -X -q $(CDEBUGFLAGS)
 CXXFLAGS = -P -RT- $(CFLAGS)
-LDFLAGS   = $(DYNRTLDFLAGS) /Gn /x
+LDFLAGS   = $(DYNRTLDFLAGS) $(LDDEBUGFLAGS) /Gn /x
 
 .SUFFIXES: .cc .c .obj
 
-OBJS_ =  +aboutdlg.obj +aboutosp.obj +ospedit1.obj +ospedit2.obj +ospedit3.obj\
+OBJS_ =  +aboutdlg.obj +aboutosp.obj +cnvinfo.obj +convert.obj +ospedit1.obj +ospedit2.obj +ospedit3.obj\
             +sound.obj +verinfo.obj
 
-OBJS_2 = obj\win32\aboutdlg.obj obj\win32\aboutosp.obj obj\win32\ospedit1.obj\
+OBJS_2 = obj\win32\aboutdlg.obj obj\win32\aboutosp.obj obj\win32\cnvinfo.obj obj\win32\convert.obj obj\win32\ospedit1.obj\
             obj\win32\ospedit2.obj obj\win32\ospedit3.obj obj\win32\sound.obj\
             obj\win32\verinfo.obj
 
@@ -41,15 +42,15 @@ all: bin/win32/ospedit.exe bin/win32/txtrtf.cnv bin/win32/txtwrite.cnv bin/win32
 
 bin/win32/ospedit.exe: $(OBJS) obj/win32/ospedit.res
 	$(LD) $(LDFLAGS) $(OBJS_2), bin\win32\ospedit.exe,, rhtv.lib import32.lib c0x32.obj cw32.lib,,obj\win32\ospedit.res
-	del bin\win32\ospedit.tds
+	rem del bin\win32\ospedit.tds
 
 bin/win32/txtrtf.cnv: obj/win32/rtfactn.obj obj/win32/rtfreadr.obj obj/win32/txtrtf.res
 	$(LD) $(LDFLAGS) obj\win32\rtfactn.obj obj\win32\rtfreadr.obj, bin\win32\txtrtf.cnv,, import32.lib c0x32.obj cw32.lib,,obj\win32\txtrtf.res
-	del bin\win32\txtrtf.tds
+	rem del bin\win32\txtrtf.tds
 
 bin/win32/txtwrite.cnv: obj/win32/txtwrite.obj obj/win32/txtwrite.res
 	$(LD) $(LDFLAGS) obj\win32\txtwrite.obj, bin\win32\txtwrite.cnv,, import32.lib c0x32.obj cw32.lib,,obj\win32\txtwrite.res
-	del bin\win32\txtwrite.tds
+	rem del bin\win32\txtwrite.tds
 
 bin/win32/msconv.cnv: obj/win32/msconv.obj obj/win32/msconv.res
 	$(LD) $(LDFLAGS) obj\win32\msconv.obj, bin\win32\msconv.cnv,, import32.lib c0x32.obj cw32.lib,,obj\win32\msconv.res

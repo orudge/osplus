@@ -1,6 +1,6 @@
 /*************************************************************/
 /* OSPlus - Open Source version                              */
-/* Copyright (c) Owen Rudge 2000-2002. All Rights Reserved.  */
+/* Copyright (c) Owen Rudge 2000-2004. All Rights Reserved.  */
 /*************************************************************/
 /* OSPlus Text Editor - Standalone                           */
 /* OSPEDIT.EXE                                               */
@@ -27,6 +27,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
  *  19/05/2001:   Added Save/Restore Desktop
  *  24/12/2001:   Hid sound-related menu items if SOUND_SUPPORT = 0
  *  05/01/2002:   Cleaned up indentation, etc
+ *  28/12/2004:   Added new converter info dialog (orudge)
  */
 
 #define Uses_TApplication
@@ -145,6 +146,8 @@ TMenuBar *TEditorApp::initMenuBar(TRect r) // Another messy function...
 
    TSubMenu& sub5 = *new TSubMenu("~H~elp", kbAltH) +
       *new TMenuItem("~V~ersion Information...", cmVerInfo, kbNoKey) +
+	*new TMenuItem("~C~onverter Information...", cmCnvInfo, kbNoKey) +
+	newLine() + 
       *new TMenuItem("~A~bout Text Editor...", cmAboutApp,	kbAltA);
 
    r.b.y = r.a.y+1;

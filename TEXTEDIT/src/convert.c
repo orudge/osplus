@@ -45,7 +45,7 @@ static int num_converters = 0;
 /* register_converter_file_type:
  *  Registers a new converter.
  */
-void register_converter_file_type(char *ext, char *load_fn, char *params)
+void register_converter_file_type(char *ext, char *load_fn, char *params, char *title)
 {
 	char tmp[32], *aext;
 	CONVERTER_INFO *iter = converter_type_list;
@@ -72,8 +72,41 @@ void register_converter_file_type(char *ext, char *load_fn, char *params)
 		else
 			iter->params = strdup(params);
 
+		iter->title = strdup(title);
 		iter->next = NULL;
+
+		fprintf(stderr, "Added '%d' '%s' '%s' '%s' '%s'\n", iter->id, iter->load_fn, iter->ext, iter->params, iter->title, iter->next);
 	}
+}
+
+int get_number_of_converters()
+{
+ 	return(num_converters);
+}
+
+int get_converter_info(int id, char *fn, char *ext, char *params, char *title)
+{
+	CONVERTER_INFO *iter;
+
+	for (iter = converter_type_list; iter; iter = iter->next)
+	{
+		if (iter->id == id)
+		{
+			strcpy(fn, iter->load_fn);
+			strcpy(ext, iter->ext);
+
+			if (iter->params == NULL)
+				strcpy(params, "");
+			else
+				strcpy(params, iter->params);
+
+			strcpy(title, iter->title);
+
+			return 1;
+		}
+	}
+
+	return 0;
 }
 
 void register_microsoft_converters()
@@ -92,6 +125,8 @@ void register_microsoft_converters()
 	char ext_tmp[255];
 	char tmplen;
 	char short_path[MAXPATH];
+	char name[255];
+	char name2[260];
 
 	ret = RegOpenKeyEx(HKEY_LOCAL_MACHINE, "Software\\Microsoft\\Shared Tools\\Text Converters\\Import", 0, KEY_READ, &hKey);
 
@@ -99,6 +134,7 @@ void register_microsoft_converters()
 		return;
 
 	do {
+		len = sizeof(subkey_name);
 		ret = RegEnumKeyEx(hKey, i, subkey_name, &len, NULL, NULL, NULL, &ignore);
 
 		if (ret == ERROR_NO_MORE_ITEMS)
@@ -128,8 +164,18 @@ void register_microsoft_converters()
 
 						if (strcmp(extensions, "*") != 0)
 						{
+		fprintf(stderr, "Here: '%s' '%s' '%s'\n", subkey_name, path, short_path);
+
+							len = sizeof(name);
+							ret = RegQueryValueEx(hSubKey, "Name", NULL, NULL, name, &len);
+
+							if (ret == ERROR_SUCCESS)
+								sprintf(name2, "MS: %s", name);
+							else
+								sprintf(name2, "MS: %s", subkey_name);
+
 							if (strchr(extensions, ' ') == 0)
-								register_converter_file_type(extensions, "msconv.cnv", short_path);
+								register_converter_file_type(extensions, "msconv.cnv", short_path, name2);
 							else
 							{
 								tmplen = strlen(extensions);
@@ -147,7 +193,8 @@ void register_microsoft_converters()
 										ZeroMemory(ext_tmp, sizeof(ext_tmp));
 										pos++;
 										strncpy(ext_tmp, lastpos, pos-lastpos-1);
-										register_converter_file_type(ext_tmp, "msconv.cnv", short_path);
+
+										register_converter_file_type(ext_tmp, "msconv.cnv", short_path, name2);
 									}
 
 									lastpos = pos;

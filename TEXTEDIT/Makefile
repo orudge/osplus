@@ -13,14 +13,19 @@ ifeq ($(COMPILER),undefined)
 	$(error Please run configure.bat or configure before make)
 endif
 
+ifeq ($(DEBUG),1)
+CFLAGS   = -g -Isrc/ -Isrc/convert/
+CPPFLAGS = -g -Isrc/ -Isrc/convert/
+LDFLAGS  =
+else
 CFLAGS   = -s -Isrc/ -Isrc/convert/
 CPPFLAGS = -s -Isrc/ -Isrc/convert/
-RCFLAGS  = --include-dir=src/ --include-dir=src/convert/
 LDFLAGS  = -s
+RCFLAGS  = --include-dir=src/ --include-dir=src/convert/
 LD_LIBS  = 
+endif
 
 ifeq ($(COMPILER),djgpp )
-
 # Since `rhtv-config` doesn't seem to work on DJGPP, please update the following by hand:
 RHTV_CFLAGS   = -O2
 RHTV_CPPFLAGS = -O2
@@ -76,6 +81,7 @@ LD_LIBS   += $(RHTV_SLIBS)
 OBJ_LIST = \
 $(OBJ_DIR)/aboutdlg.o \
 $(OBJ_DIR)/aboutosp.o \
+$(OBJ_DIR)/cnvinfo.o \
 $(OBJ_DIR)/convert.o \
 $(OBJ_DIR)/ospedit1.o \
 $(OBJ_DIR)/ospedit2.o \

@@ -58,6 +58,7 @@ extern char __os_ver[50];
           #define BUILD_VERSION	"MinGW32 version (Win32)"
           #define OSP_COMPILER      "MinGW32"
           #define OSP_COMPILER_VER  __gcc_ver
+          #define SOUND_SUPPORT     1
 
           extern char __gcc_ver[50];
 	#else
@@ -113,7 +114,8 @@ const int
   cmStopMID        = 113,
   cmSaveDesktop    = 114,
   cmRestoreDesktop = 115,
-  cmVerInfo        = 116;
+  cmVerInfo        = 116,
+  cmCnvInfo        = 117;
 
 class TEditorApp : public TApplication
 {
@@ -141,6 +143,7 @@ private:
    void aboutBox();
    void aboutProg();
    void verInfo();
+   void cnvInfo();
 
    void selectWAV();
    void playWAV();

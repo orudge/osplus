@@ -16,13 +16,16 @@ typedef struct CONVERTER_INFO
    char *ext;       // File extension (eg, "RTF")
    char *load_fn;   // Converter to load file
    char *params;    // Any extra parameters to pass
+   char *title;     // Title
    struct CONVERTER_INFO *next;
 } CONVERTER_INFO;
 
 int convert_file(char *fn_in, char *fn_out, char *converter, char *params, char *error_out);
-void register_converter_file_type(char *ext, char *load_fn, char *params);
+void register_converter_file_type(char *ext, char *load_fn, char *params, char *title);
 void register_microsoft_converters();
 int convert_text_file(char *filename_in, char *filename_out, char *error_out, int start_from);
+int get_number_of_converters();
+int get_converter_info(int id, char *fn, char *ext, char *params, char *title);
 
 #define CONVERT_DELETE_FILE           2
 
