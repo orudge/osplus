@@ -5,7 +5,7 @@
 /* OSPlus Text Editor - Standalone                           */
 /* OSPEDIT.EXE                                               */
 /*************************************************************/
-/* Resource file for Win32                                   */
+/* Configuration file routines (from Allegro)                */
 /*************************************************************/
 
 /* This program is free software; you can redistribute it and/or
@@ -22,39 +22,18 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 
-#define RES_INFO_ONLY
+#ifdef WITH_ALLEG
+	#include <allegro.h>
+#else
 
-#include "ospver.h"
+void set_config_file(AL_CONST char *filename);
+AL_CONST char *get_config_string(AL_CONST char *section, AL_CONST char *name, AL_CONST char *def);
+int get_config_int(AL_CONST char *section, AL_CONST char *name, int def);
+int get_config_hex(AL_CONST char *section, AL_CONST char *name, int def);
+float get_config_float(AL_CONST char *section, AL_CONST char *name, float def);
+void set_config_string(AL_CONST char *section, AL_CONST char *name, AL_CONST char *val);
+void set_config_int(AL_CONST char *section, AL_CONST char *name, int val);
+void set_config_hex(AL_CONST char *section, AL_CONST char *name, int val);
+void set_config_float(AL_CONST char *section, AL_CONST char *name, float val);
 
-#if defined(__MSVC__) || defined(__MINGW32__)
-   #include <windows.h>
 #endif
-
-1 VERSIONINFO 
-FILEVERSION OSP_TXT_MAJOR_VERSION, OSP_TXT_MINOR_VERSION, 0, 0
-PRODUCTVERSION OSP_MAJOR_VERSION, OSP_MINOR_VERSION, 0, 0
-FILEOS VOS__WINDOWS32
-FILETYPE VFT_APP
-{
- BLOCK "StringFileInfo"
- {
-  BLOCK "040904E4"
-  {
-   VALUE "CompanyName", "Owen Rudge\000\000"
-   VALUE "FileDescription", "OSPlus Text Editor\000"
-   VALUE "FileVersion", OSP_TXT_VERSION_STR "\000\000"
-   VALUE "InternalName", "OSPEDIT\000"
-   VALUE "LegalCopyright", "Copyright © Owen Rudge 2000-2005\000\000"
-   VALUE "OriginalFilename", "OSPEDIT.EXE\000"
-   VALUE "ProductName", "OSPlus\000"
-   VALUE "ProductVersion", OSP_VERSION_STR "\000\000"
-  }
-
- }
-
- BLOCK "VarFileInfo"
- {
-  VALUE "Translation", 0x0809, 1252
- }
-}
-

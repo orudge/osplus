@@ -1,3 +1,27 @@
+/*************************************************************/
+/* OSPlus - Open Source version                              */
+/* Copyright (c) Owen Rudge 2000-2005. All Rights Reserved.  */
+/*************************************************************/
+/* OSPlus Text Editor - Standalone                           */
+/* OSPEDIT.EXE                                               */
+/*************************************************************/
+/* About dialog for Text Editor                              */
+/*************************************************************/
+
+/* This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
+
 //-------------------------------------------------------
 //                       aboutdlg.cpp
 //-------------------------------------------------------
@@ -39,7 +63,7 @@ TAboutDialog::TAboutDialog() :
        "\n"
        "Version %s, Build %s\n"
        "\n"
-       "Copyright (c) Owen Rudge 2000-2004", OSP_TXT_VERSION_STR, OSP_TXT_BUILD_DATE);
+       "Copyright (c) Owen Rudge 2000-2005", OSP_TXT_VERSION_STR, OSP_TXT_BUILD_DATE);
 
    control = new TStaticText(TRect(2, 1, 48, 7), tmpbuf);
    insert(control);
@@ -95,15 +119,3 @@ TStreamable *TAboutDialog::build()
 {
    return new TAboutDialog( streamableInit );
 }
-
-// From here to end of file may be removed if TAboutDialog will not be streamed.
-
-TStreamableClass RAboutDialog( TAboutDialog::name,
-                        TAboutDialog::build,
-                        __DELTA(TAboutDialog)
-                      );
-
-__link(RAboutDialog)
-__link(RButton)
-__link(RStaticText)
-

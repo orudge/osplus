@@ -1,6 +1,6 @@
 /*************************************************************/
 /* OSPlus - Open Source version                              */
-/* Copyright (c) Owen Rudge 2000-2004. All Rights Reserved.  */
+/* Copyright (c) Owen Rudge 2000-2005. All Rights Reserved.  */
 /*************************************************************/
 /* Microsoft -> OSPlus conversion layer                      */
 /* MSCONV.CNV                                                */
@@ -32,7 +32,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 #include <windows.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <io.h>
+//#include <io.h>
 
 #include "convert.h"
 

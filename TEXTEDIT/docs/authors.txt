@@ -3,3 +3,7 @@ AUTHORS
 
 Owen Rudge <orudge@freeuk.com> - Just about everything not written by someone else
 Heinz Rath <heinz.rath@gmx.at> - Real-mode sound drivers
+Sean Young <sean@mess.org>     - Windows Write converter
+
+Thanks also to the authors of the Allegro (http://alleg.sf.net/) project, some code
+of which has been used in OSPlus Text Editor.

@@ -4,12 +4,12 @@
 /*********************************************/
 
 #ifndef TRUE
-   #define FALSE               0
-   #define TRUE                1
+	#define FALSE               0
+	#define TRUE                1
 #endif
 
 #ifndef cdecl
-   #define cdecl
+	#define cdecl
 #endif
 
 #ifdef __cplusplus

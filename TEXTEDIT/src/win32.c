@@ -1,6 +1,6 @@
 /*************************************************************/
 /* OSPlus - Open Source version                              */
-/* Copyright (c) Owen Rudge 2000-2002. All Rights Reserved.  */
+/* Copyright (c) Owen Rudge 2000-2005. All Rights Reserved.  */
 /*************************************************************/
 /* OSPlus Text Editor - Standalone                           */
 /* OSPEDIT.EXE                                               */
@@ -74,10 +74,10 @@ void snd_LoadMID()
    char str[250];
 
    if (MIDLoaded == TRUE)
-      mciSendString("close ospedtmid", NULL, NULL, NULL);
+      mciSendString("close ospedtmid", NULL, (UINT) NULL, NULL);
 
    wsprintf(str, "open \"%s\" type sequencer alias ospedtmid", MIDName);
-   ret = mciSendString(str, NULL, NULL, NULL);
+   ret = mciSendString(str, NULL, (UINT) NULL, NULL);
 
    if (ret == 0)
       MIDLoaded = TRUE;
@@ -87,12 +87,12 @@ void snd_LoadMID()
 
 void snd_PlayMID()
 {
-   mciSendString("play ospedtmid", NULL, NULL, NULL);
+   mciSendString("play ospedtmid", NULL, (UINT) NULL, NULL);
 }
 
 void snd_StopMID()
 {
-   mciSendString("stop ospedtmid", NULL, NULL, NULL);
+   mciSendString("stop ospedtmid", NULL, (UINT) NULL, NULL);
 }
 
 void snd_Init()
@@ -112,7 +112,7 @@ void snd_Exit()
 
    if (MIDLoaded == TRUE)
    {
-      mciSendString("stop ospedtmid", NULL, NULL, NULL);
-      mciSendString("close ospedtmid", NULL, NULL, NULL);
+      mciSendString("stop ospedtmid", NULL, (UINT) NULL, NULL);
+      mciSendString("close ospedtmid", NULL, (UINT) NULL, NULL);
    }
 }

@@ -5,7 +5,7 @@
 /* OSPlus Text Editor - Standalone                           */
 /* OSPEDIT.EXE                                               */
 /*************************************************************/
-/* About dialog for OSPlus                                   */
+/* Converter window (header)                                 */
 /*************************************************************/
 
 /* This program is free software; you can redistribute it and/or
@@ -24,12 +24,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 
 //-------------------------------------------------------
 //
-//   aboutosp.h: Header file for aboutosp.cpp
+//   cnvinfo.h: Header file for cnvinfo.cpp
 //
 //-------------------------------------------------------
 
-#if !defined( __ABOUTOSP_H )
-#define __ABOUTOSP_H
+#if !defined( __CNVINFO_H )
+#define __CNVINFO_H
 
 #define Uses_TStreamable
 #define Uses_TStreamableClass
@@ -38,26 +38,36 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 #define Uses_TDialog
 #define Uses_TButton
 #define Uses_TStaticText
+#define Uses_TParamText
+#define Uses_TListBox
+#define Uses_TScrollBar
 
 #if defined(__DJGPP__) || defined(__LINUX__) || defined(__WIN32__)
-	#include <tv.h>
+   #include <tv.h>
 #else
-	#include <tvision\tv.h>
+   #include <tvision\tv.h>
 #endif
 
+struct ConverterDataRec  {
+  TListBoxRec ConverterData;   //TListBox
+  };
 
-class TAboutOSPlus : public TDialog
+
+class TCnvInfoDialog : public TDialog
 {
 
 public:
 
-    TAboutOSPlus( );
-    TAboutOSPlus( StreamableInit ) :
+    TCnvInfoDialog( );
+    TCnvInfoDialog( StreamableInit ) :
            TDialog (streamableInit),
-           TWindowInit(TAboutOSPlus::initFrame) {};
+           TWindowInit(TCnvInfoDialog::initFrame) {};
     virtual void handleEvent( TEvent& );
     virtual Boolean valid( ushort );
 
+    TButton *CloseButton;
+    TListBox *ConverterList;
+    TParamText *CnvInfoLbl;
 
 
 private:
@@ -77,15 +87,15 @@ public:
 
 };
 
-inline ipstream& operator >> ( ipstream& is, TAboutOSPlus& cl )
+inline ipstream& operator >> ( ipstream& is, TCnvInfoDialog& cl )
     { return is >> (TStreamable&)cl; }
-inline ipstream& operator >> ( ipstream& is, TAboutOSPlus*& cl )
+inline ipstream& operator >> ( ipstream& is, TCnvInfoDialog*& cl )
     { return is >> (void *&)cl; }
-inline opstream& operator << ( opstream& os, TAboutOSPlus& cl )
+inline opstream& operator << ( opstream& os, TCnvInfoDialog& cl )
     { return os << (TStreamable&)cl; }
-inline opstream& operator << ( opstream& os, TAboutOSPlus* cl )
+inline opstream& operator << ( opstream& os, TCnvInfoDialog* cl )
     { return os << (TStreamable *)cl; }
 
 
-#endif  // __ABOUTOSP_H
+#endif  // __CNVINFO_H
 

@@ -1,7 +1,6 @@
 @echo off
 if "%1"=="djgpp" goto djgpp
 if "%1"=="mingw" goto mingw
-if "%1"=="msvc" goto msvc
 if "%1"=="undefined" goto undefined
 
 echo Usage: configure target [--with-alleg]
@@ -12,10 +11,12 @@ echo Possible targets:
 echo.
 echo    djgpp
 echo    mingw
-echo    msvc
 echo.
 echo --with-alleg is only applicable on DJGPP, if you have the Allegro
 echo games library installed.
+echo.
+echo To build the MSVC, Borland C++ (Win32) or Borland C++ (DOS) versions
+echo please read the appropriate file in docs/build.
 echo.
 echo All options are case-sensitive.
 

@@ -1,6 +1,6 @@
 /*************************************************************/
 /* OSPlus - Open Source version                              */
-/* Copyright (c) Owen Rudge 2000-2004. All Rights Reserved.  */
+/* Copyright (c) Owen Rudge 2000-2005. All Rights Reserved.  */
 /*************************************************************/
 /* OSPlus Text Editor - Standalone                           */
 /* OSPEDIT.EXE                                               */
@@ -48,7 +48,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 #if defined(__DJGPP__) || defined(__LINUX__) || defined(__WIN32__)
    #include <tv.h>
 
-	#if __GNUC__ >= 3
+	#if (__GNUC__ >= 3) || (_MSC_VER >= 1300)
 		#include <strstream>        // yes, it's depreciated, I know
 		using std::strstreambuf;
 		using std::istrstream;
@@ -66,7 +66,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 
 #include <stdarg.h>
 
-#include <iomanip.h>
+#if (__GNUC__ >= 3) || (_MSC_VER >= 1300)
+	#include <iomanip>
+#else
+	#include <iomanip.h>
+#endif
+
+#if (_MSC_VER >= 1300) || (__GNUC__ >= 3)
+   #define ends ""  // bit of a hack, but seems to work
+#endif
 
 TMenuBar *TEditorApp::initMenuBar(TRect r) // Another messy function...
 {

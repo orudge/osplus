@@ -1,0 +1,49 @@
+BUILDING OSPLUS TEXT EDITOR WITH MINGW
+======================================
+
+To build the DJGPP version of the Text Editor, you need:
+
+- MinGW32 2.0 or higher, 3.x recommended
+
+- The Cygwin make utility may also be required - see www.cygwin.com
+
+- Turbo Vision, available from http://tvision.sourceforge.net/. Turbo Vision 2.0.3
+  is recommended.
+
+- Dialog Designer, available from
+  www.simtel.net/simtel.net/msdos/turbovis.html, to modify the About dialogs
+
+TO BUILD
+========
+
+If you do not have the Cygwin make tool (the MinGW32 tool doesn't seem to work properly
+for this), you must open the Makefile, look for the "#### MINGW/CYGWIN ####" section
+and change the:
+
+   RHTV_CFLAGS   = `rhtv-config --cflags`
+   RHTV_CPPFLAGS = `rhtv-config --cppflags`
+   RHTV_INCLUDE  = `rhtv-config --include`
+   RHTV_DIR_LIBS = `rhtv-config --dir-libs`
+   RHTV_SLIBS    = `rhtv-config --slibs`
+
+lines so they have the output of the commands specified. For example:
+
+   RHTV_CFLAGS   = -O2
+   ...
+   RHTV_INCLUDE  = -I/c/Various/tv203/contrib/tvision/include -Id:/mingw32/msys/include/rhtvision
+   ...
+
+(on my system).
+
+You should then run the configure.bat file with the 'mingw' parameter. After that, you
+can then simply run:
+
+   make
+
+to build OSPlus Text Editor. Object files will be placed in obj/mingw32, and binaries in
+bin/mingw32.
+
+If you have the UPX executable compressor installed (see http://upx.sf.net/), you can
+then compress the executables, reducing their sizes significantly, by running:
+
+   make compress

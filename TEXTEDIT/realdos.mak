@@ -8,17 +8,16 @@
 # Borland C++ tools
 #
 IMPLIB  = IMPLIB
-BCCDOS  = BCC +bccdos.cfg 
+BCCDOS  = BCC +BCCDOS.CFG
 TLINK   = TLINK
 TLIB    = TLIB
 TASM    = TASM
-
-BCC_LIB = D:\BC45\LIB
-BCC_INC = D:\BC45\INCLUDE
 #
 # IDE macros
 #
 
+BCC_LIB = D:\BC45\LIB
+BCC_INC = D:\BC45\INCLUDE
 
 #
 # Options
@@ -64,10 +63,13 @@ Dep_ospedit = \
    BIN\REALDOS\txtrtf.cnv\
    BIN\REALDOS\txtwrite.cnv
 
-ospedit : BccDos.cfg $(Dep_ospedit)
+ospedit : BCCDOS.CFG $(Dep_ospedit)
   echo MakeNode 
 
 Dep_OSPEDIT = \
+   OBJ\REALDOS\config.obj\
+   OBJ\REALDOS\unicode.obj\
+   OBJ\REALDOS\cnvinfo.obj\
    OBJ\REALDOS\convert.obj\
    OBJ\REALDOS\verinfo.obj\
    OBJ\REALDOS\aboutosp.obj\
@@ -83,6 +85,9 @@ BIN\REALDOS\ospedit.exe : $(Dep_OSPEDIT)
   $(TLINK)   @&&|
  /v $(IDE_LFLAGSDOS) $(LEAT_OSPEDIT) $(LNIEAT_OSPEDIT) +
 $(BCC_LIB)\c0l.obj+
+OBJ\REALDOS\config.obj+
+OBJ\REALDOS\unicode.obj+
+OBJ\REALDOS\cnvinfo.obj+
 OBJ\REALDOS\convert.obj+
 OBJ\REALDOS\verinfo.obj+
 OBJ\REALDOS\aboutosp.obj+
@@ -100,6 +105,21 @@ $(BCC_LIB)\emu.lib+
 $(BCC_LIB)\mathl.lib+
 $(BCC_LIB)\cl.lib
 
+|
+
+OBJ\REALDOS\config.obj :  src\config.c
+  $(BCCDOS) -P- -c @&&|
+ $(CEAT_OSPEDIT) $(CNIEAT_OSPEDIT) -o$@ src\config.c
+|
+
+OBJ\REALDOS\unicode.obj :  src\unicode.c
+  $(BCCDOS) -P- -c @&&|
+ $(CEAT_OSPEDIT) $(CNIEAT_OSPEDIT) -o$@ src\unicode.c
+|
+
+OBJ\REALDOS\cnvinfo.obj :  SRC\cnvinfo.cpp
+  $(BCCDOS) -c @&&|
+ $(CEAT_OSPEDIT) $(CNIEAT_OSPEDIT) -o$@ SRC\cnvinfo.cpp
 |
 
 OBJ\REALDOS\convert.obj :  SRC\convert.c
@@ -196,8 +216,8 @@ OBJ\REALDOS\txtwrite.obj :  SRC\CONVERT\txtwrite.c
 |
 
 # Compiler configuration file
-BccDos.cfg : 
-   Copy &&|
+BCCDOS.CFG : 
+   COPY &&|
 -W-
 -R
 -v

@@ -1,6 +1,6 @@
 /*************************************************************/
 /* OSPlus - Open Source version                              */
-/* Copyright (c) Owen Rudge 2000-2004. All Rights Reserved.  */
+/* Copyright (c) Owen Rudge 2000-2005. All Rights Reserved.  */
 /*************************************************************/
 /* OSPlus Text Editor - Standalone                           */
 /* OSPEDIT.EXE                                               */
@@ -48,11 +48,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
  * 27/12/2004: Added support for MSVC 8 (orudge)
  * 27/12/2004: GCC 3.x compatibility updates, converter updates (orudge)
  * 28/12/2004: Added new converter info dialog (orudge)
+ * 31/12/2004: Added GCC ver for DJGPP (orudge)
  */
 
 //#define DJGPP_NO_SOUND_SUPPORT
-
-#define ATTEMPT_NEW_CONVERT_ROUTINES
 
 #ifdef __LINUX__
 	#define DJGPP_NO_SOUND_SUPPORT
@@ -87,13 +86,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 		#include <unistd.h>
 	#endif
 
-	#if __GNUC__ >= 3
+	#if (__GNUC__ >= 3) || (_MSC_VER >= 1300)
 		#include <sstream>
 	#else
 		#include <strstream.h>
 	#endif
 
-	#if (defined(__LINUX__) && !defined(LINUX_NO_SOUND_SUPPORT)) || (defined(__DJGPP) && !defined(DJGPP_NO_SOUND_SUPPORT))
+	#if (defined(__LINUX__) && !defined(LINUX_NO_SOUND_SUPPORT)) || (defined(__DJGPP__) && !defined(DJGPP_NO_SOUND_SUPPORT))
+		#define USE_CONSOLE
 		#include <allegro.h>
 	#endif
 #else
@@ -107,8 +107,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 	#endif
 #endif
 
-#if !defined(ALLEGRO_H) && !defined(__WIN32__)
+#if !defined(ALLEGRO_H) && !defined(__WIN32__) && !defined(__LINUX__)
 	#define REAL_DOS // real-mode DOS
+	#include "realdos.h"
+#endif
+
+#if defined(__MSDOS__) && !defined(ALLEGRO_H)
+	#include "realdos.h"
 #endif
 
 #if defined(__LINUX__) && !defined(ALLEGRO_H)
@@ -132,7 +137,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 #include <stdarg.h>
 #include <string.h>
 
-#if __GNUC__ >= 3
+#if (__GNUC__ >= 3) || (_MSC_VER >= 1300)
 	#include <iomanip>
 #else
 	#include <iomanip.h>
@@ -159,9 +164,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 	#endif
 #endif
 
-#ifdef ATTEMPT_NEW_CONVERT_ROUTINES
-	#include "convert.h"
-#endif
+#include "convert.h"
 
 typedef int BOOL;
 
@@ -169,9 +172,6 @@ typedef int BOOL;
 	#define FALSE False
 	#define TRUE  True
 #endif
-
-#include "write.h" // Write converter return values
-#include "rtferror.h" // RTF converter return values
 
 BOOL IsInitialFile = False;          // was file specified on command line?
 char initialfile[200];               // file name on cmd line
@@ -247,13 +247,6 @@ TEditorApp::TEditorApp() :
 	 TApplication()
 {
 	char szBuf[200], errortxt[200];
-#ifdef __LINUX__
-	char tmp[200];
-#endif
-	BOOL NoDelete = FALSE;
-#ifdef ATTEMPT_NEW_CONVERT_ROUTINES
-	int delfile = 0;
-#endif
 
 	TCommandSet ts;
 	ts.enableCmd(cmSave);
@@ -280,14 +273,13 @@ TEditorApp::TEditorApp() :
 
 	if (IsInitialFile == True)
 	{
-#ifdef ATTEMPT_NEW_CONVERT_ROUTINES
-	int ret;
+		int ret;
 		QuickMessage *qm = new QuickMessage("");
 		TProgram::deskTop->insert(qm);
 
 		ret = convert_text_file(initialfile, szBuf, errortxt, 0);
 
-		if (!(ret & ERROR_CNV_OK))
+		if ((!(ret & ERROR_CNV_OK)) && (ret != -2))
 		{
 			messageBox(mfError | mfOKButton, errortxt);
 		}
@@ -299,203 +291,37 @@ TEditorApp::TEditorApp() :
 
 		if (ret & CONVERT_DELETE_FILE)
 			unlink(szBuf);
-#else
-
-#ifdef __LINUX__
-		strcpy(tmp, initialfile);
-		if (strstr(strupr(tmp), ".RTF") != NULL)
-#else
-		if (strstr(strupr(initialfile), ".RTF") != NULL)
-#endif
-		{
-			QuickMessage *qm = new QuickMessage( "" );
-			TProgram::deskTop->insert( qm );
-
-#ifdef __LINUX__
-			sprintf(tmp, "./txtrtf.cnv \"%s\" \"%s\"", initialfile, szBuf);
-			system(tmp);
-#else
-			tmpnam(szBuf);
-			int tmpret;
-			switch(tmpret = spawnl(P_WAIT, "TXTRTF.CNV", "TXTRTF.CNV", initialfile, szBuf, NULL))
-			{
-				case ERROR_RTF_CANNOT_OPEN_SRC:
-					messageBox(mfError | mfOKButton, "Unable to open source file.");
-					break;
-				case ERROR_RTF_CANNOT_OPEN_DEST:
-					messageBox(mfError | mfOKButton, "Unable to open temporary destination file.");
-					break;
-				default:
-					if (tmpret >= ERROR_RTF_PARSE_ERROR)
-						messageBox(mfWarning | mfOKButton, "Error %d while parsing RTF file", tmpret - ERROR_RTF_PARSE_ERROR);
-					break;
-			}
-#endif
-
-			TProgram::deskTop->remove( qm );
-			destroy(qm);
-
-			openEditor(szBuf, True);
-			unlink(szBuf);
-		}
-#ifdef __LINUX__
-		else if (strstr(strupr(tmp), ".WRI") != NULL)
-#else
-		else if (strstr(strupr(initialfile), ".WRI") != NULL)
-#endif
-		{
-			QuickMessage *qm = new QuickMessage( "" );
-			TProgram::deskTop->insert( qm );
-
-			tmpnam(szBuf);
-#ifdef __LINUX__
-			sprintf(tmp, "./txtwrite.cnv \"%s\" \"%s\"", initialfile, szBuf);
-			system(tmp);
-#else
-			switch(spawnl(P_WAIT, "TXTWRITE.CNV", "TXTWRITE.CNV", initialfile, szBuf, NULL))
-			{
-				case ERROR_WRI_UNABLE_OPEN_SRC:
-					messageBox(mfError | mfOKButton, "Unable to open source file.");
-					break;
-				case ERROR_WRI_UNABLE_OPEN_DEST:
-					messageBox(mfError | mfOKButton, "Unable to open temporary destination file.");
-					break;
-				case ERROR_NOT_WRITE_FILE:
-					messageBox(mfWarning | mfOKButton, "This file is not a Write file. Displaying contents anyway.");
-					strcpy(szBuf, initialfile);
-					NoDelete = TRUE;
-					break;
-			}
-#endif
-
-			TProgram::deskTop->remove( qm );
-			destroy(qm);
-
-			openEditor(szBuf, True);
-			unlink(szBuf);
-
-		}
-		else
-			openEditor(initialfile, True);
-#endif // ATTEMPT_NEW_CONVERT_ROUTINES
 	}
 }
 
 void TEditorApp::fileOpen()
 {
 	char fileName[MAXPATH];
-	char szBuf[144];
-#if defined(__LINUX__) || defined(__WIN32__)
-	char tmp[MAXPATH];
-#endif
-	BOOL NoDelete = FALSE;
+	char szBuf[200], errortxt[200];
 
 	strcpy( fileName, "*" );
 
 	if (execDialog(new TFileDialog("*", "Open File",
 				"~N~ame", fdOpenButton, 100), fileName) != cmCancel)
 	{
-#ifdef ATTEMPT_NEW_CONVERT_ROUTINES
+		int ret;
 		QuickMessage *qm = new QuickMessage("");
 		TProgram::deskTop->insert(qm);
 
-		char errortxt[200];
-		int delfile;
+		ret = convert_text_file(fileName, szBuf, errortxt, 0);
 
-		messageBox(0, "result: %d", convert_text_file(fileName, szBuf, errortxt, 0));
-		messageBox(0, "%d (T: 0 F: 1)", delfile);
-		messageBox(0, errortxt);
-
+		if ((!(ret & ERROR_CNV_OK)) && (ret != -2))
+		{
+			messageBox(mfError | mfOKButton, errortxt);
+		}
+		
 		TProgram::deskTop->remove( qm );
 		destroy(qm);
-#else
 
-#ifdef __LINUX__
-		strcpy(tmp, fileName);
-		if (strstr(strupr(tmp), ".RTF") != NULL)
-#else
-		if (strstr(strupr(fileName), ".RTF") != NULL)
-#endif
-		{
-			QuickMessage *qm = new QuickMessage( "" );
-			TProgram::deskTop->insert( qm );
+		openEditor(szBuf, True);
 
-			tmpnam(szBuf);
-#ifdef __LINUX__
-			sprintf(tmp, "./txtrtf.cnv \"%s\" \"%s\"", fileName, szBuf);
-			system(tmp);
-#else
-			int tmpret;
-#ifdef __WIN32__
-			sprintf(tmp, "\"%s\"", fileName);
-			switch(tmpret = spawnl(P_WAIT, "TXTRTF.CNV", "TXTRTF.CNV", tmp, szBuf, NULL))
-#else
-			switch(tmpret = spawnl(P_WAIT, "TXTRTF.CNV", "TXTRTF.CNV", fileName, szBuf, NULL))
-#endif
-			{
-				case ERROR_RTF_CANNOT_OPEN_SRC:
-					messageBox(mfError | mfOKButton, "Unable to open source file.");
-					break;
-				case ERROR_RTF_CANNOT_OPEN_DEST:
-					messageBox(mfError | mfOKButton, "Unable to open temporary destination file.");
-					break;
-				default:
-					if (tmpret >= ERROR_RTF_PARSE_ERROR)
-						messageBox(mfWarning | mfOKButton, "Error %d while parsing RTF file", tmpret - ERROR_RTF_PARSE_ERROR);
-					break;
-			}
-#endif
-
-			TProgram::deskTop->remove( qm );
-			destroy(qm);
-
-			openEditor(szBuf, True);
+		if (ret & CONVERT_DELETE_FILE)
 			unlink(szBuf);
-		}
-#ifdef __LINUX__
-		else if (strstr(strupr(tmp), ".WRI") != NULL)
-#else
-		else if (strstr(strupr(fileName), ".WRI") != NULL)
-#endif
-		{
-			QuickMessage *qm = new QuickMessage("");
-			TProgram::deskTop->insert(qm);
-
-			tmpnam(szBuf);
-#ifdef __LINUX__
-			sprintf(tmp, "./txtwrite.cnv \"%s\" \"%s\"", fileName, szBuf);
-			system(tmp);
-#else
-#ifdef __WIN32__
-			sprintf(tmp, "\"%s\"", fileName);
-			switch(spawnl(P_WAIT, "TXTWRITE.CNV", "TXTWRITE.CNV", tmp, szBuf, NULL))
-#else
-			switch(spawnl(P_WAIT, "TXTWRITE.CNV", "TXTWRITE.CNV", fileName, szBuf, NULL))
-#endif
-			{
-				case ERROR_WRI_UNABLE_OPEN_SRC:
-					messageBox(mfError | mfOKButton, "Unable to open source file.");
-					break;
-				case ERROR_WRI_UNABLE_OPEN_DEST:
-					messageBox(mfError | mfOKButton, "Unable to open temporary destination file.");
-					break;
-				case ERROR_NOT_WRITE_FILE:
-					messageBox(mfWarning | mfOKButton, "This file is not a Write file. Displaying contents anyway.");
-					strcpy(szBuf, fileName);
-					NoDelete = TRUE;
-					break;
-			}
-#endif
-
-			TProgram::deskTop->remove( qm );
-			destroy(qm);
-
-			openEditor(szBuf, True);
-			if (NoDelete != TRUE) unlink(szBuf);
-		}
-		else
-#endif
-			openEditor(fileName, True);
 	}
 }
 
@@ -717,7 +543,7 @@ void TEditorApp::selectWAV()
 	if (SoundEnabled == FALSE) goto leave;
 
 #if (defined(DJGPP_NO_SOUND_SUPPORT) || defined(LINUX_NO_SOUND_SUPPORT)) && !defined(ALLEGRO_H)
-	messageBox("Sound is not enabled with this version.", cmOK);
+	messageBox("Sound is not enabled with this version.", mfOKButton);
 #else
 	strcpy( WAVName, "*.wav" );
 
@@ -731,7 +557,7 @@ leave: ;
 void TEditorApp::playWAV()
 {
 #if (defined(DJGPP_NO_SOUND_SUPPORT) || defined(LINUX_NO_SOUND_SUPPORT)) && !defined(ALLEGRO_H)
-	messageBox("Sound is not enabled with this version.", cmOK);
+	messageBox("Sound is not enabled with this version.", mfOKButton);
 #else
 	snd_PlayWAV();
 #endif
@@ -740,7 +566,7 @@ void TEditorApp::playWAV()
 void TEditorApp::stopWAV()
 {
 #if (defined(DJGPP_NO_SOUND_SUPPORT) || defined(LINUX_NO_SOUND_SUPPORT)) && !defined(ALLEGRO_H)
-	messageBox("Sound is not enabled with this version.", cmOK);
+	messageBox("Sound is not enabled with this version.", mfOKButton);
 #else
 	snd_StopWAV();
 #endif
@@ -751,7 +577,7 @@ void TEditorApp::selectMID()
 	if (SoundEnabled == FALSE) goto leave;
 
 #ifdef NO_MIDI_MUSIC
-	messageBox("MIDI music is not enabled with this version.", cmOK);
+	messageBox("MIDI music is not enabled with this version.", mfOKButton);
 #else
 	strcpy( MIDName, "*.mid" );
 
@@ -765,7 +591,7 @@ leave: ;
 void TEditorApp::playMID()
 {
 #ifdef NO_MIDI_MUSIC
-	messageBox("MIDI music is not enabled with this version.", cmOK);
+	messageBox("MIDI music is not enabled with this version.", mfOKButton);
 #else
 	snd_PlayMID();
 #endif
@@ -774,7 +600,7 @@ void TEditorApp::playMID()
 void TEditorApp::stopMID()
 {
 #ifdef NO_MIDI_MUSIC
-	messageBox("MIDI music is not enabled with this version.", cmOK);
+	messageBox("MIDI music is not enabled with this version.", mfOKButton);
 #else
 	snd_StopMID();
 #endif
@@ -788,12 +614,11 @@ int main(int argc, char *argv[])
 		IsInitialFile = True;
 	}
 
-#ifdef ATTEMPT_NEW_CONVERT_ROUTINES
 	// Register converters
 	register_converter_file_type("rtf", "txtrtf.cnv", NULL, "Rich Text Format");
 	register_converter_file_type("wri", "txtwrite.cnv", NULL, "Windows Write");
 	register_microsoft_converters();
-#endif
+	register_ini_converters();
 
 	snd_Init();
 
@@ -853,7 +678,7 @@ int main(int argc, char *argv[])
 	else
 		sprintf(__bc_compiler_ver, "%d.%d (0x%X)", cmajor, cminor, __BORLANDC__);
 #elif defined(__DJGPP__)
-	sprintf(__dj_compiler_ver, "%d.%d", __DJGPP__, __DJGPP_MINOR__);
+	sprintf(__dj_compiler_ver, "%d.%d (GCC %d.%d.%d)", __DJGPP__, __DJGPP_MINOR__, __GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__);
 #endif
 
 #if defined(__BORLANDC__) && defined(__MSDOS__)  // Turbo Vision version
@@ -880,7 +705,7 @@ int main(int argc, char *argv[])
 	strcpy(__alleg_ver, "Not applicable");
 #endif
 
-#ifdef ALLEGRO_H	 // OS running on
+#if defined(ALLEGRO_H) || defined(__MSDOS__)	 // OS running on
 	char *s;
 
 	switch (os_type)
@@ -900,9 +725,11 @@ int main(int argc, char *argv[])
 		case OSTYPE_LINUX:       s = "Linux";                  break;
 		case OSTYPE_FREEBSD:     s = "FreeBSD";                break;
 		case OSTYPE_UNIX:        s = "Unix";                   break;
+#ifndef REAL_DOS // BCC isn't liking these for some reason :/
 		case OSTYPE_BEOS:        s = "BeOS";                   break;
 		case OSTYPE_QNX:         s = "QNX";                    break;
 		case OSTYPE_MACOS:       s = "MacOS";                  break;
+#endif		
 		default:                 s = "Unknown";                break;
 	}
 
@@ -955,7 +782,7 @@ int main(int argc, char *argv[])
 
 	sprintf(__os_ver, "DOS %d.%d", dmajor, dminor);
 #elif defined(__WIN32__)
-	sprintf(__os_ver, "%ld.%ld", VerInfo.dwMajorVersion, VerInfo.dwMinorVersion);
+	sprintf(__os_ver, "%ld.%ld (%s)", VerInfo.dwMajorVersion, VerInfo.dwMinorVersion, VerInfo.szCSDVersion);
 #else
 	sprintf(__os_ver, "Unknown");
 #endif
@@ -963,6 +790,8 @@ int main(int argc, char *argv[])
 #ifdef __MSVC__
 	#if (_MSC_VER == 1400)
 		sprintf(__msvc_compiler_ver, "8.0 (%d)", _MSC_VER);
+	#elif (_MSC_VER == 1310)
+		sprintf(__msvc_compiler_ver, "7.1 (%d)", _MSC_VER);
 	#elif (_MSC_VER == 1300)
 		sprintf(__msvc_compiler_ver, "7.0 (%d)", _MSC_VER);
 	#elif (_MSC_VER == 1200)

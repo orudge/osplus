@@ -1,9 +1,9 @@
 # Unified gcc-based makefile for OSPlus Text Editor
-# By Owen Rudge, 28/12/2004
+# By Owen Rudge, 28/12/2004 - last updated 01/01/2005
 
 -include makefile.cfg
 
-null: all
+null: $(COMPILER)
 
 ifeq ($(COMPILER),)
 	$(error Please run configure.bat or configure before make)
@@ -12,6 +12,12 @@ endif
 ifeq ($(COMPILER),undefined)
 	$(error Please run configure.bat or configure before make)
 endif
+
+undefined :
+
+djgpp : all
+mingw : all
+linux : all
 
 ifeq ($(DEBUG),1)
 CFLAGS   = -g -Isrc/ -Isrc/convert/
@@ -33,17 +39,21 @@ RHTV_INCLUDE  = -Ic:/Various/tv203/contrib/tvision/include -Ic:/djgpp/include/rh
 RHTV_DIR_LIBS = -Lc:/Various/tv203/contrib/tvision/makes -Lc:/djgpp/lib
 RHTV_SLIBS    = -lrhtv -lstdcxx
 
+EXE_NAME      = ospedit.exe
+
 ifeq ($(WITH_ALLEG),1 )
 OBJ_DIR = obj/djgppsnd
 BIN_DIR = bin/djgppsnd
 
+CFLAGS     +=  -DSOUND_SUPPORT=1 -DWITH_ALLEG=1
+CPPFLAGS   +=  -DSOUND_SUPPORT=1 -DWITH_ALLEG=1
 LD_LIBS += -lalleg
 else
 OBJ_DIR = obj/djgpp
 BIN_DIR = bin/djgpp
 
-CFLAGS          += -DDJGPP_NO_SOUND_SUPPORT=1
-CPPFLAGS        += -DDJGPP_NO_SOUND_SUPPORT=1
+CPPFLAGS        += -DDJGPP_NO_SOUND_SUPPORT=1 -DSOUND_SUPPORT=0
+CFLAGS          += -DLINUX_NO_SOUND_SUPPORT=1 -DSOUND_SUPPORT=0
 endif
 
 ECHO            = @echo
@@ -63,6 +73,8 @@ RHTV_INCLUDE  = `rhtv-config --include`
 RHTV_DIR_LIBS = `rhtv-config --dir-libs`
 RHTV_SLIBS    = `rhtv-config --slibs`
 
+EXE_NAME      = ospedit.exe
+
 OBJ_DIR       = obj/mingw32
 BIN_DIR       = bin/mingw32
 
@@ -73,26 +85,68 @@ LD_LIBS       = -lwinmm
 
 endif
 
+#### *NIX ####
+
+ifeq ($(COMPILER),linux)
+RHTV_CFLAGS   = -D__LINUX__=1 `rhtv-config --cflags`
+RHTV_CPPFLAGS = -D__LINUX__=1 `rhtv-config --cppflags`
+RHTV_INCLUDE  = `rhtv-config --include`
+RHTV_DIR_LIBS = `rhtv-config --dir-libs`
+RHTV_SLIBS    = `rhtv-config --slibs`
+
+EXE_NAME      = ospedit
+
+ifeq ($(WITH_ALLEG),1)
+OBJ_DIR = obj/linuxsnd
+BIN_DIR = bin/linuxsnd
+
+CFLAGS     +=  -DSOUND_SUPPORT=1 -DWITH_ALLEG=1
+CPPFLAGS   +=  -DSOUND_SUPPORT=1 -DWITH_ALLEG=1
+RHTV_SLIBS += `allegro-config --libs`
+else
+OBJ_DIR = obj/linux
+BIN_DIR = bin/linux
+
+CFLAGS          += -DLINUX_NO_SOUND_SUPPORT=1 -DSOUND_SUPPORT=0
+CPPFLAGS        += -DLINUX_NO_SOUND_SUPPORT=1 -DSOUND_SUPPORT=0
+endif
+
+ECHO          = echo
+RM            = rm
+
+LD_LIBS       = 
+
+endif
+
 CFLAGS    += $(RHTV_CFLAGS) $(RHTV_INCLUDE)
 CPPFLAGS  += $(RHTV_CPPFLAGS) $(RHTV_INCLUDE)
 LDFLAGS   += $(RHTV_DIR_LIBS)
-LD_LIBS   += $(RHTV_SLIBS)
+LD_LIBS   +=
 
 OBJ_LIST = \
 $(OBJ_DIR)/aboutdlg.o \
 $(OBJ_DIR)/aboutosp.o \
+$(OBJ_DIR)/config.o \
 $(OBJ_DIR)/cnvinfo.o \
 $(OBJ_DIR)/convert.o \
 $(OBJ_DIR)/ospedit1.o \
 $(OBJ_DIR)/ospedit2.o \
 $(OBJ_DIR)/ospedit3.o \
 $(OBJ_DIR)/sound.o \
-$(OBJ_DIR)/verinfo.o
+$(OBJ_DIR)/verinfo.o \
+$(OBJ_DIR)/unicode.o
 
 EXE_LIST = \
-$(BIN_DIR)/ospedit.exe \
+$(BIN_DIR)/$(EXE_NAME) \
 $(BIN_DIR)/txtrtf.cnv \
 $(BIN_DIR)/txtwrite.cnv
+
+ifeq ($(COMPILER),linux)
+ifeq ($(WITH_WINE), 1)
+EXE_LIST += $(BIN_DIR)/msconv.cnv
+EXE_LIST += $(BIN_DIR)/msconv.cnv.exe.so
+endif
+endif
 
 ifeq ($(COMPILER),mingw )
 EXE_LIST += $(BIN_DIR)/msconv.cnv
@@ -130,8 +184,29 @@ $(BIN_DIR)/msconv.cnv: $(OBJ_DIR)/msconv.o $(OBJ_DIR)/msconv.res
 	gcc -o $@ $<
 endif
 
-$(BIN_DIR)/ospedit.exe: $(OBJ_LIST) $(OSPEDIT_RES)
-	gcc $(LDFLAGS) -o $@ $(OBJ_LIST) $(LD_LIBS)
+ifeq ($(COMPILER), linux)
+ifeq ($(WITH_WINE), 1)
+WINE_CEXTRA    = -mno-cygwin
+WINE_CXXEXTRA  = -mno-cygwin
+WINE_LDFLAGS   = -mconsole -mno-cygwin
+WINE_CC        = winegcc
+WINE_WINEBUILD = winebuild
+CP             = cp
+MV             = mv
+
+$(OBJ_DIR)/msconv.o : src/convert/msconv.c
+	$(WINE_CC) -c $(CFLAGS) $(WINE_CEXTRA) -c $< -o $@
+
+$(BIN_DIR)/msconv.cnv.exe.so: $(OBJ_DIR)/msconv.o
+	$(WINE_CC) $(WINE_LDFLAGS) -o $@ $<
+
+$(BIN_DIR)/msconv.cnv: src/convert/msconv.wine
+	$(CP) $< $@
+endif
+endif
+
+$(BIN_DIR)/$(EXE_NAME): $(OBJ_LIST) $(OSPEDIT_RES)
+	gcc $(LDFLAGS) -o $@ $(OBJ_LIST) $(LD_LIBS) $(RHTV_SLIBS)
 
 $(BIN_DIR)/txtrtf.cnv: $(RTF_OBJ_LIST) $(TXTRTF_RES)
 	gcc $(LDFLAGS) -o $@ $(RTF_OBJ_LIST) $(LD_LIBS)

@@ -1,6 +1,6 @@
 /*************************************************************/
 /* OSPlus - Open Source version                              */
-/* Copyright (c) Owen Rudge 2000-2004. All Rights Reserved.  */
+/* Copyright (c) Owen Rudge 2000-2005. All Rights Reserved.  */
 /*************************************************************/
 /* OSPlus Text Editor                                        */
 /* OSPEDIT.EXE                                               */
@@ -13,14 +13,26 @@
  *
  * 05/01/2002: Cleaned up indentation, etc (orudge)
  * 27/12/2004: Finished new converter system (orudge)
+ * 29/12/2004: More work to make compatible with Linux (orudge)
+ * 31/12/2004: New config file system (orudge)
  */
 
 #include <string.h>
 #include <stdlib.h>
-#include <process.h>
 #include <stdio.h>
 #include <limits.h>
 #include <errno.h>
+
+#include "unicode.h"
+#include "config.h"
+
+#ifdef __LINUX__
+	#include <sys/wait.h>
+	
+	#define stricmp  strcasecmp
+#else
+	#include <process.h>
+#endif
 
 #ifdef __WIN32__
 	#include <windows.h>
@@ -34,9 +46,6 @@
 	#endif
 #endif
 
-#include "write.h"
-#include "rtferror.h"
-
 #include "convert.h"
 
 static CONVERTER_INFO *converter_type_list = NULL;
@@ -47,7 +56,7 @@ static int num_converters = 0;
  */
 void register_converter_file_type(char *ext, char *load_fn, char *params, char *title)
 {
-	char tmp[32], *aext;
+	char *aext;
 	CONVERTER_INFO *iter = converter_type_list;
 
 	aext = ext;
@@ -75,7 +84,7 @@ void register_converter_file_type(char *ext, char *load_fn, char *params, char *
 		iter->title = strdup(title);
 		iter->next = NULL;
 
-		fprintf(stderr, "Added '%d' '%s' '%s' '%s' '%s'\n", iter->id, iter->load_fn, iter->ext, iter->params, iter->title, iter->next);
+//		fprintf(stderr, "Added '%d' '%s' '%s' '%s' '%s'\n", iter->id, iter->load_fn, iter->ext, iter->params, iter->title, iter->next);
 	}
 }
 
@@ -164,7 +173,7 @@ void register_microsoft_converters()
 
 						if (strcmp(extensions, "*") != 0)
 						{
-		fprintf(stderr, "Here: '%s' '%s' '%s'\n", subkey_name, path, short_path);
+//		fprintf(stderr, "Here: '%s' '%s' '%s'\n", subkey_name, path, short_path);
 
 							len = sizeof(name);
 							ret = RegQueryValueEx(hSubKey, "Name", NULL, NULL, name, &len);
@@ -215,13 +224,47 @@ void register_microsoft_converters()
 #endif
 }
 
+#define INI_NAME    "ospedit.ini"
+
+#define get_ini_data(x, y)    x = get_config_string(buf, y, "")
+
+void register_ini_converters()
+{
+	char *description, *ext, *filename, *params;
+	char buf[10];
+	int num_entries=0, i=0;
+	
+	set_config_file(INI_NAME);
+	num_entries = get_config_int("converters", "num", 0);
+	
+	if (num_entries >= 1)
+	{
+		for (i = 0; i < num_entries; i++)
+		{
+			sprintf(buf, "conv%d", i+1);
+			get_ini_data(description, "desc");
+			get_ini_data(ext, "ext");
+			get_ini_data(filename, "filename");
+			get_ini_data(params, "params");
+			
+			if ((strlen(filename) > 0) && (strlen(ext) > 0))
+			{
+				if ((strlen(filename) > 0) && (strlen(ext) > 0))
+				{
+					register_converter_file_type(ext, filename, params, description);
+				}
+			}
+		}
+	}
+}
+			
 /* convert_text_file:
  *  Converts a file to plain text. Give filename_in and a pointer to a buffer
  *  in filename_out.
  */
 int convert_text_file(char *filename_in, char *filename_out, char *error_out, int start_from)
 {
-	char tmp[16], *aext;
+	char *aext;
 	CONVERTER_INFO *iter;
 	int ret, ret2;
 
@@ -337,10 +380,18 @@ int convert_file(char *fn_in, char *fn_out, char *converter, char *params, char 
 	strcpy(fn_out, tmp_dest);
 
 #ifdef __LINUX__
-	char tmp[200];
+	char tmp[200];   // TODO: possibly still needs a bit of work for Linux version
 
-	sprintf(tmp, "./%s \"%s\" \"%s\"", converter, fn_in, tmp_dest);
-	system(tmp);
+	if (params == NULL)
+		sprintf(tmp, "./%s \"%s\" \"%s\"", converter, fn_in, tmp_dest);
+	else
+		sprintf(tmp, "./%s \"%s\" \"%s\" \"%s\"", converter, params, fn_in, tmp_dest);
+	
+	tmpret2 = WEXITSTATUS(system(tmp));
+//	fprintf(stderr, "execute of `%s' returned '%d'\n", tmp, tmpret2);
+	
+	if (tmpret2 == 0)
+		tmpret2 = ERROR_CNV_OK;
 #else
 	if (params == NULL)
 	{
@@ -350,6 +401,7 @@ int convert_file(char *fn_in, char *fn_out, char *converter, char *params, char 
 	{
 		tmpret2 = spawnl(P_WAIT, converter, converter, params, fn_in, tmp_dest, NULL);
 	}
+#endif
 
 	switch(tmpret2)
 	{
@@ -480,7 +532,6 @@ int convert_file(char *fn_in, char *fn_out, char *converter, char *params, char 
 			sprintf(error_out, "Unknown error: %d", tmpret2);
 			break;
 	}
-#endif
 
 	return(tmpret | tmpret2);
 }

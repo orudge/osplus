@@ -1,6 +1,6 @@
 /************************************************************/
 /* OSPlus Text Editor - Open Source                         */
-/* Copyright (c) Owen Rudge 2000-2002. All Rights Reserved. */
+/* Copyright (c) Owen Rudge 2000-2005. All Rights Reserved. */
 /************************************************************/
 /* OSPlus Calculator Accessory                              */
 /* Header File                                              */

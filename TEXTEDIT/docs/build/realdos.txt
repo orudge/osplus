@@ -19,13 +19,12 @@ TO BUILD
 ========
 
 To build this version, you must first edit REALDOS.MAK and change the
-"BCPATH=C:\BC45" line to the appropriate value for your machine. Then type:
+BCC_INC and BCC_LIB lines to point to your Borland C++ installation.
+Then, ensuring the appropriate tools are in your PATH, simply type:
 
-   SET BCPATH=d:\bc_directory\BIN\MAKE.EXE
-   BUILDBC
+   make /f realdos.mak
 
-at the command prompt, where "d:\bc_directory" is the path to your Borland
-C++ directory.
+at the command prompt.
 
 It is recommended that you use the IDE to build this version, as the executable
 produced is much smaller. (The Generate Makefile command must have missed some
@@ -33,3 +32,11 @@ switches or something). The project file is called OSPEDIT.IDE.
 
 The generated object files will be placed in OBJ\REALDOS, and the binaries will
 be placed in BIN\REALDOS.
+
+If you have the UPX executable compressor installed (see http://upx.sf.net/), you can
+then compress the executables, reducing their sizes significantly, by running:
+
+   upx --best --8086 bin/realdos/ospedit.exe bin/realdos/txtrtf.cnv bin/realdos/txtwrite.cnv
+
+(the --8086 flag is only necessary if you plan on running OSPlus Text Editor on an 8086
+or similar machine)

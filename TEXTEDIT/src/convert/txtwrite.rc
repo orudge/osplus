@@ -20,7 +20,7 @@ FILETYPE VFT_APP
    VALUE "FileDescription", "Write to Text converter\000"
    VALUE "FileVersion", "2.1\000\000"
    VALUE "InternalName", "TXTWRITE\000"
-   VALUE "LegalCopyright", "Copyright © Owen Rudge 2000-2004, Sean Young 2002. All Rights Reserved.\000\000"
+   VALUE "LegalCopyright", "Copyright © Owen Rudge 2000-2005, Sean Young 2002. All Rights Reserved.\000\000"
    VALUE "OriginalFilename", "TXTWRITE.CNV\000"
    VALUE "ProductName", "OSPlus\000"
    VALUE "ProductVersion", OSP_VERSION_STR "\000\000"

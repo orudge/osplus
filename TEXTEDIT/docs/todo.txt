@@ -1,7 +1,6 @@
 WISHLIST
 ========
 
-- Improved converter system (like, for example, Allegro bitmap system).
-  UPDATE (24/12/2001): Being done! :-)
+- MP3/Ogg Vorbis player for DJGPP, Linux and Win32 ports maybe
 
-- MP3 player for DJGPP, Linux and Win32 ports maybe
+- General improvements to make OSPlus Text Editor better :)

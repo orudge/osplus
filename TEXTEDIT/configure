@@ -1,0 +1,68 @@
+#!/bin/sh
+
+case "$1" in
+  djgpp)
+     echo "COMPILER=djgpp " > makefile.cfg
+     
+     if test "$2" = "--with-alleg"; then
+     	echo "WITH_ALLEG=1 " >> makefile.cfg
+     else
+        if test "$3" = "--with-alleg"; then
+           echo "WITH_ALLEG=1 " >> makefile.cfg
+	else
+           echo "WITH_ALLEG=0 " >> makefile.cfg	
+	fi
+     fi
+
+     echo "Configuration complete. Now run \`make'."    
+     ;;
+  mingw)
+     echo "COMPILER=mingw " > makefile.cfg
+     echo "Configuration complete. Now run \`make'."
+     ;;
+  linux)
+     echo "COMPILER=linux" > makefile.cfg
+     
+     if test "$2" = "--with-alleg"; then
+     	echo "WITH_ALLEG=1" >> makefile.cfg
+     else
+        if test "$3" = "--with-alleg"; then
+           echo "WITH_ALLEG=1" >> makefile.cfg
+	else
+           echo "WITH_ALLEG=0" >> makefile.cfg	
+	fi
+     fi
+       
+     if test "$2" = "--with-wine"; then
+     	echo "WITH_WINE=1" >> makefile.cfg
+     else
+        if test "$3" = "--with-wine"; then
+           echo WITH_WINE=1 >> makefile.cfg
+	else
+           echo WITH_WINE=0 >> makefile.cfg	
+	fi
+     fi
+     
+     echo "Configuration complete. Now run \`make'."
+     ;;
+  *)
+	echo "Usage: configure target [--with-alleg] [--with-wine]"
+echo 
+echo "You did not specify a target to configure OSPlus Text Editor for."
+echo 
+echo Possible targets:
+echo 
+echo "    djgpp"
+echo "    mingw"
+echo "    linux"
+echo 
+echo "--with-alleg is only applicable on DJGPP or Linux, if you have the Allegro"
+echo games library installed.
+echo 
+echo "--with-wine is only applicable on Linux, if you have WINE installed and want"
+echo to use Win32 converters.
+echo 
+echo "All options are case-sensitive."
+	;;
+esac;
+	

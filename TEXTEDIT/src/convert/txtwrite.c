@@ -1,6 +1,6 @@
 /*************************************************************/
 /* OSPlus - Open Source version                              */
-/* Copyright (c) Owen Rudge 2000-2004. All Rights Reserved.  */
+/* Copyright (c) Owen Rudge 2000-2005. All Rights Reserved.  */
 /*************************************************************/
 /* OSPlus Write Converter                                    */
 /* TXTWRITE.CNV                                              */
@@ -58,7 +58,7 @@
 #include <errno.h>
 #include "convert.h"
 
-#if defined(__DJGPP__) || defined(__BORLANDC__)   // DJGPP + Borland C++ don't have snprintf/vsnprintf
+#if defined(__DJGPP__) || defined(__BORLANDC__) || defined(_MSC_VER)  // DJGPP + Borland C++ don't have snprintf/vsnprintf
 
 int snprintf(char *str, size_t n, const char *fmt, ...);
 int vsnprintf(char *str, size_t size, const char *format, va_list ap);
@@ -81,7 +81,7 @@ int snprintf(char *str, size_t n, const char *fmt, ...)
 #define EMULATE_BUGS 
 
 static const char rcsid[] = 
-  "$Id: txtwrite.c,v 1.2 2004-12-28 02:43:11 orudge Exp $";
+  "$Id: txtwrite.c,v 1.3 2005-01-01 19:50:03 orudge Exp $";
 
 /* helper macros endianness */
 #define read_word(p)	((*(p)) + ((*((p)+1)) << 8))

@@ -1,5 +1,11 @@
 KNOWN PROBLEMS
 ==============
 
-- With the Win32 port, a GPF is generated when you quit the editor if you've played a
-  MIDI file
+- With the Borland C++ (Win32) port, a GPF is sometimes generated when you quit the editor if
+  you've played a MIDI file
+
+- If you use the Change Directory option, OSPlus Text Editor can no longer find the path to its
+  converter files.
+
+- Sometimes certain converters (especially the Win32 ones) don't always work, or produce an empty
+  temporary file.
