@@ -1,6 +1,6 @@
 /*************************************************/
 /* OSPlus Disk Imager                            */
-/* Version 1.3                                   */
+/* Version 1.4                                   */
 /*                                               */
 /* Copyright (c) Owen Rudge 2000-2001            */
 /* Disk Writing Routines: Written by Mark Becker */
@@ -60,7 +60,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 #define Uses_TParamText
 #define Uses_MsgBox
 
-#include <tvision\tv.h>
+#include <tvision/tv.h>
+#include <sys/stat.h>
 #include <stdlib.h>
 #include <alloc.h>
 #include <stdio.h>
@@ -77,44 +78,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 #include <io.h>
 #include <fcntl.h>
 
+#include "tprogbar.h"
+#include "quickmsg.h"
+
 #define space64k 0x10000
 
 static void *DMAbuffer=0;
 
 void RawReadMain(char *fn, char *drive);
-
-class QuickMessage: public TWindow
-{
-	 TParamText *msg1;
-	 TParamText *msg2;
-
-public:
-	 QuickMessage():
-		  TWindow( TRect( 25,10,65,16 ), "Disk Imager", 0 ),
-		  TWindowInit( TWindow::initFrame ) {
-
-	 flags = 0; // no move, close, grow or zoom
-	 options |= ofCentered;
-	 palette = wpGrayWindow;
-	 char temp[30];
-	 sprintf(temp,"Please wait...");
-	 msg1 = new TParamText( TRect( 2,2,38,3 ));
-	 msg2 = new TParamText( TRect( 2,3,38,4 ));
-
-	 insert(msg1);
-	 insert(msg2);
-  }
-  virtual void handleEvent( TEvent &event ) {
-	 TWindow::handleEvent( event );
-  }
-  void setProgress( char *__format, ...) {
-	 msg1->setText(__format);
-  }
-  void setProgress2( char *__format, ...) {
-	 msg2->setText(__format);
-  }
-};
-
 
 #define MAXDMASIZE (18*2*512)
 static char *__buf=0;
@@ -217,7 +188,7 @@ static int Error(int status, int quit)
 	 case 0xBB:	msg("Undefined error occurred (hard disk only)");	break;
     case 0xCC:	msg("Write fault occurred");				break;
 	 case 0xE0:	msg("Status error");					break;
-    case 0xFF:	msg("Sense operation failed");				break;
+	 case 0xFF:	msg("Sense operation failed");				break;
   }
 #ifdef USE_EXIT
   if (quit) exit(1); // TODO: Change exit() to something that cancels the operation
@@ -269,10 +240,16 @@ static int nsects(int drive)
   status = biosdisk(READ, drive, 0, 0, 1, 1, buffer);
   if (status == 0x06)			/* Door signal change?	*/
 			 status = biosdisk(READ, drive, 0, 0, 1, 1, buffer);
-  if (status) Error(status,1);
+  if (status)
+  {
 #ifndef USE_EXIT
-  return(-100);
+	  Error(status,1);
+#else
+	  if (Error(status,1) == EXIT_FAILURE) // OCR: Fix *stupid* bug
+		  return(-100);
 #endif
+  }
+
   memcpy(&bootsec, buffer, 512);
 
   for (i=0; i < sizeof(nsect)/sizeof(int); ++i) {
@@ -305,10 +282,11 @@ void disk_rawread(char	*fname, char drive,                  char *errio_ft, char
 {
   char	*buffer, *pbuf;
   int	 fdout, head, track, status, spt, buflength, ns;
-  long int count;
+  long int count, amountread, totalbytes;
+  double percent;
   int ret,retry,retrycount,secpercall;
-  if ((fdout = open(fname, O_RDWR | O_CREAT | O_TRUNC | O_BINARY)) == -1) {
-	 messageBox(mfError | mfOKButton, "Can't create file %s.", fname);
+  if ((fdout = open(fname, O_RDWR | O_CREAT | O_TRUNC | O_BINARY, S_IREAD| S_IWRITE	)) == -1) { // OCR: 26/9/01
+	 messageBox(mfError | mfOKButton, "Can't create file %s.", fname);                        // Made read/write
 	 return;
   }
 
@@ -323,6 +301,8 @@ void disk_rawread(char	*fname, char drive,                  char *errio_ft, char
  */
   set_dpt();
   spt = nsects(drive);
+
+//  messageBox(cmOK, "spt: %d", spt);
 
   if (spt == -100)
   {
@@ -353,12 +333,24 @@ void disk_rawread(char	*fname, char drive,                  char *errio_ft, char
  * Start reading data from diskette
  */
   head = track = 0;
+
+  totalbytes = image_filesize;
+
   do {
-    pbuf = buffer;
-    count = buflength;
+	 pbuf = buffer;
+	 count = buflength;
 	 for (ns = 1; count > 0 && !cancel(); ns+=secpercall) {
 		sprintf(buf, THS_ft, track, head, ns);
 		qm->setProgress2(buf);
+
+		amountread += buflength;
+
+		percent = (double) amountread / (double) totalbytes;
+
+		sprintf(buf, "%ld bytes read, %ld bytes\nleft...", amountread, image_filesize);
+		qm->setProgress3(buf);
+		qm->SetProgressBar((int)(percent*100));
+
 		retrycount=MAXRETRY;
 		do {
 		  status = biosdisk(READ, drive, head, track, ns, secpercall, pbuf);
