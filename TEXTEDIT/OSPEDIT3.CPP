@@ -37,7 +37,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 #define	Uses_TFileDialog
 #define	Uses_TDeskTop
 
-#ifdef __DJGPP__
+#if defined(__DJGPP__) || defined(__LINUX__)
    #include <tv.h>
    #include <strstream.h>
 #else
@@ -54,9 +54,13 @@ TMenuBar *TEditorApp::initMenuBar( TRect r )
 {
 
       TSubMenu&	sub0 = *new TSubMenu( "~ð~", kbAltSpace	) +
-		  *new TMenuItem( "~A~bout OSPlus...", cmAbout,	kbAltA ) +
+		  *new TMenuItem( "~A~bout OSPlus...", cmAbout,	kbNoKey) +
 		  newLine() +
-		  *new TMenuItem( "~D~OS Shell", cmDosShell, kbAltD) +
+#ifdef __LINUX__
+		  *new TMenuItem( "S~h~ell", cmDosShell, kbAltD, hcNoContext, "Alt-D") +
+#else
+		  *new TMenuItem( "~D~OS Shell", cmDosShell, kbAltD, hcNoContext, "Alt-D") +
+#endif
 		  *new TMenuItem( "~C~alculator", cmCalcCmd, kbNoKey) +
 		  newLine() +
 		  *new TMenuItem( "~S~elect WAV...", cmSelectWAV, kbNoKey) +

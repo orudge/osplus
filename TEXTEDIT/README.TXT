@@ -1,13 +1,14 @@
 OSPLUS TEXT EDITOR SOURCE CODE NOTES
 ====================================
 
-This code requires Borland C++ or DJGPP to compile. I believe it will work
-with Borland C++ 3.0 or higher, but I have compiled and tested it with
-Borland C++ 4.51. Any version of BC above 4.0 should work. See the
-/README.TXT for information on where to obtain Turbo Vision. The DJGPP
-version requires DJGPP and RHIDE. I used 1.4 (30th Sep 1997). It also
-requires Turbo Vision for DJGPP. You can download it from the address
-mentioned in the /README.TXT file.
+This code requires Borland C++ or DJGPP to compile. The Linux version
+requires GCC. I believe it will work with Borland C++ 3.0 or higher,
+but I have compiled and tested it with Borland C++ 4.51. Any version
+of BC above 4.0 should work. See the /README.TXT for information on
+where to obtain Turbo Vision. The DJGPP version requires DJGPP and
+RHIDE. I used 1.4 (30th Sep 1997). It also requires Turbo Vision for
+DJGPP. You can download it from the address mentioned in the
+/README.TXT file.
 
 If you want to include sound support in the DJGPP version, make sure that
 DJGPP_NO_SOUND_SUPPORT is not defined. If you don't want sound support,
@@ -20,8 +21,11 @@ There is a bug where if you open an RTF file or DOS prompt, the sound may
 stop playing and you have to restart the Editor. This is due to the system
 switching into real mode to perform the conversion or the DOS prompt.
 
-Also, you may find it useful to compress the resulting EXE: without Allegro
-support, this is about 1.5mb, with Allegro, this can be over 2mb! I'd
+To compile the converters in DJGPP, run BUILDCNV.BAT.
+
+Also, you may find it useful to compress all the resulting EXE files: without
+Allegro support, this is about 1.5mb, with Allegro, this can be over 2mb!
+(This is without the -s parameter, which strips debugging info.) I'd
 recommend UPX. One last thing: *please* don't upload any uncompressed
 copies of the Text Editor. (The real-mode, Borland C++, version is about
 267kb uncompressed, or 97kb compressed).
@@ -37,6 +41,12 @@ I have used the Windows multimedia functions for WAV support in Win32
 DOS, you'll recieve messages about "missing WINMM.DLL in imports" or
 something similar. The Win32 version requires Borland C++.
 
+This code also runs under Linux. Sound support is available too, via
+Allegro again. Run the ./build script from the console to build four
+programs - ospedit, the editor with sound support, ospedtns - the
+Editor without sound support, txtwrite.cnv - the Write converter, and
+txtrtf.cnv - the RTF converter.
+
 I have encoded the binary files here to help prevent CVS messing them
 up. Use UUDECODE, WinZip or something that can handle UUE files to decode
 them.
@@ -51,9 +61,8 @@ ABOUTDLG.UUE is the file ABOUT.DLG, which is used by the Dialog Designer
 
 Run DECODE to decode the files, and ENCODE to encode them again.
 
-It is recommended you use the Borland C++ IDE for development, but a
-MAKEFILE has been provided anyway. You must modify BCPATH= in the
-makefile.
+A makefile has been provided for Borland C++. You must modify BCPATH=
+in the makefile to specify your Borland C++ path.
 
 A makefile has been provided for DJGPP too. Please run BUILD.BAT to
 create both versions of the Editor. To only create the Borland C++
@@ -66,9 +75,6 @@ MAKE *must* be first in the path.
 The sound support in the Borland C++ version uses Heinz Rath's sound
 drivers. You can download them at www.geocities.com/heinz_rath/.
 
-Last of all, sorry about all the nested (and quite messy) #ifdefs:
-I'll tidy them up sometime.
-
 Happy hacking!
 
-Owen Rudge, 19th December 2000
+Owen Rudge, 26th December 2000

@@ -6,13 +6,11 @@
 /* TXTWRITE.CNV                                           */
 /**********************************************************/
 
-#include <sys\stat.h>
 #include <string.h>
 #include <stdlib.h>
 #include <limits.h>
 #include <stdio.h>
 #include <fcntl.h>
-#include <io.h>
 
 /* This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -27,6 +25,11 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
+
+/* History:
+ *
+ * 26/12/2000: Changed open/write/read/close to fopen() etc for portability
+ */
 
 typedef unsigned short      WORD;
 
@@ -53,8 +56,8 @@ struct WRITE_FF_S
 int main(int argc, char *argv[])
 {
 	struct WRITE_FF_S ff;
-	char rest[2000];
-	int hndl, out;
+	char rest[2048];
+	FILE *hndl, *out;
 
 	if (argc != 3)
 	{
@@ -65,27 +68,29 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 
-	hndl = open(argv[1], O_RDONLY | O_BINARY);
-	out = open(argv[2], O_WRONLY | O_BINARY | O_CREAT | O_TRUNC, S_IREAD|S_IWRITE	);
+	hndl = fopen(argv[1], "rb");
+	out = fopen(argv[2], "wb");
 
-	read(hndl, &ff, sizeof(WRITE_FF));
+        if (hndl == NULL || out == NULL)
+           exit(1);
+
+	fread(&ff, sizeof(WRITE_FF), 1, hndl);
 	//printf("%d", ff.wIdent);
 	//getch();
 
 	//printf("README.WRI: %o %d %o %d %d %d %d %d %d %d %d %d %d %d %d\n", ff.wIdent, ff.dty, ff.wTool, ff.x, ff.y, ff.z, ff.a, ff.fcMac, ff.fcMac2, ff.pnPara, ff.pnFntb, ff.pnSep, ff.pnSetb, ff.pnPgtb, ff.pnFfntb);
 
 //	flen = filelength(hndl) - (64 * sizeof(WORD));
-	lseek(hndl, 64*sizeof(WORD), SEEK_SET);
+	fseek(hndl, 64*sizeof(WORD), SEEK_SET);
 
 	do
 	{
-		read(hndl, rest, sizeof(rest));
-		//printf("%s", rest);
-		write(out, rest, strlen(rest));
-	} while (!eof(hndl));
+		fread(&rest, sizeof(rest), 1, hndl);
+		fwrite(rest, sizeof(rest), 1, out);
+	} while (!feof(hndl));
 
-	close(hndl);
-	close(out);
+	fclose(hndl);
+	fclose(out);
 
 	return(1);
 }

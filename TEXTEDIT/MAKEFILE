@@ -1,18 +1,19 @@
-# IMPORTANT! Change BCPATH to your Borland C++ root directory
-# (eg D:\BC45)
+#
+# Borland C++ IDE generated makefile
 #
 .AUTODEPEND
 
+
+BCPATH  = D:\BC45
 
 #
 # Borland C++ tools
 #
 IMPLIB  = IMPLIB
-BCCDOS  = BCC +BCCDOS.CFG 
+BCCDOS  = BCC +BCCDOS.CFG
 TLINK   = TLINK
 TLIB    = TLIB
 TASM    = TASM
-
 #
 # IDE macros
 #
@@ -21,7 +22,6 @@ TASM    = TASM
 #
 # Options
 #
-BCPATH = D:\BC45
 IDE_LFLAGSDOS =  -L$(BCPATH)\LIB -P=65535
 IDE_BFLAGS = 
 CLATDOS_ospeditdexe =  -v- -R- -k- -1- -p- -ml -f
@@ -36,7 +36,7 @@ REAT_ospeditdexe = $(RLATDOS_ospeditdexe)
 BEAT_ospeditdexe = $(BLATDOS_ospeditdexe)
 CLATDOS_txtrtfdcnv =  -ml -f-
 LLATDOS_txtrtfdcnv =  -c -Tde -L$(BCPATH)\LIB
-RLATDOS_txtrtfdcnv = 
+RLATDOS_txtrtfdcnv =
 BLATDOS_txtrtfdcnv = 
 CEAT_txtrtfdcnv = $(CLATDOS_txtrtfdcnv)
 CNIEAT_txtrtfdcnv = -I$(BCPATH)\INCLUDE -D
@@ -46,8 +46,8 @@ REAT_txtrtfdcnv = $(RLATDOS_txtrtfdcnv)
 BEAT_txtrtfdcnv = $(BLATDOS_txtrtfdcnv)
 CLATDOS_txtwritedcnv =  -ml -f-
 LLATDOS_txtwritedcnv =  -c -Tde -L$(BCPATH)\LIB
-RLATDOS_txtwritedcnv = 
-BLATDOS_txtwritedcnv = 
+RLATDOS_txtwritedcnv =
+BLATDOS_txtwritedcnv =
 CEAT_txtwritedcnv = $(CLATDOS_txtwritedcnv)
 CNIEAT_txtwritedcnv = -I$(BCPATH)\INCLUDE -D
 LNIEAT_txtwritedcnv = -x
@@ -63,33 +63,45 @@ Dep_ospedit = \
    txtrtf.cnv\
    txtwrite.cnv
 
-ospedit : BCCDOS.CFG $(Dep_ospedit)
+ospedit : BccDos.cfg $(Dep_ospedit)
   echo MakeNode 
 
 Dep_ospeditdexe = \
+   sound.obj\
+   aboutdlg.obj\
    ospedit1.obj\
    ospedit2.obj\
    ospedit3.obj\
    gemsnd.obj\
-   calc.obj\
-   aboutdlg.obj
+   calc.obj
 
 ospedit.exe : $(Dep_ospeditdexe)
   $(TLINK)   @&&|
  /v $(IDE_LFLAGSDOS) $(LEAT_ospeditdexe) $(LNIEAT_ospeditdexe) +
-D:\BC45\LIB\c0l.obj+
+$(BCPATH)\LIB\c0l.obj+
+sound.obj+
+aboutdlg.obj+
 ospedit1.obj+
 ospedit2.obj+
 ospedit3.obj+
 gemsnd.obj+
-calc.obj+
-aboutdlg.obj
+calc.obj
 $<,$*
-D:\BC45\LIB\tv.lib+
-D:\BC45\LIB\emu.lib+
-D:\BC45\LIB\mathl.lib+
-D:\BC45\LIB\cl.lib
+$(BCPATH)\LIB\tv.lib+
+$(BCPATH)\LIB\emu.lib+
+$(BCPATH)\LIB\mathl.lib+
+$(BCPATH)\LIB\cl.lib
 
+|
+
+sound.obj :  sound.c
+  $(BCCDOS) -P- -c @&&|
+ $(CEAT_ospeditdexe) $(CNIEAT_ospeditdexe) -o$@ sound.c
+|
+
+aboutdlg.obj :  aboutdlg.cpp
+  $(BCCDOS) -c @&&|
+ $(CEAT_ospeditdexe) $(CNIEAT_ospeditdexe) -o$@ aboutdlg.cpp
 |
 
 ospedit1.obj :  ospedit1.cpp
@@ -117,11 +129,6 @@ calc.obj :  calc.cpp
  $(CEAT_ospeditdexe) $(CNIEAT_ospeditdexe) -o$@ calc.cpp
 |
 
-aboutdlg.obj :  aboutdlg.cpp
-  $(BCCDOS) -c @&&|
- $(CEAT_ospeditdexe) $(CNIEAT_ospeditdexe) -o$@ aboutdlg.cpp
-|
-
 Dep_txtrtfdcnv = \
    rtfactn.obj\
    rtfreadr.obj
@@ -129,11 +136,11 @@ Dep_txtrtfdcnv = \
 txtrtf.cnv : $(Dep_txtrtfdcnv)
   $(TLINK)   @&&|
  /v $(IDE_LFLAGSDOS) $(LEAT_txtrtfdcnv) $(LNIEAT_txtrtfdcnv) +
-D:\BC45\LIB\c0l.obj+
+$(BCPATH)\LIB\c0l.obj+
 rtfactn.obj+
 rtfreadr.obj
 $<,$*
-D:\BC45\LIB\cl.lib
+$(BCPATH)\LIB\cl.lib
 
 |
 
@@ -153,10 +160,10 @@ Dep_txtwritedcnv = \
 txtwrite.cnv : $(Dep_txtwritedcnv)
   $(TLINK)   @&&|
  /v $(IDE_LFLAGSDOS) $(LEAT_txtwritedcnv) $(LNIEAT_txtwritedcnv) +
-D:\BC45\LIB\c0l.obj+
+$(BCPATH)\LIB\c0l.obj+
 txtwrite.obj
 $<,$*
-D:\BC45\LIB\cl.lib
+$(BCPATH)\LIB\cl.lib
 
 |
 
@@ -166,8 +173,8 @@ txtwrite.obj :  txtwrite.c
 |
 
 # Compiler configuration file
-BCCDOS.CFG : 
-   COPY &&|
+BccDos.cfg : 
+   Copy &&|
 -W-
 -R
 -v
@@ -180,3 +187,5 @@ BCCDOS.CFG :
 -k-
 -g0
 | $@
+
+

@@ -29,9 +29,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
  * 19/12/2000: Added support for Allegro and sound (orudge)
  * 19/12/2000: Added new About dialog (orudge)
  * 20/12/2000: Added Win32 version - uses Windows WINMM.DLL (orudge)
+ * 24/12/2000: Added Linux version (orudge)
  */
 
 //#define DJGPP_NO_SOUND_SUPPORT
+
+#ifdef __LINUX__
+   #define DJGPP_NO_SOUND_SUPPORT
+#endif
 
 #define Uses_MsgBox
 #define Uses_TParamText
@@ -47,23 +52,30 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 #define Uses_TStaticText
 #define Uses_TButton
 
-#ifdef __DJGPP__
+#include "sound.h"
+
+#if defined(__DJGPP__) || defined(__LINUX__)
    #define Uses_TCalculator
 
    #include <tv.h>
    #include <unistd.h>
    #include <strstream.h>
 
-   #ifndef DJGPP_NO_SOUND_SUPPORT
+   #if defined(__LINUX__) && !defined(LINUX_NO_SOUND_SUPPORT)
       #include <allegro.h>
-
-      SAMPLE *waveSample;
    #endif
 #else
    #include <tvision\tv.h>
    #include <strstrea.h>
 
    #include "calc.h"
+#endif
+
+#if defined(__LINUX__) && !defined(ALLEGRO_H)
+   extern "C" {
+      extern char *strlwr(char *str);
+      extern char *strupr(char *str);
+   }
 #endif
 
 #ifdef __WIN32__
@@ -79,11 +91,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 #include <iomanip.h>
 #include <limits.h>
 #include <stdio.h>
-#include <process.h>
-#include <io.h>
-#include <conio.h>
 
-#include "gemsnd.h"
+#ifndef __LINUX__
+   #include <process.h>
+   #include <io.h>
+   #include <conio.h>
+#endif
 
 #ifndef MAXPATH
    #ifdef PATH_MAX
@@ -95,13 +108,18 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 
 typedef int BOOL;
 
+#ifndef FALSE
+  #define FALSE False
+  #define TRUE  True
+#endif
+
 BOOL IsInitialFile = False;     // was file specified on command line?
 char initialfile[200];          // file name on cmd line
 
-char WAVName[MAXPATH];          // file name of WAV
-BOOL WAVLoaded = FALSE;         // WAV loaded?
+extern char WAVName[MAXPATH];          // file name of WAV
+extern BOOL WAVLoaded;         // WAV loaded?
 
-BOOL SoundEnabled = FALSE;
+extern BOOL SoundEnabled;
 
 TEditWindow *clipWindow;
 
@@ -144,7 +162,7 @@ TEditorApp::TEditorApp() :
 				 ),
 	 TApplication()
 {
-	 char szBuf[200];
+	 char szBuf[200], tmp[200];
 
 	 TCommandSet ts;
 	 ts.enableCmd( cmSave );
@@ -170,13 +188,23 @@ TEditorApp::TEditorApp() :
 
 	 if (IsInitialFile == True)
 	 {
+#ifdef __LINUX__
+                  strcpy(tmp, initialfile);
+		  if (strstr(strupr(tmp), ".RTF") != NULL)
+#else
 		  if (strstr(strupr(initialfile), ".RTF") != NULL)
+#endif
 		  {
 			  QuickMessage *qm = new QuickMessage( "" );
 			  TProgram::deskTop->insert( qm );
 
+#ifdef __LINUX__
+			  sprintf(tmp, "./txtrtf.cnv \"%s\" \"%s\"", initialfile, szBuf);
+			  system(tmp);
+#else
 			  tmpnam(szBuf);
 			  spawnl(P_WAIT, "TXTRTF.CNV", "TXTRTF.CNV", initialfile, szBuf, NULL);
+#endif
 
 			  TProgram::deskTop->remove( qm );
 			  destroy(qm);
@@ -184,13 +212,22 @@ TEditorApp::TEditorApp() :
 			  openEditor(szBuf, True);
 			  unlink(szBuf);
 		  }
+#ifdef __LINUX__
+                  else if (strstr(strupr(tmp), ".WRI") != NULL)
+#else
 		  else if (strstr(strupr(initialfile), ".WRI") != NULL)
+#endif
 		  {
 			  QuickMessage *qm = new QuickMessage( "" );
 			  TProgram::deskTop->insert( qm );
 
 			  tmpnam(szBuf);
+#ifdef __LINUX__
+			  sprintf(tmp, "./txtwrite.cnv \"%s\" \"%s\"", initialfile, szBuf);
+			  system(tmp);
+#else
 			  spawnl(P_WAIT, "TXTWRITE.CNV", "TXTWRITE.CNV", initialfile, szBuf, NULL);
+#endif
 
 			  TProgram::deskTop->remove( qm );
 			  destroy(qm);
@@ -206,20 +243,30 @@ TEditorApp::TEditorApp() :
 void TEditorApp::fileOpen()
 {
 	 char fileName[MAXPATH];
-	 char szBuf[144];
+	 char szBuf[144], tmp[MAXPATH];
 
 	 strcpy( fileName, "*.*" );
 
 	 if( execDialog( new TFileDialog( "*.*", "Open File",
 				"~N~ame", fdOpenButton, 100 ), fileName) != cmCancel )
 	 {
+#ifdef __LINUX__
+                  strcpy(tmp, fileName);
+                  if (strstr(strupr(tmp), ".RTF") != NULL)
+#else
 		  if (strstr(strupr(fileName), ".RTF") != NULL)
+#endif
 		  {
 			  QuickMessage *qm = new QuickMessage( "" );
 			  TProgram::deskTop->insert( qm );
 
 			  tmpnam(szBuf);
+#ifdef __LINUX__
+			  sprintf(tmp, "./txtrtf.cnv \"%s\" \"%s\"", fileName, szBuf);
+			  system(tmp);
+#else
 			  spawnl(P_WAIT, "TXTRTF.CNV", "TXTRTF.CNV", fileName, szBuf, NULL);
+#endif
 
 			  TProgram::deskTop->remove( qm );
 			  destroy(qm);
@@ -227,13 +274,22 @@ void TEditorApp::fileOpen()
 			  openEditor(szBuf, True);
 			  unlink(szBuf);
 		  }
+#ifdef __LINUX__
+                  else if (strstr(strupr(tmp), ".WRI") != NULL)
+#else
 		  else if (strstr(strupr(fileName), ".WRI") != NULL)
+#endif
 		  {
 			  QuickMessage *qm = new QuickMessage( "" );
 			  TProgram::deskTop->insert( qm );
 
 			  tmpnam(szBuf);
+#ifdef __LINUX__
+			  sprintf(tmp, "./txtwrite.cnv \"%s\" \"%s\"", fileName, szBuf);
+			  system(tmp);
+#else
 			  spawnl(P_WAIT, "TXTWRITE.CNV", "TXTWRITE.CNV", fileName, szBuf, NULL);
+#endif
 
 			  TProgram::deskTop->remove( qm );
 			  destroy(qm);
@@ -258,12 +314,20 @@ void TEditorApp::changeDir()
 
 void TEditorApp::dosShell()
 {
-	 suspend();
-    system("cls");
-	 cout << "Type EXIT to return to OSPlus Text Editor";
-	 system( getenv( "COMSPEC"));
-	 resume();
-	 redraw();
+	suspend();
+
+#ifdef __LINUX__
+ 	system("clear");
+        cout << "Type exit to return to OSPlus Text Editor\n";
+	system(getenv("SHELL"));
+#else
+	system("cls");
+        cout << "Type EXIT to return to OSPlus Text Editor\n";
+        system(getenv("COMSPEC"));
+#endif
+
+	resume();
+	redraw();
 }
 
 void TEditorApp::showClip()
@@ -365,7 +429,7 @@ void TEditorApp::aboutBox( void ) {
 
 	 aboutBox->options |= ofCentered;
 
-#ifdef __DJGPP__
+#if defined(__DJGPP__) || defined(__LINUX__)
     deskTop->execView(aboutBox);
 #else
 	 executeDialog(aboutBox);
@@ -378,7 +442,7 @@ void TEditorApp::aboutProg()
 
 	 aboutBox->options |= ofCentered;
 
-#ifdef __DJGPP__
+#if defined(__DJGPP__) || defined(__LINUX__)
 	 deskTop->execView(aboutBox);
 #else
 	 executeDialog(aboutBox);
@@ -397,60 +461,33 @@ void TEditorApp::selectWAV()
 {
    if (SoundEnabled == FALSE) goto leave;
 
-#ifdef DJGPP_NO_SOUND_SUPPORT
-   messageBox("Sound is not enabled with the DJGPP version.", cmOK);
+#if (defined(DJGPP_NO_SOUND_SUPPORT) || defined(LINUX_NO_SOUND_SUPPORT)) && !defined(ALLEGRO_H)
+   messageBox("Sound is not enabled with this version.", cmOK);
 #else
-	strcpy( WAVName, "*.WAV" );
+   strcpy( WAVName, "*.WAV" );
 
-	if( execDialog( new TFileDialog( "*.WAV", "Select WAV File",
-				"~N~ame", fdOpenButton, 100 ), WAVName) != cmCancel )
-	{
-	    WAVLoaded = TRUE;
-#ifdef __DJGPP__
-       destroy_sample(waveSample);
-       waveSample = load_sample(WAVName);
-#endif
-   }
+   if( execDialog( new TFileDialog( "*.WAV", "Select WAV File",
+			"~N~ame", fdOpenButton, 100 ), WAVName) != cmCancel )
+      snd_LoadWAV();
 #endif
 leave: ;
 }
 
 void TEditorApp::playWAV()
 {
-#ifdef DJGPP_NO_SOUND_SUPPORT
-   messageBox("Sound is not enabled with the DJGPP version.", cmOK);
+#if (defined(DJGPP_NO_SOUND_SUPPORT) || defined(LINUX_NO_SOUND_SUPPORT)) && !defined(ALLEGRO_H)
+   messageBox("Sound is not enabled with this version.", cmOK);
 #else
- 	if (WAVLoaded == TRUE)
-   {
-#ifdef __DJGPP__
-      play_sample(waveSample, 255, 128, 1000, FALSE);
-#else
- #ifdef __WIN32__
-		sndPlaySound(WAVName, SND_ASYNC | SND_NODEFAULT);
- #else
-		if (isPlaying() == TRUE)  StopWAV();
-		PlayIWAV(WAVName);
- #endif
-#endif
-    }
+   snd_PlayWAV();
 #endif
 }
 
 void TEditorApp::stopWAV()
 {
-#ifdef DJGPP_NO_SOUND_SUPPORT
-   messageBox("Sound is not enabled with the DJGPP version.", cmOK);
+#if (defined(DJGPP_NO_SOUND_SUPPORT) || defined(LINUX_NO_SOUND_SUPPORT)) && !defined(ALLEGRO_H)
+   messageBox("Sound is not enabled with this version.", cmOK);
 #else
-	if (WAVLoaded == TRUE)
-#ifdef __DJGPP__
-      stop_sample(waveSample);
-#else
- #ifdef __WIN32__
-		sndPlaySound(NULL, SND_SYNC | SND_NODEFAULT);
- #else
-		if (isPlaying() == TRUE)  StopWAV();
- #endif
-#endif
+   snd_StopWAV();
 #endif
 }
 
@@ -462,50 +499,15 @@ int main(int argc, char *argv[])
 		 IsInitialFile = True;
 	 }
 
-#ifdef DJGPP_NO_SOUND_SUPPORT
-    SoundEnabled = FALSE;
-#else
-#ifdef __DJGPP__
-    allegro_init();
-
-    if (install_sound(DIGI_AUTODETECT, MIDI_NONE, "") == -1)
-       SoundEnabled = FALSE;
-    else
-       SoundEnabled = TRUE;
-#else
- #ifdef __WIN32__
-	 if (waveInGetNumDevs() == 0)
-		 SoundEnabled = FALSE;
-	 else
-		 SoundEnabled = TRUE;
- #else
-	 if (getenv("OSPSOUND") != NULL) // only play sounds if OSPSOUND = TRUE
-	 {                               // this is really just a 'safety net'
-		 SpeakerOn();                 // as if Heinz's drivers are not loaded
-		 SoundEnabled = TRUE;         // it causes a pretty bad crash.
-	 }
- #endif
-#endif
-#endif
+	 snd_Init();
 
 	 TEditorApp editorApp;
 	 editorApp.run();
 
-#ifndef __DJGPP__
- #ifdef __WIN32__
-	 sndPlaySound(NULL, SND_NODEFAULT);
- #else
-	 if (SoundEnabled == TRUE)
-	 {
-		 StopWAV();
-		 SpeakerOff();
-	 }
- #endif
-#else
-    #ifndef DJGPP_NO_SOUND_SUPPORT
-       destroy_sample(waveSample);
-    #endif
-#endif
-
+       snd_Exit();
 	 return 0;
+#if defined(__LINUX__) && defined(ALLEGRO_H)
+} END_OF_MAIN();
+#else
 }
+#endif

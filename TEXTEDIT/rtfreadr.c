@@ -27,12 +27,11 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 
 #include <fcntl.h>
-#include <io.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <windows.h>
+//#include <windows.h>
 #include "rtftype.h"
 #include "rtfdecl.h"
 
@@ -41,7 +40,7 @@ bool fSkipDestIfUnk;
 long cbBin;
 long lParam;
 
-int fhandle;
+FILE *fhandle;
 
 char destfile[200];
 
@@ -301,15 +300,9 @@ ecParseChar(int ch)
 int
 ecPrintChar(int ch)
 {
-	 char chrs[1];
+	 fprintf(fhandle, "%c", ch);
 
-	 sprintf(chrs, "%c", ch);
-
-//	 printf("%c", ch);
 	 // unfortunately, we don't do a whole lot here as far as layout goes...
-	 write(fhandle, chrs, sizeof(chrs));
-
-	 //putchar(ch);
 	 return ecOK;
 }
 
@@ -339,13 +332,18 @@ int main(int argc, char *argv[])
 		  printf("Can't open RTF file\n");
 		  return 2;
 	 }
-	 fhandle = open(destfile, O_WRONLY | O_APPEND | O_CREAT | O_TEXT);
+	 fhandle = fopen(destfile, "wt");
+         if (!fhandle)
+         {
+                  printf("Can't open destination file\n");
+                  return 3;
+         }
 
 	 if ((ec = ecRtfParse(fp)) != ecOK)
 		  printf("Error %d parsing RTF file\n", ec);
 
 	 fclose(fp);
-	 printf("%d", close(fhandle));
+	 fclose(fhandle);
 
 	 return 0;
 }

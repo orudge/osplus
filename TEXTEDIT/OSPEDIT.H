@@ -12,7 +12,7 @@ class TEditWindow;
 class TDialog;
 
 const int
-#ifndef __DJGPP__
+#ifdef __BORLANDC__
   cmChangeDrct = 102,
   cmShowClip   = 105,
 #endif
