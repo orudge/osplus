@@ -8,6 +8,14 @@ Thanks for downloading the source code to the OSPlus Text Editor! This has
 evolved a fair bit since it was closed source, and now includes features such
 as sound support.
 
+******************************** IMPORTANT: ********************************
+While developing the Text Editor, I changed "TEXTEDIT.MAK" to "textedit.mak"
+(or vice versa, I can't remember), and now there are two files in the CVS
+repository and I can't delete the other one! The same goes for BUILD. So,
+I've created a few files called !EXTEDIT.MAK and !UILD, and a file called
+FIXCVS.BAT, which will put things right.
+****************************************************************************
+
 There are a few different builds for the Text Editor, which are:
 
 - Borland C++ 4.x (real mode DOS)
