@@ -1,6 +1,0 @@
-section 2 of uuencode 4.21 of file OSPEDIT.IDE    by R.E.M.
-
-`
-end
-sum -r/size 49255/6 section (from first encoded line to "end")
-sum -r/size 20637/42750 entire input file
