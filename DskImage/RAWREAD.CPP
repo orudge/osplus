@@ -1,6 +1,6 @@
 /*************************************************/
 /* OSPlus Disk Imager                            */
-/* Version 1.2                                   */
+/* Version 1.3                                   */
 /*                                               */
 /* Copyright (c) Owen Rudge 2000-2001            */
 /* Disk Writing Routines: Written by Mark Becker */
@@ -188,15 +188,19 @@ extern void msg(char (*s));
 /*
  Identify the error code with a real error message.
 */
+#ifdef USE_EXIT
 static void Error(int status, int quit)
+#else
+static int Error(int status, int quit)
+#endif
 {
   switch (status) {
-    case 0x00:	msg("Operation Successful");				break;
+	 case 0x00:	msg("Operation Successful");				break;
     case 0x01:	msg("Bad command");					break;
-    case 0x02:	msg("Address mark not found");				break;
+	 case 0x02:	msg("Address mark not found");				break;
     case 0x03:	msg("Attempt to write on write-protected disk");	break;
-    case 0x04:	msg("Sector not found");				break;
-    case 0x05:	msg("Reset failed (hard disk)");			break;
+	 case 0x04:	msg("Sector not found");				break;
+	 case 0x05:	msg("Reset failed (hard disk)");			break;
     case 0x06:	msg("Disk changed since last operation");		break;
     case 0x07:	msg("Drive parameter activity failed");			break;
     case 0x08:	msg("DMA overrun");					break;
@@ -210,12 +214,19 @@ static void Error(int status, int quit)
     case 0x40:	msg("Seek operation failed");				break;
     case 0x80:	msg("Attachment failed to respond");			break;
     case 0xAA:	msg("Drive not ready (hard disk only");			break;
-    case 0xBB:	msg("Undefined error occurred (hard disk only)");	break;
+	 case 0xBB:	msg("Undefined error occurred (hard disk only)");	break;
     case 0xCC:	msg("Write fault occurred");				break;
 	 case 0xE0:	msg("Status error");					break;
     case 0xFF:	msg("Sense operation failed");				break;
   }
-  if (quit) exit(1);
+#ifdef USE_EXIT
+  if (quit) exit(1); // TODO: Change exit() to something that cancels the operation
+#else
+  if (quit)
+	  return(EXIT_FAILURE);
+  else
+	  return(EXIT_SUCCESS);
+#endif
 }
 
 struct bootsector {
@@ -259,6 +270,9 @@ static int nsects(int drive)
   if (status == 0x06)			/* Door signal change?	*/
 			 status = biosdisk(READ, drive, 0, 0, 1, 1, buffer);
   if (status) Error(status,1);
+#ifndef USE_EXIT
+  return(-100);
+#endif
   memcpy(&bootsec, buffer, 512);
 
   for (i=0; i < sizeof(nsect)/sizeof(int); ++i) {
@@ -280,13 +294,13 @@ static int nsects(int drive)
 }
 
 /*                    +------name of output file
-                      |       +-- drive letter of floppy (e.g. 'A')
+							 |       +-- drive letter of floppy (e.g. 'A')
 							 |       |            +-- format for printf like "Can't figure out how many sectors/track for this diskette."
 							 |       |            |                                */
 void disk_rawread(char	*fname, char drive,                  char *errio_ft, char *THS_ft, char *done_ft)
 /*                                                                |           |            |
 	 format for printf like "Disketten IO-Fehler, Status %2x\n" ---+           |            |
-    format for printf like "Track: %02d  Head: %2d Sector: %2d\r" ------------+            |
+	 format for printf like "Track: %02d  Head: %2d Sector: %2d\r" ------------+            |
     format for printf like "\nSchreiben auf Diskette beendet\n" ---------------------------+ */
 {
   char	*buffer, *pbuf;
@@ -309,6 +323,15 @@ void disk_rawread(char	*fname, char drive,                  char *errio_ft, char
  */
   set_dpt();
   spt = nsects(drive);
+
+  if (spt == -100)
+  {
+	  TProgram::deskTop->remove( qm ); // destroy message window
+	  qm->destroy;
+
+	  return;
+  }
+
   free_dpt();
 
   char buf[100];
@@ -359,6 +382,10 @@ void disk_rawread(char	*fname, char drive,                  char *errio_ft, char
 		  close(fdout);
 		  free_DMAbuffer(&DMAbuffer);
 		  free_dpt();
+
+		  TProgram::deskTop->remove( qm );
+		  qm->destroy;
+
 		  return;
 		}
 

@@ -1,8 +1,11 @@
-//-------------------------------------------------------
-//
-//   write.h: Header file for write.cpp
-//
-//-------------------------------------------------------
+/*************************************************/
+/* OSPlus Disk Imager                            */
+/* Version 1.3                                   */
+/*                                               */
+/* Copyright (c) Owen Rudge 2000-2001            */
+/* Disk Writing Routines: Written by Mark Becker */
+/* Disk Reading Routines: (c) Hans Lermen 1995   */
+/*************************************************/
 
 #if !defined( __WRITE_H )
 #define __WRITE_H

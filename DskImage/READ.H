@@ -1,3 +1,12 @@
+/*************************************************/
+/* OSPlus Disk Imager                            */
+/* Version 1.3                                   */
+/*                                               */
+/* Copyright (c) Owen Rudge 2000-2001            */
+/* Disk Writing Routines: Written by Mark Becker */
+/* Disk Reading Routines: (c) Hans Lermen 1995   */
+/*************************************************/
+
 //-------------------------------------------------------
 //
 //   read.h: Header file for read.cpp
