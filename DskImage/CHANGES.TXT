@@ -30,3 +30,10 @@ DATE        MODIFICATION                               AUTHOR     VER
 02/09/2001: Made it so errors did not call exit().     (orudge)   1.3
             This should also stop errors like "insert
             diskette in drive B" then crashes
+26/09/2001: Fixed horrible (and stupid) bug introduced (orudge)   1.4
+            in ver 1.3 that caused the Imager not to
+            read from a disk
+26/09/2001: Moved QuickMessage class into seperate CPP (orudge)   1.4
+            file
+26/09/2001: Added more progress info and progress bar  (orudge)   1.4
+26/09/2001: Fixed F2/F3 keyboard shortcuts             (orudge)   1.4

@@ -12,6 +12,7 @@ BCCDOS  = BCC +BCCDOS.CFG
 TLINK   = TLINK
 TLIB    = TLIB
 TASM    = TASM
+
 BCPATH  = C:\BC45
 
 #
@@ -22,12 +23,12 @@ BCPATH  = C:\BC45
 #
 # Options
 #
-IDE_LFLAGSDOS =  -L$(BCPATH)\LIB
+IDE_LFLAGSDOS =  -LD:\BC45\LIB
 IDE_BFLAGS = 
-LLATDOS_dskimagedexe =  -L$(BCPATH)\LIB -P=65535 -c -Tde
+LLATDOS_dskimagedexe =  -P=65535 -L$(BCPATH)\LIB;D:\BC45\LIB -c -Tde
 RLATDOS_dskimagedexe = 
 BLATDOS_dskimagedexe = 
-CNIEAT_dskimagedexe = -I$(BCPATH)\INCLUDE -D
+CNIEAT_dskimagedexe = -I$(BCPATH)\INCLUDE;D:\BC45\INCLUDE -D
 LNIEAT_dskimagedexe = -x
 LEAT_dskimagedexe = $(LLATDOS_dskimagedexe)
 REAT_dskimagedexe = $(RLATDOS_dskimagedexe)
@@ -43,6 +44,8 @@ dskimage : BccDos.cfg $(Dep_dskimage)
   echo MakeNode 
 
 Dep_dskimagedexe = \
+   tprogbar.obj\
+   quickmsg.obj\
    aboutosp.obj\
    window.obj\
    about.obj\
@@ -55,6 +58,8 @@ dskimage.exe : $(Dep_dskimagedexe)
   $(TLINK)   @&&|
  /v $(IDE_LFLAGSDOS) $(LEAT_dskimagedexe) $(LNIEAT_dskimagedexe) +
 $(BCPATH)\LIB\c0l.obj+
+tprogbar.obj+
+quickmsg.obj+
 aboutosp.obj+
 window.obj+
 about.obj+
@@ -64,8 +69,20 @@ write.obj+
 dskimage.obj
 $<,$*
 $(BCPATH)\LIB\tv.lib+
+$(BCPATH)\LIB\emu.lib+
+$(BCPATH)\LIB\mathl.lib+
 $(BCPATH)\LIB\cl.lib
 
+|
+
+tprogbar.obj :  tprogbar.cpp
+  $(BCCDOS) -c @&&|
+ $(CEAT_dskimagedexe) $(CNIEAT_dskimagedexe) -o$@ tprogbar.cpp
+|
+
+quickmsg.obj :  quickmsg.cpp
+  $(BCCDOS) -c @&&|
+ $(CEAT_dskimagedexe) $(CNIEAT_dskimagedexe) -o$@ quickmsg.cpp
 |
 
 aboutosp.obj :  aboutosp.cpp
@@ -115,6 +132,11 @@ BccDos.cfg :
 -v-
 -R-
 -k-
+-y-
+-N-
+-vi
 -ml
--f-
+-f
 | $@
+
+

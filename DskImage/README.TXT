@@ -15,6 +15,11 @@ It is recommended you use the Borland C++ IDE for development, but a
 MAKEFILE has been provided anyway. You must modify BCPATH= in the
 makefile.
 
+Finally, the code produced by the IDE seems to be smaller than the
+code produced by the makefile. I'm guessing that this is because
+the IDE's Generate Makefile command didn't include all the
+command-line parameters I specified in the options dialog.
+
 Happy hacking!
 
 Owen Rudge, 26th May 2001

@@ -1,6 +1,6 @@
 /*************************************************/
 /* OSPlus Disk Imager                            */
-/* Version 1.3                                   */
+/* Version 1.4                                   */
 /*                                               */
 /* Copyright (c) Owen Rudge 2000-2001            */
 /* Disk Writing Routines: Written by Mark Becker */
@@ -38,7 +38,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
  * 1.2	-	Final code and documentation clean-ups.		4/9/91
  */
 
-#define DSKIMAGE_VERSION   "1.3"
+#define DSKIMAGE_VERSION   "1.4"
 
 #include <alloc.h>
 #include <bios.h>
@@ -78,6 +78,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 
 #include <tvision\tv.h>
 
+#include "tprogbar.h"
 #include "dskwrite.h"
 #include "write.h"
 #include "about.h"
@@ -128,37 +129,7 @@ int	done;
 
 extern void RawReadMain(char *fn, char *drive);
 
-class QuickMessage: public TWindow
-{
-	 TParamText *msg1;
-	 TParamText *msg2;
-
-public:
-	 QuickMessage():
-		  TWindow( TRect( 25,10,65,16 ), "Disk Imager", 0 ),
-		  TWindowInit( TWindow::initFrame ) {
-
-	 flags = 0; // no move, close, grow or zoom
-	 options |= ofCentered;
-	 palette = wpGrayWindow;
-	 char temp[30];
-	 sprintf(temp,"Please wait...");
-	 msg1 = new TParamText( TRect( 2,2,38,3 ));
-	 msg2 = new TParamText( TRect( 2,3,38,4 ));
-
-	 insert(msg1);
-	 insert(msg2);
-  }
-  virtual void handleEvent( TEvent &event ) {
-	 TWindow::handleEvent( event );
-  }
-  void setProgress( char *__format, ...) {
-	 msg1->setText(__format);
-  }
-  void setProgress2( char *__format, ...) {
-	 msg2->setText(__format);
-  }
-};
+#include "quickmsg.h"
 
 /*
  Catch ^C and ^Break.
@@ -346,12 +317,12 @@ TMenuBar *TDiskWriter::initMenuBar( TRect r )
 			 *new TSubMenu( "~ð~", kbAltSpace ) +
 				  *new TMenuItem( "~A~bout OSPlus...", cmAbout, kbAltA ) +
 				  newLine() +
-				  *new TMenuItem( "~D~OS Shell", cmDosShell, kbAltD) +
+				  *new TMenuItem( "~D~OS Shell", cmDosShell, kbAltD, hcNoContext, "Alt-D") +
 		  *new TSubMenu( "~F~ile", kbAltF )+
-				*new TMenuItem( "~R~ead Image from Disk...", cmRead, cmRead, hcNoContext, "F2") +
-				*new TMenuItem( "~W~rite Image to Disk...", cmWrite, cmWrite, hcNoContext, "F3") +
+				*new TMenuItem( "~R~ead Image from Disk...", cmRead, kbF2, hcNoContext, "F2") +
+				*new TMenuItem( "~W~rite Image to Disk...", cmWrite, kbF3, hcNoContext, "F3") +
             newLine() +
-				*new TMenuItem( "E~x~it", cmQuit, cmQuit, hcNoContext, "Alt-X" ) +
+				*new TMenuItem( "E~x~it", cmQuit, kbAltX, hcNoContext, "Alt-X" ) +
 		  *new TSubMenu( "~H~elp", kbAltH ) +
 				*new TMenuItem( "~A~bout Disk Imager...", cmAboutApp, kbAltA)
 			  );
@@ -409,12 +380,16 @@ void DoWrite()
 {
   char	*buffer, *pbuf, msg[200];
   int	 count, fdin, drive, head, track, status, spt, buflength, ns;
+  long amountdone;
+  double percentdone;
 
   ctrlbrk(handler);
   _fmode = O_BINARY;
   if ((fdin = open(fname, O_RDONLY)) <= 0) {
-	 perror(fname);
-  exit(1);
+//	 perror(fname);
+	 messageBox(mfInformation | mfOKButton, "%s\nFilename: %s", strerror(errno), fname);
+//  exit(1);
+    return;
   }
 
   drive = gdrive[0];
@@ -450,11 +425,22 @@ void DoWrite()
  * Start writing data to diskette until there is no more data to write.
  */
 	head = track = 0;
+	amountdone = 0;
+
 	while ((count = read(fdin, buffer, buflength)) > 0 && !done) {
+	  amountdone += buflength;
+
 	  pbuf = buffer;
 	  for (ns = 1; count > 0 && !done; ns+=3) {
 		 sprintf(msg, "Track: %02d  Head: %2d Sector: %2d", track, head, ns);
 		 qm->setProgress2(msg);
+
+		 percentdone = (double)amountdone/(double)filelength(fdin);
+		 sprintf(msg, "%ld bytes written out of %ld\nbytes", amountdone, filelength(fdin));
+		 qm->setProgress3(msg);
+
+		 qm->SetProgressBar((int)(percentdone*100));
+
 		 status = biosdisk(WRITE, drive, head, track, ns, 3, pbuf);
 
 		 if (status != 0)

@@ -21,7 +21,7 @@ TAboutDialog::TAboutDialog() :
  control = new TStaticText(TRect(2, 1, 48, 11), "OSPlus Disk Imager\n"
      "Open Source\n"
      "\n"
-     "Version 1.3, Build 20010902\n"
+     "Version 1.4, Build 20010926\n"
      "\n"
      "Copyright (c) Owen Rudge 2000-2001\n"
      "Copyright (c) Hans Lerman 1995\n"
