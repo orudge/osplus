@@ -1,0 +1,4 @@
+NAME						OSPEDT32
+
+IMPORTS					WINMM.sndPlaySoundA
+							WINMM.waveInGetNumDevs
