@@ -1,6 +1,6 @@
 /*************************************************/
 /* OSPlus Disk Imager                            */
-/* Version 1.2                                   */
+/* Version 1.3                                   */
 /*                                               */
 /* Copyright (c) Owen Rudge 2000-2001            */
 /* Disk Writing Routines: Written by Mark Becker */
@@ -23,8 +23,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 
 /* OSPlus Disk Imager History can be found in CHANGES.TXT */
 
-/* TODO: Add Browse dialogs */
-
 /* RAWRITE History
  *	---------------
  *
@@ -39,6 +37,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
  *
  * 1.2	-	Final code and documentation clean-ups.		4/9/91
  */
+
+#define DSKIMAGE_VERSION   "1.3"
 
 #include <alloc.h>
 #include <bios.h>
@@ -171,39 +171,47 @@ int	handler(void)
 void msg(char (*s))
 {
 	messageBox(s, mfInformation | mfOKButton); //fprintf(stderr, "%s\n", s);
-	_exit(1);
+//	_exit(1);
 }
 /*
  Identify the error code with a real error message.
 */
+#ifdef USE_EXIT
 void Error(int (status))
+#else
+int Error(int (status))
+#endif
 {
   switch (status) {
-    case 0x00:	msg("Operation Successful");				break;
-    case 0x01:	msg("Bad command");					break;
-    case 0x02:	msg("Address mark not found");				break;
-    case 0x03:	msg("Attempt to write on write-protected disk");	break;
-    case 0x04:	msg("Sector not found");				break;
-    case 0x05:	msg("Reset failed (hard disk)");			break;
-    case 0x06:	msg("Disk changed since last operation");		break;
-    case 0x07:	msg("Drive parameter activity failed");			break;
-    case 0x08:	msg("DMA overrun");					break;
-    case 0x09:	msg("Attempt to DMA across 64K boundary");		break;
-    case 0x0A:	msg("Bad sector detected");				break;
-    case 0x0B:	msg("Bad track detected");				break;
-    case 0x0C:	msg("Unsupported track");				break;
-    case 0x10:	msg("Bad CRC/ECC on disk read");			break;
-    case 0x11:	msg("CRC/ECC corrected data error");			break;
+	 case 0x00:	msg("Operation Successful");				break;
+	 case 0x01:	msg("Bad command");					break;
+	 case 0x02:	msg("Address mark not found");				break;
+	 case 0x03:	msg("Attempt to write on write-protected disk");	break;
+	 case 0x04:	msg("Sector not found");				break;
+	 case 0x05:	msg("Reset failed (hard disk)");			break;
+	 case 0x06:	msg("Disk changed since last operation");		break;
+	 case 0x07:	msg("Drive parameter activity failed");			break;
+	 case 0x08:	msg("DMA overrun");					break;
+	 case 0x09:	msg("Attempt to DMA across 64K boundary");		break;
+	 case 0x0A:	msg("Bad sector detected");				break;
+	 case 0x0B:	msg("Bad track detected");				break;
+	 case 0x0C:	msg("Unsupported track");				break;
+	 case 0x10:	msg("Bad CRC/ECC on disk read");			break;
+	 case 0x11:	msg("CRC/ECC corrected data error");			break;
 	 case 0x20:	msg("Controller has failed");				break;
-    case 0x40:	msg("Seek operation failed");				break;
+	 case 0x40:	msg("Seek operation failed");				break;
     case 0x80:	msg("Attachment failed to respond");			break;
     case 0xAA:	msg("Drive not ready (hard disk only");			break;
     case 0xBB:	msg("Undefined error occurred (hard disk only)");	break;
     case 0xCC:	msg("Write fault occurred");				break;
-    case 0xE0:	msg("Status error");					break;
-    case 0xFF:	msg("Sense operation failed");				break;
+	 case 0xE0:	msg("Status error");					break;
+	 case 0xFF:	msg("Sense operation failed");				break;
   }
+#ifdef USE_EXIT
   _exit(1);
+#else
+  return(EXIT_FAILURE);
+#endif
 }
 
 /*
@@ -237,6 +245,7 @@ int nsects(int (drive))
     }
 	 if (i == sizeof(nsect)/sizeof(int)) {
 		msg("Can't figure out how many sectors/track for this diskette.");
+		return(-100);
 	 }
 	 free(buffer);
 	 return(nsect[i]);
@@ -250,23 +259,25 @@ int main(int argc, char *argv[])
   {
 	  for (i = 0; i < argc; i++)
 	  {
-		  if (strstr(argv[i], "/?") != 0)
+		  if ((strstr(argv[i], "/?") != 0) ||
+				(strstr(argv[i], "-?") != 0) ||
+            (strstr(argv[i], "--help") != 0))
 		  {
 			  printf("OSPlus Disk Imager\n");
-			  printf("Version 1.2\n");
+			  printf("Version " DSKIMAGE_VERSION "\n");
 			  printf("\n");
 			  printf("Copyright (c) Owen Rudge 2000-2001.\n");
 			  printf("Disk Writing Routines: Written by Mark Becker\n");
 			  printf("Disk Reading Routines: (c) Hans Lermen 1995\n");
 			  printf("\n");
-			  printf("Web site:    www.osplus.co.uk\n");
+			  printf("Web site:    http://www.osplus.co.uk/\n");
 			  printf("Development: http://sourceforge.net/projects/osplus/\n");
 			  printf("\n");
 			  printf("Built on %s at %s.\n", __DATE__, __TIME__);
 			  printf("\n");
 			  printf("Press any key to exit.\n");
-           getch();
-			  exit(0);
+			  getch();
+           exit(0);
 		  }
 	  }
   }
@@ -421,6 +432,15 @@ void DoWrite()
   TProgram::deskTop->insert( qm );
 
   spt = nsects(drive);
+
+  if (spt == -100)
+  {
+	  TProgram::deskTop->remove( qm );
+	  qm->destroy;
+
+	  return;
+  }
+
   buflength = spt * SECTORSIZE;
   buffer = (char *)malloc(buflength);
 
@@ -437,7 +457,15 @@ void DoWrite()
 		 qm->setProgress2(msg);
 		 status = biosdisk(WRITE, drive, head, track, ns, 3, pbuf);
 
-		 if (status != 0) Error(status);
+		 if (status != 0)
+		 {
+			 Error(status);
+
+			 TProgram::deskTop->remove( qm );
+			 qm->destroy;
+			 return;
+		 }
+
 
 		 count -= (3*SECTORSIZE);
 		 pbuf  += (3*SECTORSIZE);
