@@ -1,6 +1,6 @@
 /*************************************************/
 /* OSPlus Disk Imager                            */
-/* Version 1.1                                   */
+/* Version 1.2                                   */
 /*                                               */
 /* Copyright (c) Owen Rudge 2000-2001            */
 /* Disk Writing Routines: Written by Mark Becker */

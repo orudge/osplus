@@ -1,11 +1,11 @@
 //-------------------------------------------------------
 //
-//   write.h: Header file for write.cpp
+//   aboutosp.h: Header file for aboutosp.cpp
 //
 //-------------------------------------------------------
 
-#if !defined( __WRITE_H )
-#define __WRITE_H
+#if !defined( __ABOUTOSP_H )
+#define __ABOUTOSP_H
 
 #define Uses_TStreamable
 #define Uses_TStreamableClass
@@ -14,32 +14,27 @@
 #define Uses_TDialog
 #define Uses_TButton
 #define Uses_TStaticText
-#define Uses_TInputLine
 
-#include <tvision\tv.h>
-
-
-struct dataRec  {
-  char ImageFile[126];   //TInputLine
-  char Drive[3];   //TInputLine
-  };
+#if defined(__DJGPP__) || defined(__LINUX__)
+	#include <tv.h>
+#else
+	#include <tvision\tv.h>
+#endif
 
 
-class TWriteDialog : public TDialog
+class TAboutOSPlus : public TDialog
 {
 
 public:
 
-    TWriteDialog( );
-    TWriteDialog( StreamableInit ) :
+    TAboutOSPlus( );
+    TAboutOSPlus( StreamableInit ) :
            TDialog (streamableInit),
-           TWindowInit(TWriteDialog::initFrame) {};
+           TWindowInit(TAboutOSPlus::initFrame) {};
     virtual void handleEvent( TEvent& );
     virtual Boolean valid( ushort );
 
-    TButton *BrowseWrite;
 
-    ushort execDialog( TDialog *d, void *data );
 
 private:
 
@@ -58,16 +53,15 @@ public:
 
 };
 
-inline ipstream& operator >> ( ipstream& is, TWriteDialog& cl )
+inline ipstream& operator >> ( ipstream& is, TAboutOSPlus& cl )
     { return is >> (TStreamable&)cl; }
-inline ipstream& operator >> ( ipstream& is, TWriteDialog*& cl )
+inline ipstream& operator >> ( ipstream& is, TAboutOSPlus*& cl )
     { return is >> (void *&)cl; }
-inline opstream& operator << ( opstream& os, TWriteDialog& cl )
+inline opstream& operator << ( opstream& os, TAboutOSPlus& cl )
     { return os << (TStreamable&)cl; }
-inline opstream& operator << ( opstream& os, TWriteDialog* cl )
+inline opstream& operator << ( opstream& os, TAboutOSPlus* cl )
     { return os << (TStreamable *)cl; }
 
-#define cmBrowse   20
 
-#endif  // __WRITE_H
+#endif  // __ABOUTOSP_H
 

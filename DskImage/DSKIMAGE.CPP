@@ -1,6 +1,6 @@
 /*************************************************/
 /* OSPlus Disk Imager                            */
-/* Version 1.1                                   */
+/* Version 1.2                                   */
 /*                                               */
 /* Copyright (c) Owen Rudge 2000-2001            */
 /* Disk Writing Routines: Written by Mark Becker */
@@ -20,6 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
+
+/* OSPlus Disk Imager History can be found in CHANGES.TXT */
 
 /* TODO: Add Browse dialogs */
 
@@ -80,6 +82,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 #include "write.h"
 #include "about.h"
 #include "read.h"
+#include "aboutosp.h"
+
+extern "C" {
+	 void OS_ChangeWindowTitle();
+	 void OS_RemoveWindowTitle();
+}
 
 int OKPressed;
 char fname[128];
@@ -186,7 +194,7 @@ void Error(int (status))
     case 0x0C:	msg("Unsupported track");				break;
     case 0x10:	msg("Bad CRC/ECC on disk read");			break;
     case 0x11:	msg("CRC/ECC corrected data error");			break;
-    case 0x20:	msg("Controller has failed");				break;
+	 case 0x20:	msg("Controller has failed");				break;
     case 0x40:	msg("Seek operation failed");				break;
     case 0x80:	msg("Attachment failed to respond");			break;
     case 0xAA:	msg("Drive not ready (hard disk only");			break;
@@ -234,11 +242,42 @@ int nsects(int (drive))
 	 return(nsect[i]);
 }
 
-void main(void)
+int main(int argc, char *argv[])
 {
+  int i;
+
+  if (argc > 1)
+  {
+	  for (i = 0; i < argc; i++)
+	  {
+		  if (strstr(argv[i], "/?") != 0)
+		  {
+			  printf("OSPlus Disk Imager\n");
+			  printf("Version 1.2\n");
+			  printf("\n");
+			  printf("Copyright (c) Owen Rudge 2000-2001.\n");
+			  printf("Disk Writing Routines: Written by Mark Becker\n");
+			  printf("Disk Reading Routines: (c) Hans Lermen 1995\n");
+			  printf("\n");
+			  printf("Web site:    www.osplus.co.uk\n");
+			  printf("Development: http://sourceforge.net/projects/osplus/\n");
+			  printf("\n");
+			  printf("Built on %s at %s.\n", __DATE__, __TIME__);
+			  printf("\n");
+			  printf("Press any key to exit.\n");
+           getch();
+			  exit(0);
+		  }
+	  }
+  }
+
   TDiskWriter dw;
 
+  OS_ChangeWindowTitle();
   dw.run();
+  OS_RemoveWindowTitle();
+
+  return(0);
 }	/* end main */
 
 TDiskWriter::TDiskWriter() :
@@ -249,6 +288,7 @@ TDiskWriter::TDiskWriter() :
 {
 	 demoDialogData = new DialogData;
 	 strcpy(demoDialogData->DriveData, "A:");
+    strcpy(demoDialogData->FileData, "");
 }
 
 TDiskWriter::~TDiskWriter()
@@ -414,7 +454,7 @@ void DoWrite()
 void TDiskWriter::dosShell()
 {
 	 suspend();
-	 system("cls");
+	 clrscr();
 	 cout << "Type EXIT to return to Disk Imager";
 	 system( getenv( "COMSPEC"));
 	 resume();
@@ -422,7 +462,9 @@ void TDiskWriter::dosShell()
 }
 
 void TDiskWriter::aboutBox( void ) {
-	 TDialog *aboutBox = new TDialog(TRect(0, 0, 39, 13), "About OSPlus");
+	 TDialog *aboutBox = new TAboutOSPlus; //Dialog(TRect(0, 0, 39, 13), "About Disk Writer");
+
+/*	 TDialog *aboutBox = new TDialog(TRect(0, 0, 39, 13), "About OSPlus");
 
 	 aboutBox->insert(
 		new TStaticText(TRect(11, 2, 30, 10), // 9
@@ -435,7 +477,7 @@ void TDiskWriter::aboutBox( void ) {
 
 	 aboutBox->insert(
 		new TButton(TRect(14, 10, 26, 12), " OK", cmOK, bfDefault)
-		);
+		);*/
 
 	 aboutBox->options |= ofCentered;
 

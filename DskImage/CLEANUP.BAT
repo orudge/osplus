@@ -1,0 +1,7 @@
+@ECHO OFF
+ECHO Cleaning up...
+ECHO.
+DEL *.OBJ
+DEL *.CSM
+DEL *.BAK
+DEL BCCDOS.CFG
