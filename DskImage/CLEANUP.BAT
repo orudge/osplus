@@ -1,9 +1,0 @@
-@ECHO OFF
-ECHO Cleaning up...
-ECHO.
-DEL *.OBJ
-DEL *.CSM
-DEL *.BAK
-DEL *.~DE
-DEL *.BKP
-DEL BCCDOS.CFG
