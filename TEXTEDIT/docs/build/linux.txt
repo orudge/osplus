@@ -1,0 +1,30 @@
+BUILDING OSPLUS TEXT EDITOR FOR LINUX
+=====================================
+
+To build the Linux version of the Text Editor, you need:
+
+- gcc (I don't know what version (2.95?), but a recent one should do fine), etc
+
+- Turbo Vision 1.1.3 or better, available from http://sourceforge.net/projects/setedit/.
+
+- A DOS emulator such as dosemu or a DOS machine to run Dialog Designer if
+  you wish.
+
+For the version with sound support, you also need:
+
+- Allegro 4.0. Available from http://alleg.sourceforge.net/. Earlier WIPs should work,
+  but 3.12 will not.
+
+TO BUILD
+========
+
+You must edit `buildlnx' so that the Turbo Vision include path is correct. (Alternatively,
+copy the header files to /usr/include in the appropriate directories). Building is a
+simple case of typing `buildlnx'.
+
+The object files for the version with sound will be placed in obj/linuxsnd, and the binaries
+will be placed in bin/linuxsnd. The version without sound will store files in obj/linux and
+bin/linux respectively.
+
+Please note that I haven't built the Linux version in a while. It may not compile. Please let
+me know how you get on. E-mail me at webmaster@osplus.co.uk.

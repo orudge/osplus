@@ -12,6 +12,7 @@ ECHO This batch file will the Borland C++ version of Text Editor. Please
 ECHO ensure that Borland C++ 4 or higher is installed.
 ECHO.
 ECHO Press any key to continue, or CTRL-C to abort.
+PAUSE > NUL
 
 :SKIPWARNING
-%BCMAKE%
+%BCMAKE% -f REALDOS.MAK

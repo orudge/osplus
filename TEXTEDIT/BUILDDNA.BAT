@@ -12,7 +12,8 @@ ECHO This batch file will build the DJGPP version of Text Editor with Allegro.
 ECHO Please ensure that DJGPP and Turbo Vision are both correctly installed.
 ECHO.
 ECHO Press any key to continue, or CTRL-C to abort.
+PAUSE > NUL
 
 :SKIPWARNING
-%DJMAKE% -f textedns.mak
-CALL BUILDCNV.BAT
+%DJMAKE% -f djgpp.mak
+CALL BUILDCNV.BAT djgpp

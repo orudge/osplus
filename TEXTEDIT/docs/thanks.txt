@@ -1,0 +1,15 @@
+THANKS TO
+=========
+
+- Heinz Rath (heinz.rath@gmz.at) for the real-mode sound drivers.
+  www.geocities.com/heinz_rath/
+
+- Shawn Hargreaves (shawn@talula.demon.co.uk) and all the other
+  people working on the Allegro team, for Allegro.
+  www.talula.demon.co.uk/allegro/, http://alleg.sourceforge.net/
+
+- Salvador Eduardo Tropea (salvador@inti.edu.ar) and Robert
+  Hoehne for porting Turbo Vision to DJGPP, Linux and Win32.
+
+- Borland (www.borland.com) for creating Turbo Vision in the first
+  place!

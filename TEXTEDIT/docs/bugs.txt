@@ -1,0 +1,5 @@
+KNOWN PROBLEMS
+==============
+
+- With the Win32 port, a GPF is generated when you quit the editor if you've played a
+  MIDI file

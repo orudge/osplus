@@ -1,0 +1,30 @@
+BUILDING OSPLUS TEXT EDITOR WITH BORLAND C++ (WIN32)
+====================================================
+
+To build the Win32 version of the Text Editor, you need:
+
+- Borland C++Builder 4.0 or higher (may work with 3.0) - you need BCC32
+  to be version 5.4 or higher (may work with earlier versions). The free
+  command line tools should work.
+
+- Turbo Vision 1.1.3 or better, available from http://sourceforge.net/projects/setedit/.
+
+- Dialog Designer, available from
+  www.simtel.net/simtel.net/msdos/turbovis.html, to modify the About dialogs
+
+TO BUILD
+========
+
+You must build Turbo Vision and copy the include files to <CBDIR>\Include and
+<CBDIR>\Include\tv as appropriate, and RHTV.LIB to <CBDIR>\LIB. Please note you also
+need to create a directory called <CBDIR>\Include\tvision and place a copy of tv.h
+in it. This is because I was lazy and couldn't be bothered to go through all the code
+and set another different path for a compiler... ;-)
+
+Type the following to build this version:
+
+   SET CBPATH=d:\cb_dir\BIN\MAKE.EXE
+   BUILDWIN
+
+where "d:\cb_dir" is the path to your C++Builder directory. The object files will be
+placed in obj/win32, and the binaries will be placed in bin/win32.

@@ -1,0 +1,27 @@
+BUILDING OSPLUS TEXT EDITOR WITH DJGPP - NO SOUND
+=================================================
+
+To build the DJGPP version of the Text Editor, you need:
+
+- DJGPP 2.03 or better
+
+- Turbo Vision, available from http://sourceforge.net/projects/setedit/
+
+- Dialog Designer, available from
+  www.simtel.net/simtel.net/msdos/turbovis.html, to modify the About dialogs
+
+TO BUILD
+========
+
+To build this version, you must first edit djgpp.mak and change the
+"DJDIR=C:\DJGPP" line to the appropriate value for your machine. Then type:
+
+   SET DJPATH=d:\djgpp_dir\BIN\MAKE.EXE
+   BUILDDNA
+
+at the command prompt, where "d:\djgpp_dir" is the path to your DJGPP directory.
+The object files will be placed in obj/djgpp, and the binaries will be placed
+in bin/djgpp.
+
+There is also a RHIDE project file available. To build using RHIDE, open DJGPP.GPR.
+Please note that you need RHIDE 1.4.7.8 or higher to use this file.

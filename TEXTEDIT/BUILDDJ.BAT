@@ -1,6 +1,6 @@
 @ECHO OFF
 IF "%1"=="NOWARNING" GOTO SKIPWARNING
-ECHO OSPlus Text Editor Build Process - DJGPP
+ECHO OSPlus Text Editor Build Process - DJGPP with Allegro
 ECHO.
 ECHO DJMAKE must be set to your DJGPP\BIN\MAKE.EXE path. It is currently set
 ECHO to %DJMAKE%
@@ -13,7 +13,8 @@ ECHO Please ensure that DJGPP, Allegro and Turbo Vision are all correctly
 ECHO installed.
 ECHO.
 ECHO Press any key to continue, or CTRL-C to abort.
+PAUSE > NUL
 
 :SKIPWARNING
-%DJMAKE% -f textedit.mak
-CALL BUILDCNV.BAT
+%DJMAKE% -f djgppsnd.mak
+CALL BUILDCNV.BAT djgppsnd

@@ -1,0 +1,32 @@
+#define RES_INFO_ONLY
+
+#include "ospedit.h"
+
+1 VERSIONINFO 
+FILEVERSION OSP_TXT_MAJOR_VERSION, OSP_TXT_MINOR_VERSION, 0, 0
+PRODUCTVERSION OSP_MAJOR_VERSION, OSP_MINOR_VERSION, 0, 0
+FILEOS VOS__WINDOWS32
+FILETYPE VFT_APP
+{
+ BLOCK "StringFileInfo"
+ {
+  BLOCK "040904E4"
+  {
+   VALUE "CompanyName", "Owen Rudge\000\000"
+   VALUE "FileDescription", "OSPlus Text Editor\000"
+   VALUE "FileVersion", OSP_TXT_VERSION_STR "\000\000"
+   VALUE "InternalName", "OSPEDIT\000"
+   VALUE "LegalCopyright", "Copyright © Owen Rudge 2000-2001\000\000"
+   VALUE "OriginalFilename", "OSPEDIT.EXE\000"
+   VALUE "ProductName", "OSPlus\000"
+   VALUE "ProductVersion", OSP_VERSION_STR "\000\000"
+  }
+
+ }
+
+ BLOCK "VarFileInfo"
+ {
+  VALUE "Translation", 0x0809, 1252
+ }
+}
+
