@@ -1,0 +1,182 @@
+# IMPORTANT! Change BCPATH to your Borland C++ root directory
+# (eg D:\BC45)
+#
+.AUTODEPEND
+
+
+#
+# Borland C++ tools
+#
+IMPLIB  = IMPLIB
+BCCDOS  = BCC +BCCDOS.CFG 
+TLINK   = TLINK
+TLIB    = TLIB
+TASM    = TASM
+
+#
+# IDE macros
+#
+
+
+#
+# Options
+#
+BCPATH = D:\BC45
+IDE_LFLAGSDOS =  -L$(BCPATH)\LIB -P=65535
+IDE_BFLAGS = 
+CLATDOS_ospeditdexe =  -v- -R- -k- -1- -p- -ml -f
+LLATDOS_ospeditdexe =  -L$(BCPATH)\LIB -P=65535 -Tde
+RLATDOS_ospeditdexe = 
+BLATDOS_ospeditdexe = 
+CEAT_ospeditdexe = $(CLATDOS_ospeditdexe)
+CNIEAT_ospeditdexe = -I$(BCPATH)\INCLUDE -D
+LNIEAT_ospeditdexe = -x
+LEAT_ospeditdexe = $(LLATDOS_ospeditdexe)
+REAT_ospeditdexe = $(RLATDOS_ospeditdexe)
+BEAT_ospeditdexe = $(BLATDOS_ospeditdexe)
+CLATDOS_txtrtfdcnv =  -ml -f-
+LLATDOS_txtrtfdcnv =  -c -Tde -L$(BCPATH)\LIB
+RLATDOS_txtrtfdcnv = 
+BLATDOS_txtrtfdcnv = 
+CEAT_txtrtfdcnv = $(CLATDOS_txtrtfdcnv)
+CNIEAT_txtrtfdcnv = -I$(BCPATH)\INCLUDE -D
+LNIEAT_txtrtfdcnv = -x
+LEAT_txtrtfdcnv = $(LLATDOS_txtrtfdcnv)
+REAT_txtrtfdcnv = $(RLATDOS_txtrtfdcnv)
+BEAT_txtrtfdcnv = $(BLATDOS_txtrtfdcnv)
+CLATDOS_txtwritedcnv =  -ml -f-
+LLATDOS_txtwritedcnv =  -c -Tde -L$(BCPATH)\LIB
+RLATDOS_txtwritedcnv = 
+BLATDOS_txtwritedcnv = 
+CEAT_txtwritedcnv = $(CLATDOS_txtwritedcnv)
+CNIEAT_txtwritedcnv = -I$(BCPATH)\INCLUDE -D
+LNIEAT_txtwritedcnv = -x
+LEAT_txtwritedcnv = $(LLATDOS_txtwritedcnv)
+REAT_txtwritedcnv = $(RLATDOS_txtwritedcnv)
+BEAT_txtwritedcnv = $(BLATDOS_txtwritedcnv)
+
+#
+# Dependency List
+#
+Dep_ospedit = \
+   ospedit.exe\
+   txtrtf.cnv\
+   txtwrite.cnv
+
+ospedit : BCCDOS.CFG $(Dep_ospedit)
+  echo MakeNode 
+
+Dep_ospeditdexe = \
+   ospedit1.obj\
+   ospedit2.obj\
+   ospedit3.obj\
+   gemsnd.obj\
+   calc.obj\
+   aboutdlg.obj
+
+ospedit.exe : $(Dep_ospeditdexe)
+  $(TLINK)   @&&|
+ /v $(IDE_LFLAGSDOS) $(LEAT_ospeditdexe) $(LNIEAT_ospeditdexe) +
+D:\BC45\LIB\c0l.obj+
+ospedit1.obj+
+ospedit2.obj+
+ospedit3.obj+
+gemsnd.obj+
+calc.obj+
+aboutdlg.obj
+$<,$*
+D:\BC45\LIB\tv.lib+
+D:\BC45\LIB\emu.lib+
+D:\BC45\LIB\mathl.lib+
+D:\BC45\LIB\cl.lib
+
+|
+
+ospedit1.obj :  ospedit1.cpp
+  $(BCCDOS) -c @&&|
+ $(CEAT_ospeditdexe) $(CNIEAT_ospeditdexe) -o$@ ospedit1.cpp
+|
+
+ospedit2.obj :  ospedit2.cpp
+  $(BCCDOS) -c @&&|
+ $(CEAT_ospeditdexe) $(CNIEAT_ospeditdexe) -o$@ ospedit2.cpp
+|
+
+ospedit3.obj :  ospedit3.cpp
+  $(BCCDOS) -c @&&|
+ $(CEAT_ospeditdexe) $(CNIEAT_ospeditdexe) -o$@ ospedit3.cpp
+|
+
+gemsnd.obj :  gemsnd.c
+  $(BCCDOS) -P- -c @&&|
+ $(CEAT_ospeditdexe) $(CNIEAT_ospeditdexe) -o$@ gemsnd.c
+|
+
+calc.obj :  calc.cpp
+  $(BCCDOS) -c @&&|
+ $(CEAT_ospeditdexe) $(CNIEAT_ospeditdexe) -o$@ calc.cpp
+|
+
+aboutdlg.obj :  aboutdlg.cpp
+  $(BCCDOS) -c @&&|
+ $(CEAT_ospeditdexe) $(CNIEAT_ospeditdexe) -o$@ aboutdlg.cpp
+|
+
+Dep_txtrtfdcnv = \
+   rtfactn.obj\
+   rtfreadr.obj
+
+txtrtf.cnv : $(Dep_txtrtfdcnv)
+  $(TLINK)   @&&|
+ /v $(IDE_LFLAGSDOS) $(LEAT_txtrtfdcnv) $(LNIEAT_txtrtfdcnv) +
+D:\BC45\LIB\c0l.obj+
+rtfactn.obj+
+rtfreadr.obj
+$<,$*
+D:\BC45\LIB\cl.lib
+
+|
+
+rtfactn.obj :  rtfactn.c
+  $(BCCDOS) -P- -c @&&|
+ $(CEAT_txtrtfdcnv) $(CNIEAT_txtrtfdcnv) -o$@ rtfactn.c
+|
+
+rtfreadr.obj :  rtfreadr.c
+  $(BCCDOS) -P- -c @&&|
+ $(CEAT_txtrtfdcnv) $(CNIEAT_txtrtfdcnv) -o$@ rtfreadr.c
+|
+
+Dep_txtwritedcnv = \
+   txtwrite.obj
+
+txtwrite.cnv : $(Dep_txtwritedcnv)
+  $(TLINK)   @&&|
+ /v $(IDE_LFLAGSDOS) $(LEAT_txtwritedcnv) $(LNIEAT_txtwritedcnv) +
+D:\BC45\LIB\c0l.obj+
+txtwrite.obj
+$<,$*
+D:\BC45\LIB\cl.lib
+
+|
+
+txtwrite.obj :  txtwrite.c
+  $(BCCDOS) -P- -c @&&|
+ $(CEAT_txtwritedcnv) $(CNIEAT_txtwritedcnv) -o$@ txtwrite.c
+|
+
+# Compiler configuration file
+BCCDOS.CFG : 
+   COPY &&|
+-W-
+-R
+-v
+-vi
+-H
+-H=tvedit.csm
+-1-
+-v-
+-R-
+-k-
+-g0
+| $@
