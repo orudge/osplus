@@ -173,14 +173,14 @@ txtwrite.obj :  txtwrite.c
 |
 
 # Compiler configuration file
-BccDos.cfg : 
-   Copy &&|
+BCCDOS.CFG : 
+   COPY &&|
 -W-
 -R
 -v
 -vi
 -H
--H=tvedit.csm
+-H=ospedit.csm
 -1-
 -v-
 -R-

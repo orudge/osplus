@@ -63,7 +63,7 @@ osped321.obj+
 osped322.obj+
 osped323.obj
 $<,$*
-$(BCPATH)\LIB\dpmi32.lib+
+$(BCPATH)\LIB\import32.lib+
 $(BCPATH)\LIB\tv32.lib+
 $(BCPATH)\LIB\cw32.lib
 ospedt32.def

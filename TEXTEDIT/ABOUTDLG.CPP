@@ -25,9 +25,9 @@ TAboutDialog::TAboutDialog() :
  control = new TStaticText(TRect(2, 1, 48, 7), "OSPlus Text Editor\n"
      "Open Source\n"
      "\n"
-     "Version 1.1, Build 20001226\n"
+     "Version 1.1, Build 20010204\n"
      "\n"
-     "Copyright (c) Owen Rudge 2000");
+     "Copyright (c) Owen Rudge 2000-2001");
  insert(control);
 
  control = new TStaticText(TRect(2, 8, 48, 10), "This program is licensed und"
@@ -76,15 +76,3 @@ TStreamable *TAboutDialog::build()
 {
     return new TAboutDialog( streamableInit );
 }
-
-// From here to end of file may be removed if TAboutDialog will not be streamed.
-
-TStreamableClass RAboutDialog( TAboutDialog::name,
-                        TAboutDialog::build,
-                        __DELTA(TAboutDialog)
-                      );
-
-__link(RAboutDialog)
-__link(RButton)
-__link(RStaticText)
-
