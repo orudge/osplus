@@ -1,10 +1,10 @@
-/**********************************************************/
-/* OSPlus Utility Kit 1.1                                 */
-/* Copyright (c) Owen Rudge 2000. All Rights Reserved.    */
-/**********************************************************/
-/* OSPlus Write Converter                                 */
-/* TXTWRITE.CNV                                           */
-/**********************************************************/
+/*************************************************************/
+/* OSPlus - Open Source version                              */
+/* Copyright (c) Owen Rudge 2000-2001. All Rights Reserved.  */
+/*************************************************************/
+/* OSPlus Write Converter                                    */
+/* TXTWRITE.CNV                                              */
+/*************************************************************/
 
 #include <string.h>
 #include <stdlib.h>
@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
 	if (argc != 3)
 	{
 		printf("OSPlus Write to Text Converter 1.1\n");
-		printf("Copyright (c) Owen Rudge 2000\n");
+		printf("Copyright (c) Owen Rudge 2000-2001\n");
 		printf("\n");
 		printf("Usage:  TXTWRITE.CNV source dest\n");
 		exit(1);

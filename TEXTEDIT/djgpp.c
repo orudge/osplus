@@ -1,12 +1,12 @@
-/************************************************************/
-/* OSPlus Utility Kit 1.2                                   */
-/* Copyright (c) Owen Rudge 2000-2001. All Rights Reserved. */
-/************************************************************/
-/* OSPlus Text Editor - Standalone                          */
-/* OSPEDIT.EXE                                              */
-/************************************************************/
-/* Platform-specific sound-related functions - DJGPP/Linux  */
-/************************************************************/
+/*************************************************************/
+/* OSPlus - Open Source version                              */
+/* Copyright (c) Owen Rudge 2000-2001. All Rights Reserved.  */
+/*************************************************************/
+/* OSPlus Text Editor - Standalone                           */
+/* OSPEDIT.EXE                                               */
+/*************************************************************/
+/* Platform-specific sound-related functions - DJGPP/Linux   */
+/*************************************************************/
 
 /* This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License

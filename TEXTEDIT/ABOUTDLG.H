@@ -16,11 +16,10 @@
 #define Uses_TStaticText
 
 #if defined(__DJGPP__) || defined(__LINUX__)
-  #include <tv.h>
+	#include <tv.h>
 #else
-  #include <tvision\tv.h>
+	#include <tvision\tv.h>
 #endif
-
 
 
 class TAboutDialog : public TDialog
@@ -35,6 +34,7 @@ public:
     virtual void handleEvent( TEvent& );
     virtual Boolean valid( ushort );
 
+    TStaticText *build_version;
 
 
 private:

@@ -1,12 +1,12 @@
-/************************************************************/
-/* OSPlus Utility Kit 1.2                                   */
-/* Copyright (c) Owen Rudge 2000-2001. All Rights Reserved. */
-/************************************************************/
-/* OSPlus Text Editor - Standalone                          */
-/* OSPEDIT.EXE                                              */
-/************************************************************/
-/* Main source file                                         */
-/************************************************************/
+/*************************************************************/
+/* OSPlus - Open Source version                              */
+/* Copyright (c) Owen Rudge 2000-2001. All Rights Reserved.  */
+/*************************************************************/
+/* OSPlus Text Editor - Standalone                           */
+/* OSPEDIT.EXE                                               */
+/*************************************************************/
+/* Main source file                                          */
+/*************************************************************/
 
 /* This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -32,6 +32,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
  * 24/12/2000: Added Linux version (orudge)
  * 14/01/2001: Updated copyright for OSPlus Utility Kit 1.2 (orudge)
  * 04/02/2001: Added MIDI player (orudge)
+ * 19/05/2001: Added new About OSPlus dialog instead of old one (orudge)
+ * 19/05/2001: Tried to add support to save and restore workspace (orudge)
  */
 
 //#define DJGPP_NO_SOUND_SUPPORT
@@ -53,6 +55,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 #define Uses_TDialog
 #define Uses_TStaticText
 #define Uses_TButton
+
+#ifdef SAVE_RESTORE_DESKTOP
+	#define Uses_fpstream
+#endif
 
 #include "sound.h"
 
@@ -94,6 +100,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 
 #include "ospedit.h"
 #include "aboutdlg.h"
+#include "aboutosp.h"
 
 #include <stdlib.h>
 #include <stdarg.h>
@@ -202,7 +209,7 @@ TEditorApp::TEditorApp() :
 	 if (IsInitialFile == True)
 	 {
 #ifdef __LINUX__
-                  strcpy(tmp, initialfile);
+		  strcpy(tmp, initialfile);
 		  if (strstr(strupr(tmp), ".RTF") != NULL)
 #else
 		  if (strstr(strupr(initialfile), ".RTF") != NULL)
@@ -226,7 +233,7 @@ TEditorApp::TEditorApp() :
 			  unlink(szBuf);
 		  }
 #ifdef __LINUX__
-                  else if (strstr(strupr(tmp), ".WRI") != NULL)
+		  else if (strstr(strupr(tmp), ".WRI") != NULL)
 #else
 		  else if (strstr(strupr(initialfile), ".WRI") != NULL)
 #endif
@@ -264,8 +271,8 @@ void TEditorApp::fileOpen()
 				"~N~ame", fdOpenButton, 100 ), fileName) != cmCancel )
 	 {
 #ifdef __LINUX__
-                  strcpy(tmp, fileName);
-                  if (strstr(strupr(tmp), ".RTF") != NULL)
+		  strcpy(tmp, fileName);
+		  if (strstr(strupr(tmp), ".RTF") != NULL)
 #else
 		  if (strstr(strupr(fileName), ".RTF") != NULL)
 #endif
@@ -288,7 +295,7 @@ void TEditorApp::fileOpen()
 			  unlink(szBuf);
 		  }
 #ifdef __LINUX__
-                  else if (strstr(strupr(tmp), ".WRI") != NULL)
+		  else if (strstr(strupr(tmp), ".WRI") != NULL)
 #else
 		  else if (strstr(strupr(fileName), ".WRI") != NULL)
 #endif
@@ -322,7 +329,7 @@ void TEditorApp::fileNew()
 
 void TEditorApp::changeDir()
 {
-    execDialog( new TChDirDialog( cdNormal, 0 ), 0 );
+	 execDialog( new TChDirDialog( cdNormal, 0 ), 0 );
 }
 
 void TEditorApp::dosShell()
@@ -330,13 +337,13 @@ void TEditorApp::dosShell()
 	suspend();
 
 #ifdef __LINUX__
- 	system("clear");
-        cout << "Type exit to return to OSPlus Text Editor\n";
+	system("clear");
+	cout << "Type exit to return to OSPlus Text Editor\n";
 	system(getenv("SHELL"));
 #else
-	system("cls");
-        cout << "Type EXIT to return to OSPlus Text Editor\n";
-        system(getenv("COMSPEC"));
+	clrscr();
+	cout << "Type EXIT to return to OSPlus Text Editor\n";
+	system(getenv("COMSPEC"));
 #endif
 
 	resume();
@@ -345,8 +352,8 @@ void TEditorApp::dosShell()
 
 void TEditorApp::showClip()
 {
-    clipWindow->select();
-    clipWindow->show();
+	 clipWindow->select();
+	 clipWindow->show();
 }
 
 void TEditorApp::tile()
@@ -430,32 +437,29 @@ void TEditorApp::handleEvent( TEvent& event )
 					 stopMID();
 					 break;
 
+#ifdef SAVE_RESTORE_DESKTOP
+				case cmSaveDesktop:
+					 saveDesktop();
+					 break;
+
+				case cmRestoreDesktop:
+					 retrieveDesktop();
+					 break;
+#endif
+
 				default:
 					 return ;
-            }
+				}
 	 clearEvent( event );
 }
 
 void TEditorApp::aboutBox( void ) {
-	 TDialog *aboutBox = new TDialog(TRect(0, 0, 39, 13), "About OSPlus");
-
-	 aboutBox->insert(
-		new TStaticText(TRect(11, 2, 30, 10), // 9
-		  "\003OSPlus Utility Kit\n"
-                  "\003Version 1.2\n\n"
-                  "\003Copyright (c) Owen Rudge 2000-2001\n"       // The \003 centers the line.
-		  "\003All Rights Reserved\n"
-		  )
-		);
-
-	 aboutBox->insert(
-		new TButton(TRect(14, 10, 26, 12), " OK", cmOK, bfDefault)
-		);
+	 TDialog *aboutBox = new TAboutOSPlus();
 
 	 aboutBox->options |= ofCentered;
 
 #if defined(__DJGPP__) || defined(__LINUX__)
-    deskTop->execView(aboutBox);
+	 deskTop->execView(aboutBox);
 #else
 	 executeDialog(aboutBox);
 #endif
@@ -463,9 +467,14 @@ void TEditorApp::aboutBox( void ) {
 
 void TEditorApp::aboutProg()
 {
-	 TDialog *aboutBox = new TAboutDialog();
+	 TAboutDialog *aboutBox = new TAboutDialog();
+	 char bldtxt[50];
+
+	 sprintf(bldtxt, "%c%s", 3, BUILD_VERSION);
 
 	 aboutBox->options |= ofCentered;
+	 aboutBox->build_version = new TStaticText(TRect(2, 15, 49, 16), bldtxt);
+	 aboutBox->insert(aboutBox->build_version);
 
 #if defined(__DJGPP__) || defined(__LINUX__)
 	 deskTop->execView(aboutBox);
@@ -546,7 +555,7 @@ void TEditorApp::stopMID()
 #ifdef NO_MIDI_MUSIC
    messageBox("MIDI music is not enabled with this version.", cmOK);
 #else
-   snd_StopMID();
+	snd_StopMID();
 #endif
 }
 
@@ -563,10 +572,104 @@ int main(int argc, char *argv[])
 	 TEditorApp editorApp;
 	 editorApp.run();
 
-       snd_Exit();
+	 snd_Exit();
 	 return 0;
 #if defined(__LINUX__) && defined(ALLEGRO_H)
 } END_OF_MAIN();
 #else
+}
+#endif
+
+#ifdef SAVE_RESTORE_DESKTOP
+//
+// retrieveDesktop() function (restores the previously stored Desktop)
+//
+
+void TEditorApp::retrieveDesktop()
+{
+	FILE *fp;
+
+	if ((fp = fopen("OSPEDIT.DST", "r")) == NULL)
+		messageBox("Cannot find desktop file OSPEDIT.DST.", mfOKButton | mfError);
+	else
+	{
+		fclose(fp);
+		fpstream *f = new fpstream("OSPEDIT.DST", ios::in|ios::bin);
+		if (!f)
+			messageBox("Cannot open desktop file", mfOKButton | mfError);
+		else
+		{
+			TEditorApp::loadDesktop(*f);
+			if (!f)
+				messageBox("Error reading desktop file", mfOKButton | mfError);
+		}
+		delete f;
+	}
+}
+
+//
+// saveDesktop() function (saves the DeskTop by calling storeDesktop function)
+//
+
+void TEditorApp::saveDesktop()
+{
+	fpstream *f = new fpstream("OSPEDIT.DST", ios::out|ios::bin);
+
+	if (f)
+	{
+		TEditorApp::storeDesktop(*f);
+
+		if (!f)
+		{
+			messageBox("Could not create OSPEDIT.DST.", mfOKButton | mfError);
+			delete f;
+			::remove("OSPEDIT.DST");
+			return;
+		}
+	}
+	delete f;
+
+   messageBox("The desktop has been saved.", mfOKButton | mfInformation);
+}
+
+void TEditorApp::loadDesktop(fpstream &s)
+{
+	TView *p;
+
+	if (deskTop->valid(cmClose))
+	{
+		deskTop->forEach(::closeView, 0); //View, 0);  // Clear the desktop
+		do {
+			s >> p;
+			deskTop->insertBefore(validView(p), deskTop->last);
+		}
+		while (p != 0);
+	}
+}
+
+//
+// storeDesktop() function ( stores the Desktop in a resource file )
+//
+
+void TEditorApp::storeDesktop(fpstream& s)
+{
+  deskTop->forEach(::writeView, &s);
+  s << 0;
+}
+
+static void writeView(TView *p, void *strm)
+{
+	fpstream *s = (fpstream *) strm;
+	if (p != TProgram::deskTop->last)
+		*s << p;
+}
+
+//
+// closeView() function
+//
+
+static void closeView(TView *p, void *p1)
+{
+	 message(p, evCommand, cmClose, p1);
 }
 #endif

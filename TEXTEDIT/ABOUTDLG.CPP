@@ -5,9 +5,9 @@
 #define Uses_TEvent
 
 #if defined(__DJGPP__) || defined(__LINUX__)
-  #include <tv.h>
+	#include <tv.h>
 #else
-  #include <tvision\tv.h>
+	#include <tvision\tv.h>
 #endif
 
 #if !defined( __ABOUTDLG_H )
@@ -15,7 +15,7 @@
 #endif
 
 TAboutDialog::TAboutDialog() :
-       TDialog(TRect(15, 2, 65, 20), "About OSPlus Text Editor"),
+       TDialog(TRect(15, 2, 65, 22), "About OSPlus Text Editor"),
        TWindowInit(TAboutDialog::initFrame)
 
 {
@@ -25,7 +25,7 @@ TAboutDialog::TAboutDialog() :
  control = new TStaticText(TRect(2, 1, 48, 7), "OSPlus Text Editor\n"
      "Open Source\n"
      "\n"
-     "Version 1.1, Build 20010204\n"
+     "Version 2.0, Build 20010519\n"
      "\n"
      "Copyright (c) Owen Rudge 2000-2001");
  insert(control);
@@ -39,8 +39,11 @@ TAboutDialog::TAboutDialog() :
      "ion.");
  insert(control);
 
- control = new TButton(TRect(21, 15, 31, 17), "O~K~", cmOK, bfDefault);
+ control = new TButton(TRect(21, 17, 31, 19), "O~K~", cmOK, bfDefault);
  insert(control);
+
+ build_version = new TStaticText(TRect(2, 15, 49, 16), "Version unknown");
+ insert(build_version);
 
  selectNext(False);
 }
@@ -64,11 +67,13 @@ const char * const TAboutDialog::name = "TAboutDialog";
 void TAboutDialog::write( opstream& os )
 {
  TDialog::write( os );
+ os << build_version;
 }
 
 void *TAboutDialog::read( ipstream& is )
 {
  TDialog::read( is );
+ is >> build_version;
  return this;
 }
 
@@ -76,3 +81,15 @@ TStreamable *TAboutDialog::build()
 {
     return new TAboutDialog( streamableInit );
 }
+
+// From here to end of file may be removed if TAboutDialog will not be streamed.
+
+TStreamableClass RAboutDialog( TAboutDialog::name,
+                        TAboutDialog::build,
+                        __DELTA(TAboutDialog)
+                      );
+
+__link(RAboutDialog)
+__link(RButton)
+__link(RStaticText)
+

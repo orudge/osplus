@@ -1,5 +1,5 @@
 /*************************************************************/
-/* OSPlus Utility Kit 1.2                                    */
+/* OSPlus - Open Source version                              */
 /* Copyright (c) Owen Rudge 2000-2001. All Rights Reserved.  */
 /*************************************************************/
 /* OSPlus Text Editor - Standalone                           */
