@@ -1,0 +1,22 @@
+CHANGES
+=======
+
+RAWRITE History
+---------------
+
+1.0   - Initial release
+
+1.1   - Beta test (fixing bugs)                        4/5/1991
+        Some BIOS's don't like full-track writes.
+
+1.101 - Last beta release.                             4/8/1991
+        Fixed BIOS full-track write by only
+        writing 3 sectors at a time.
+
+1.2   - Final code and documentation clean-ups.        4/9/1991
+
+Disk Imager Changes
+-------------------
+
+21/10/2000: Created Turbo Vision interface for RAWRITE (orudge)
+19/12/2000: Few changes for Open Source upload         (orudge)

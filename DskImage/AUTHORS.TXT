@@ -1,0 +1,5 @@
+AUTHORS
+=======
+
+Owen Rudge <orudge@freeuk.com> - GUI, just about everything not written by someone else
+Mark Becker <???>              - Original RAWRITE routines
