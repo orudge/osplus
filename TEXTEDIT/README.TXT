@@ -13,7 +13,7 @@ While developing the Text Editor, I changed "TEXTEDIT.MAK" to "textedit.mak"
 (or vice versa, I can't remember), and now there are two files in the CVS
 repository and I can't delete the other one! The same goes for BUILD. So,
 I've created a few files called !EXTEDIT.MAK and !UILD, and a file called
-FIXCVS.BAT, which will put things right.
+FIXCVS.BAT, which will put things right. * PLEASE RUN FIXCVS RIGHT AWAY!!! * 
 ****************************************************************************
 
 There are a few different builds for the Text Editor, which are:
@@ -62,7 +62,8 @@ To build the version without Allegro, set DJPATH as appropriate then type
 BUILDDNA.
 
 To build all these different versions at once, set BCPATH and DJPATH, then
-type BUILD.
+type BUILD. The Borland C++ converters will have .CNV extensions, while the
+DJGPP ones will have .EXE extensions.
 
 To build the Linux version, you need:
 
