@@ -15,13 +15,13 @@ DJGPP_NO_SOUND_SUPPORT is not defined. If you don't want sound support,
 #define DJGPP_NO_SOUND_SUPPORT. Please remember to remove the ALLEG library
 from the Libraries dialog. You need a copy of Allegro to compile with
 sound support - download the "original" library from www.talula.demon.co.uk,
-and the latest WIP from http://alleg.sourceforge.net/.
+or the latest WIP from http://alleg.sourceforge.net/.
 
 There is a bug where if you open an RTF file or DOS prompt, the sound may
 stop playing and you have to restart the Editor. This is due to the system
 switching into real mode to perform the conversion or the DOS prompt.
 
-To compile the converters in DJGPP, run BUILDCNV.BAT.
+To compile the converters with DJGPP, run BUILDCNV.BAT.
 
 Also, you may find it useful to compress all the resulting EXE files: without
 Allegro support, this is about 1.5mb, with Allegro, this can be over 2mb!
@@ -35,6 +35,8 @@ which can be downloaded from Borland (see the \README.TXT file). On my
 system, it isn't very good in Windows, as bits of the screen are left
 behind, the interface is slow, it doesn't always paint properly and so
 on. It works fine in real DOS mode with the Borland 32RTM extender.
+It seems to crash with the Select MIDI file routine, something to do
+with mciSendString I'd guess (perhaps the wsprintf call?).
 
 I have used the Windows multimedia functions for WAV support in Win32
 (WINMM.DLL - sndPlaySound and so on). If you try to run the program from
@@ -77,4 +79,4 @@ drivers. You can download them at www.geocities.com/heinz_rath/.
 
 Happy hacking!
 
-Owen Rudge, 26th December 2000
+Owen Rudge, 4th February 2001

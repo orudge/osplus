@@ -1,12 +1,12 @@
-/**********************************************************/
-/* OSPlus Utility Kit 1.1                                 */
-/* Copyright (c) Owen Rudge 2000. All Rights Reserved.    */
-/**********************************************************/
-/* OSPlus Text Editor - Standalone                        */
-/* OSPEDIT.EXE                                            */
-/**********************************************************/
-/* Dialogs and menus                                      */
-/**********************************************************/
+/************************************************************/
+/* OSPlus Utility Kit 1.2                                   */
+/* Copyright (c) Owen Rudge 2000-2001. All Rights Reserved. */
+/************************************************************/
+/* OSPlus Text Editor - Standalone                          */
+/* OSPEDIT.EXE                                              */
+/************************************************************/
+/* Dialogs and menus                                        */
+/************************************************************/
 
 /* This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -22,20 +22,20 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 
-#define	Uses_TApplication
-#define	Uses_TMenuBar
-#define	Uses_TRect
-#define	Uses_TSubMenu
-#define	Uses_TKeys
-#define	Uses_TMenuItem
-#define	Uses_TStatusLine
-#define	Uses_TStatusItem
-#define	Uses_TStatusDef
-#define	Uses_TPoint
-#define	Uses_TEditor
-#define	Uses_MsgBox
-#define	Uses_TFileDialog
-#define	Uses_TDeskTop
+#define Uses_TApplication
+#define Uses_TMenuBar
+#define Uses_TRect
+#define Uses_TSubMenu
+#define Uses_TKeys
+#define Uses_TMenuItem
+#define Uses_TStatusLine
+#define Uses_TStatusItem
+#define Uses_TStatusDef
+#define Uses_TPoint
+#define Uses_TEditor
+#define Uses_MsgBox
+#define Uses_TFileDialog
+#define Uses_TDeskTop
 
 #if defined(__DJGPP__) || defined(__LINUX__)
    #include <tv.h>
@@ -65,7 +65,15 @@ TMenuBar *TEditorApp::initMenuBar( TRect r )
 		  newLine() +
 		  *new TMenuItem( "~S~elect WAV...", cmSelectWAV, kbNoKey) +
 		  *new TMenuItem( "~P~lay WAV",	cmPlayWAV, kbNoKey) +
-	*new TMenuItem(	"S~t~op WAV", cmStopWAV, kbNoKey);
+		  *new TMenuItem(	"S~t~op WAV", cmStopWAV, kbNoKey)
+#if defined(__MSDOS__) && !defined(__DJGPP__)
+              ;
+#else
+		  + newLine() +
+		  *new TMenuItem( "S~e~lect MID...", cmSelectMID, kbNoKey) +
+		  *new TMenuItem( "Pla~y~ MID", cmPlayMID, kbNoKey) +
+		  *new TMenuItem(	"Stop M~I~D", cmStopMID, kbNoKey);
+#endif
 
 		TSubMenu& sub1 = *new TSubMenu(	"~F~ile", kbAltF ) +
 		  *new TMenuItem( "~N~ew", cmNew, kbNoKey ) +

@@ -1,12 +1,12 @@
-/**********************************************************/
-/* OSPlus Utility Kit 1.1                                 */
-/* Copyright (c) Owen Rudge 2000. All Rights Reserved.    */
-/**********************************************************/
-/* OSPlus Text Editor - Standalone                        */
-/* OSPEDIT.EXE                                            */
-/**********************************************************/
-/* Main source file                                       */
-/**********************************************************/
+/************************************************************/
+/* OSPlus Utility Kit 1.2                                   */
+/* Copyright (c) Owen Rudge 2000-2001. All Rights Reserved. */
+/************************************************************/
+/* OSPlus Text Editor - Standalone                          */
+/* OSPEDIT.EXE                                              */
+/************************************************************/
+/* Main source file                                         */
+/************************************************************/
 
 /* This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -30,6 +30,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
  * 19/12/2000: Added new About dialog (orudge)
  * 20/12/2000: Added Win32 version - uses Windows WINMM.DLL (orudge)
  * 24/12/2000: Added Linux version (orudge)
+ * 14/01/2001: Updated copyright for OSPlus Utility Kit 1.2 (orudge)
+ * 04/02/2001: Added MIDI player (orudge)
  */
 
 //#define DJGPP_NO_SOUND_SUPPORT
@@ -69,6 +71,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
    #include <strstrea.h>
 
    #include "calc.h"
+
+   #ifndef __WIN32__
+      #define NO_MIDI_MUSIC
+   #endif
+#endif
+
+#if !defined(ALLEGRO_H) && !defined(__WIN32__)
+   #define REAL_DOS // real-mode DOS
 #endif
 
 #if defined(__LINUX__) && !defined(ALLEGRO_H)
@@ -118,6 +128,9 @@ char initialfile[200];          // file name on cmd line
 
 extern char WAVName[MAXPATH];          // file name of WAV
 extern BOOL WAVLoaded;         // WAV loaded?
+
+extern char MIDName[MAXPATH];          // file name of MID
+extern BOOL MIDLoaded;         // MID loaded?
 
 extern BOOL SoundEnabled;
 
@@ -405,6 +418,18 @@ void TEditorApp::handleEvent( TEvent& event )
 					 stopWAV();
 					 break;
 
+				case cmSelectMID:
+					 selectMID();
+					 break;
+
+				case cmPlayMID:
+					 playMID();
+					 break;
+
+				case cmStopMID:
+					 stopMID();
+					 break;
+
 				default:
 					 return ;
             }
@@ -417,8 +442,8 @@ void TEditorApp::aboutBox( void ) {
 	 aboutBox->insert(
 		new TStaticText(TRect(11, 2, 30, 10), // 9
 		  "\003OSPlus Utility Kit\n"
-		  "\003Version 1.1\n\n"
-		  "\003Copyright (c) Owen Rudge 2000\n"       // The \003 centers the line.
+                  "\003Version 1.2\n\n"
+                  "\003Copyright (c) Owen Rudge 2000-2001\n"       // The \003 centers the line.
 		  "\003All Rights Reserved\n"
 		  )
 		);
@@ -488,6 +513,40 @@ void TEditorApp::stopWAV()
    messageBox("Sound is not enabled with this version.", cmOK);
 #else
    snd_StopWAV();
+#endif
+}
+
+void TEditorApp::selectMID()
+{
+   if (SoundEnabled == FALSE) goto leave;
+
+#ifdef NO_MIDI_MUSIC
+   messageBox("MIDI music is not enabled with this version.", cmOK);
+#else
+   strcpy( MIDName, "*.MID" );
+
+   if( execDialog( new TFileDialog( "*.MID", "Select MIDI File",
+			"~N~ame", fdOpenButton, 100 ), MIDName) != cmCancel )
+      snd_LoadMID();
+#endif
+leave: ;
+}
+
+void TEditorApp::playMID()
+{
+#ifdef NO_MIDI_MUSIC
+   messageBox("MIDI music is not enabled with this version.", cmOK);
+#else
+   snd_PlayMID();
+#endif
+}
+
+void TEditorApp::stopMID()
+{
+#ifdef NO_MIDI_MUSIC
+   messageBox("MIDI music is not enabled with this version.", cmOK);
+#else
+   snd_StopMID();
 #endif
 }
 

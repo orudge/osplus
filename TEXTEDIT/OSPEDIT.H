@@ -21,7 +21,10 @@ const int
   cmAboutApp   = 107,
   cmSelectWAV  = 108,
   cmPlayWAV    = 109,
-  cmStopWAV    = 110;
+  cmStopWAV    = 110,
+  cmSelectMID  = 111,
+  cmPlayMID    = 112,
+  cmStopMID    = 113;
 
 class TEditorApp : public TApplication
 {
@@ -44,14 +47,18 @@ private:
     void dosShell();
     void showClip();
     void tile();
-	 void cascade();
-	 void calculator();
-	 void aboutBox();
+    void cascade();
+    void calculator();
+    void aboutBox();
     void aboutProg();
 
-	 void selectWAV();
-	 void playWAV();
-	 void stopWAV();
+    void selectWAV();
+    void playWAV();
+    void stopWAV();
+
+    void selectMID();
+    void playMID();
+    void stopMID();
 };
 
 extern TEditWindow *clipWindow;
@@ -60,4 +67,3 @@ ushort execDialog( TDialog *d, void *data );
 TDialog *createFindDialog();
 TDialog *createReplaceDialog();
 ushort doEditDialog( int dialog, ... );
-

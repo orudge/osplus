@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
 	{
 		fread(&rest, sizeof(rest), 1, hndl);
 		fwrite(rest, sizeof(rest), 1, out);
-	} while (!feof(hndl));
+	} while (!feof(hndl)); /* need to stop when text ends and formatting codes etc start */
 
 	fclose(hndl);
 	fclose(out);

@@ -12,3 +12,5 @@ CHANGES
 24/12/2000: Added SOUND.C for sound-related routines (orudge)
 26/12/2000: Made TXTRTF.CNV and TXTWRITE.CNV more platform-independant (orudge)
 26/12/2000: Reimplemented converter support in Text Editor for Linux (orudge)
+04/02/2001: Added MIDI player for DJGPP, Win32 and Linux (orudge)
+04/02/2001: Moved all platform-specific sound code into separate files (orudge)

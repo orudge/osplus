@@ -308,9 +308,9 @@ void geninterrupt(int intr_num)
 }
 #endif
 
-#ifdef __DJGPP__
-unsigned short FP_OFF(void *buf)
-{
+#ifdef __DJGPP__ /* a couple of functions to stop annoying errors - of course, now */
+unsigned short FP_OFF(void *buf) /* the text editor has the new cross-platform sound */
+{                                /* routines, this isn't really needed */
    return(1);
 }
 
