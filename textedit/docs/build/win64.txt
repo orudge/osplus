@@ -1,0 +1,38 @@
+BUILDING OSPLUS TEXT EDITOR WITH MICROSOFT VISUAL C++ (WIN64)
+=============================================================
+
+To build the 64-bit (AMD64) MSVC version of the Text Editor, you need:
+
+- Microsoft Visual C++ 8.0 (2005) or higher. I have tested it with 9.0 (2007) and
+  10.0 (2010).
+
+- The latest Turbo Vision CVS checkout, available from
+  http://tvision.sourceforge.net/. Stable versions may compile with the 64-bit
+  compiler, but I have not tested them.
+
+  Note that when I built Turbo Vision for 64-bit, I had to remove
+  -D_USE_32BIT_TIME_T from makes/config.nmk. Otherwise, everything appeared
+  to build and function normally.
+
+- Dialog Designer, available from
+  http://www.eunet.bg/simtel.net/msdos/turbovis.html, if you wish to modify
+  dialogs. Note that the .dlg files are actually quite outdated now, and you
+  of course can't run Dialog Designer natively on 64-bit versions of Windows.
+
+TO BUILD
+========
+
+You must build Turbo Vision and copy the include files to <VCDIR>\Include and
+<VCDIR>\Include\tv as appropriate, and librhtv.lib to <VCDIR>\Lib\AMD64.
+
+Then simply type the following to build this version:
+
+   nmake /f w32msvc.mak
+
+The object files will be placed in obj/w32msvc, and the binaries will be placed
+in bin/w32msvc.
+
+If you have the UPX executable compressor installed (see http://upx.sf.net/), you can
+then compress the executables, reducing their sizes significantly, by running:
+
+   nmake /f w32msvc.mak compress
