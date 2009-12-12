@@ -31,7 +31,7 @@ OBJS = $(OBJS_:+=obj\w32msvc\)
 all: bin/w32msvc/ospedit.exe bin/w32msvc/txtrtf.cnv bin/w32msvc/txtwrite.cnv bin/w32msvc/msconv.cnv
 
 bin/w32msvc/ospedit.exe: $(OBJS) obj/w32msvc/ospedit.res
-	$(LD) /OUT:bin\w32msvc\ospedit.exe $(LDFLAGS) $(OBJS_2) libtv.lib kernel32.lib user32.lib winmm.lib gdi32.lib advapi32.lib obj\w32msvc\ospedit.res
+	$(LD) /OUT:bin\w32msvc\ospedit.exe $(LDFLAGS) $(OBJS_2) librhtv.lib kernel32.lib user32.lib winmm.lib gdi32.lib advapi32.lib obj\w32msvc\ospedit.res
 
 bin/w32msvc/txtrtf.cnv: obj/w32msvc/rtfactn.obj obj/w32msvc/rtfreadr.obj obj/w32msvc/txtrtf.res
 	$(LD) /OUT:bin\w32msvc\txtrtf.cnv $(LDFLAGS) obj\w32msvc\rtfactn.obj obj\w32msvc\rtfreadr.obj kernel32.lib user32.lib obj\w32msvc\txtrtf.res

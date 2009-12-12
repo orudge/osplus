@@ -55,7 +55,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 #include <stdlib.h>
 #include <stdarg.h>
 
-#if __GNUC__ >= 3
+#if (__GNUC__ >= 3) || (_MSC_VER >= 1400)
    #include <iomanip>
 #else
    #include <iomanip.h>
