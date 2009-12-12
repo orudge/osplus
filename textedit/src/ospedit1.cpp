@@ -1,6 +1,6 @@
 /*************************************************************/
 /* OSPlus - Open Source version                              */
-/* Copyright (c) Owen Rudge 2000-2005. All Rights Reserved.  */
+/* Copyright (c) Owen Rudge 2000-2009. All Rights Reserved.  */
 /*************************************************************/
 /* OSPlus Text Editor - Standalone                           */
 /* OSPEDIT.EXE                                               */
@@ -50,6 +50,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
  * 28/12/2004: Added new converter info dialog (orudge)
  * 31/12/2004: Added GCC ver for DJGPP (orudge)
  * 28/03/2005: Fixed deletion bug (orudge)
+ * 12/12/2009: Add support for detecting Windows Vista/7, 64-bit (orudge)
  */
 
 //#define DJGPP_NO_SOUND_SUPPORT
@@ -765,6 +766,10 @@ int main(int argc, char *argv[])
 				strcpy(__os, "Windows XP");
 			else if (VerInfo.dwMajorVersion == 5 && VerInfo.dwMinorVersion == 2)
 				strcpy(__os, "Windows Server 2003/XP 64-bit");
+			else if (VerInfo.dwMajorVersion == 6 && VerInfo.dwMinorVersion == 0)
+				strcpy(__os, "Windows Vista");
+			else if (VerInfo.dwMajorVersion == 6 && VerInfo.dwMinorVersion == 1)
+				strcpy(__os, "Windows 7");
 			else
 				strcpy(__os, "Windows NT"); // dunno what MS will invent in the future  ;)
 		}
@@ -783,13 +788,20 @@ int main(int argc, char *argv[])
 
 	sprintf(__os_ver, "DOS %d.%d", dmajor, dminor);
 #elif defined(__WIN32__)
-	sprintf(__os_ver, "%ld.%ld (%s)", VerInfo.dwMajorVersion, VerInfo.dwMinorVersion, VerInfo.szCSDVersion);
+	if (strlen(VerInfo.szCSDVersion) != 0)
+		sprintf(__os_ver, "%ld.%ld (%s)", VerInfo.dwMajorVersion, VerInfo.dwMinorVersion, VerInfo.szCSDVersion);
+	else
+		sprintf(__os_ver, "%ld.%ld", VerInfo.dwMajorVersion, VerInfo.dwMinorVersion);
 #else
 	sprintf(__os_ver, "Unknown");
 #endif
 
 #ifdef __MSVC__
-	#if (_MSC_VER == 1400)
+	#if (_MSC_VER == 1600)
+		sprintf(__msvc_compiler_ver, "10.0 (%d)", _MSC_VER);
+	#elif (_MSC_VER == 1500)
+		sprintf(__msvc_compiler_ver, "9.0 (%d)", _MSC_VER);
+	#elif (_MSC_VER == 1400)
 		sprintf(__msvc_compiler_ver, "8.0 (%d)", _MSC_VER);
 	#elif (_MSC_VER == 1310)
 		sprintf(__msvc_compiler_ver, "7.1 (%d)", _MSC_VER);
@@ -806,6 +818,13 @@ int main(int argc, char *argv[])
 	#else
 		sprintf(__msvc_compiler_ver, "%d", _MSC_VER);
 	#endif
+
+#ifdef _WIN64
+	strcat(__msvc_compiler_ver, " (x64)");
+#else
+	strcat(__msvc_compiler_ver, " (i386)");
+#endif
+
 #endif
 
 	TEditorApp editorApp;

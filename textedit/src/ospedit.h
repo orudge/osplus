@@ -63,7 +63,12 @@ extern char __os_ver[50];
 
 		extern char __gcc_ver[50];
 	#else
-		#define BUILD_VERSION     "MSVC version (Win32)"
+		#ifdef _WIN64
+			#define BUILD_VERSION     "MSVC version (Win64)"
+		#else
+			#define BUILD_VERSION     "MSVC version (Win32)"
+		#endif
+
 		#define OSP_COMPILER	  "Microsoft Visual C++"
 		#define OSP_COMPILER_VER  __msvc_compiler_ver
 		#define SOUND_SUPPORT     1

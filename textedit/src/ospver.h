@@ -18,6 +18,6 @@
 
 #define OSP_TXT_MAJOR_VERSION      2
 #define OSP_TXT_MINOR_VERSION      1
-#define OSP_TXT_REVISION_VERSION   1
-#define OSP_TXT_VERSION_STR        "2.1.1"
-#define OSP_TXT_BUILD_DATE         "20050331"
+#define OSP_TXT_REVISION_VERSION   2
+#define OSP_TXT_VERSION_STR        "2.1.2"
+#define OSP_TXT_BUILD_DATE         "20091212"
