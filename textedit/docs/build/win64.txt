@@ -25,7 +25,8 @@ TO BUILD
 You must build Turbo Vision and copy the include files to <VCDIR>\Include and
 <VCDIR>\Include\tv as appropriate, and librhtv.lib to <VCDIR>\Lib\AMD64.
 
-Then simply type the following to build this version:
+Then open up a command prompt with the x64 build tools in your path, and
+simply type the following to build this version:
 
    nmake /f w32msvc.mak
 
