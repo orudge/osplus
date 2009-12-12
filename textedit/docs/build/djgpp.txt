@@ -9,7 +9,9 @@ To build the DJGPP version of the Text Editor, you need:
   is recommended.
 
 - Dialog Designer, available from
-  www.simtel.net/simtel.net/msdos/turbovis.html, to modify the About dialogs
+  http://www.eunet.bg/simtel.net/msdos/turbovis.html, if you wish to modify
+  dialogs. Note that the .dlg files are actually quite outdated now, so you may
+  be better off simply modifying the source files.
 
 If you want sound support in your copy of the Text Editor, you also need:
 

@@ -18,7 +18,10 @@ TO BUILD
 ========
 
 You must build Turbo Vision and copy the include files to <VCDIR>\Include and
-<VCDIR>\Include\tv as appropriate, and LIBTV.LIB to <VCDIR>\LIB.
+<VCDIR>\Include\tv as appropriate, and librhtv.lib to <VCDIR>\Lib.
+
+Note that certain older versions of Turbo Vision named the library "rhtv.lib".
+You may need to rename the library, or modify w32msvc.mak, as appropriate.
 
 Then simply type the following to build this version:
 

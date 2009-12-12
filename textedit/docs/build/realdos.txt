@@ -9,7 +9,9 @@ The real-mode DOS version of the Text Editor requires:
   Borland's web site at www.borland.com.
 
 - Dialog Designer, available from
-  www.simtel.net/simtel.net/msdos/turbovis.html, to modify the About dialogs
+  http://www.eunet.bg/simtel.net/msdos/turbovis.html, if you wish to modify
+  dialogs. Note that the .dlg files are actually quite outdated now, so you may
+  be better off simply modifying the source files.
 
 - Heinz Rath's sound drivers available from www.geocities.com/heinz_rath/ if
   you want to be able to play WAV files from the Text Editor. These are not

@@ -18,7 +18,7 @@ For the version with sound support, you also need:
 
 To make use of Win32 file converters, you will also require:
 
-- WINE, available from http://www.winehq.com/. OSPlus Text Editor has been tested with wine 20041201,
+- Wine, available from http://www.winehq.org/. OSPlus Text Editor has been tested with wine 20041201,
   but any reasonably recent version should work.
 
 TO BUILD
@@ -28,7 +28,7 @@ To build this version, simply run:
 
    ./configure linux
 
-For a version with sound support, append `--with-alleg', and if you have WINE installed, append
+For a version with sound support, append `--with-alleg', and if you have Wine installed, append
 `--with-wine'.
 
 You can then simply run:
