@@ -139,7 +139,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 
 #include "convert.h"
 
-typedef char BOOL;
+#ifndef __WIN32__
+	typedef char BOOL;
+#endif
 
 #ifndef FALSE
 	#define FALSE False
