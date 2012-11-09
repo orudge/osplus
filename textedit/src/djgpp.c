@@ -29,12 +29,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 
 #include <stdio.h>
 
-#if defined(DJGPP_NO_SOUND_SUPPORT) || defined(LINUX_NO_SOUND_SUPPORT)
-   #define NO_SOUND_SUPPORT
-#endif
-
-#if defined(__MSDOS__) && !defined(WITH_ALLEG)
-   static void detect_os(void);
+#if defined(__MSDOS__)
    int os_type = 0;
 
    #include <dpmi.h>
@@ -51,14 +46,6 @@ typedef int BOOL;
    #define FALSE  0
 #endif
 
-#if !defined(NO_SOUND_SUPPORT)
-   #define USE_CONSOLE
-   #include <allegro.h>
-
-   SAMPLE *waveSample;
-   MIDI *midi;
-#endif
-
 #ifndef MAXPATH
    #ifdef PATH_MAX
       #define MAXPATH PATH_MAX
@@ -66,97 +53,6 @@ typedef int BOOL;
       #define MAXPATH  200
    #endif
 #endif
-
-char WAVName[MAXPATH];          // file name of WAV
-BOOL WAVLoaded = FALSE;         // WAV loaded?
-
-char MIDName[MAXPATH];          // file name of WAV
-BOOL MIDLoaded = FALSE;         // WAV loaded?
-
-BOOL SoundEnabled = FALSE;
-
-void snd_LoadWAV()
-{
-   WAVLoaded = TRUE;
-
-   #ifdef ALLEGRO_H
-	destroy_sample(waveSample);
-	waveSample = load_sample(WAVName);
-   #endif
-}
-
-void snd_PlayWAV()
-{
-   if (WAVLoaded == TRUE)
-   {
-#ifdef ALLEGRO_H
-      play_sample(waveSample, 255, 128, 1000, FALSE);
-#endif
-   }
-}
-
-void snd_StopWAV()
-{
-   if (WAVLoaded == TRUE)
-#ifdef ALLEGRO_H
-      stop_sample(waveSample);
-#else
-      SoundEnabled = SoundEnabled;
-#endif
-}
-
-void snd_LoadMID()
-{
-   MIDLoaded = TRUE;
-
-#ifdef ALLEGRO_H
-   destroy_midi(midi);
-   midi = load_midi(MIDName);
-#endif
-}
-
-void snd_PlayMID()
-{
-   if (MIDLoaded == TRUE)
-   {
-#ifdef ALLEGRO_H
-      play_midi(midi, TRUE);
-#endif
-   }
-}
-
-void snd_StopMID()
-{
-#ifdef ALLEGRO_H
-   if (MIDLoaded == TRUE)
-      stop_midi();
-#endif
-}
-
-void snd_Init()
-{
-#if defined(DJGPP_NO_SOUND_SUPPORT) || defined(LINUX_NO_SOUND_SUPPORT)
-   SoundEnabled = FALSE;
-
-#ifdef __MSDOS__
-   detect_os();
-#endif
-#else
-   allegro_init();
-
-   if (install_sound(DIGI_AUTODETECT, MIDI_AUTODETECT, "") == -1)
-      SoundEnabled = FALSE;
-   else
-      SoundEnabled = TRUE;
-#endif
-}
-
-void snd_Exit()
-{
-   #ifdef ALLEGRO_H
-       destroy_midi(midi);
-   #endif
-}
 
 /* detect_os:
  *  Operating system autodetection routine.

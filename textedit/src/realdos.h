@@ -54,6 +54,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 #define OSTYPE_MACOSX      AL_ID('M','A','C','X')
 
 extern int os_type;
+
+static void detect_os(void);
+
 #endif
 
 #ifdef __cplusplus

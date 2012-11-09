@@ -44,7 +44,6 @@ typedef int BOOL;
 	#define FALSE  0
 #endif
 
-#include "gemsnd.h"
 #include "realdos.h"
 
 #ifndef MAXPATH
@@ -55,75 +54,7 @@ typedef int BOOL;
    #endif
 #endif
 
-char WAVName[MAXPATH];          // file name of WAV
-BOOL WAVLoaded = FALSE;         // WAV loaded?
-
-char MIDName[MAXPATH];          // file name of WAV
-BOOL MIDLoaded = FALSE;         // WAV loaded?
-
-BOOL SoundEnabled = FALSE;
-
 int os_type = 0;
-
-static void detect_os(void);
-
-void snd_LoadWAV()
-{
-   WAVLoaded = TRUE;
-}
-
-void snd_PlayWAV()
-{
-   if (WAVLoaded == TRUE)
-   {
-      if (isPlaying() == TRUE)  StopWAV();
-         PlayIWAV(WAVName);
-	}
-}
-
-void snd_StopWAV()
-{
-	if (WAVLoaded == TRUE)
-   {
-      if (isPlaying() == TRUE)
-         StopWAV();
-   }
-}
-
-void snd_LoadMID()
-{
-   /* no MIDI for DOS at present */
-}
-
-void snd_PlayMID()
-{
-
-}
-
-void snd_StopMID()
-{
-
-}
-
-void snd_Init()
-{
-	if (getenv("OSPSOUND") != NULL) // only play sounds if OSPSOUND = TRUE
-	{                               // this is really just a 'safety net'
-		SpeakerOn();                 // as if Heinz's drivers are not loaded
-		SoundEnabled = TRUE;         // it causes a pretty bad crash.
-	}
-
-   detect_os();
-}
-
-void snd_Exit()
-{
-	if (SoundEnabled == TRUE)
-	{
-		StopWAV();
-		SpeakerOff();
-	}
-}
 
 /* detect_os:
  *  Operating system autodetection routine. Nicked from Allegro.

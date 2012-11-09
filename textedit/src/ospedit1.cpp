@@ -53,12 +53,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
  * 12/12/2009: Add support for detecting Windows Vista/7, 64-bit (orudge)
  */
 
-//#define DJGPP_NO_SOUND_SUPPORT
-
-#ifdef __LINUX__
-	#define DJGPP_NO_SOUND_SUPPORT
-#endif
-
 #define Uses_MsgBox
 #define Uses_TParamText
 #define Uses_TApplication
@@ -77,8 +71,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 	#define Uses_fpstream
 #endif
 
-#include "sound.h"
-
 #if defined(__DJGPP__) || defined(__LINUX__) || defined(__WIN32__)
 	#define Uses_TCalculator
 
@@ -93,20 +85,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 	#else
 		#include <strstream.h>
 	#endif
-
-	#if (defined(__LINUX__) && !defined(LINUX_NO_SOUND_SUPPORT)) || (defined(__DJGPP__) && !defined(DJGPP_NO_SOUND_SUPPORT))
-		#define USE_CONSOLE
-		#include <allegro.h>
-	#endif
 #else
 	#include <tvision\tv.h>
 	#include <strstrea.h>
 
 	#include "calc.h"
-
-	#ifndef __WIN32__
-		#define NO_MIDI_MUSIC
-	#endif
 #endif
 
 #if !defined(ALLEGRO_H) && !defined(__WIN32__) && !defined(__LINUX__)
@@ -177,14 +160,6 @@ typedef int BOOL;
 
 bool IsInitialFile = False;          // was file specified on command line?
 char initialfile[200];               // file name on cmd line
-
-extern "C" char WAVName[MAXPATH];    // file name of WAV
-extern "C" BOOL WAVLoaded;           // WAV loaded?
-
-extern "C" char MIDName[MAXPATH];    // file name of MID
-extern "C" BOOL MIDLoaded;           // MID loaded?
-
-extern "C" BOOL SoundEnabled;
 
 TEditWindow *clipWindow;
 
@@ -434,30 +409,6 @@ void TEditorApp::handleEvent(TEvent& event)
 				calculator();
 				break;
 
-			case cmSelectWAV:
-				selectWAV();
-				break;
-
-			case cmPlayWAV:
-				playWAV();
-				break;
-
-			case cmStopWAV:
-				stopWAV();
-				break;
-
-			case cmSelectMID:
-				selectMID();
-				break;
-
-			case cmPlayMID:
-				playMID();
-				break;
-
-			case cmStopMID:
-				stopMID();
-				break;
-
 #ifdef SAVE_RESTORE_DESKTOP
 			case cmSaveDesktop:
 				saveDesktop();
@@ -540,74 +491,6 @@ void TEditorApp::calculator()
 		deskTop->insert(calc);
 }
 
-void TEditorApp::selectWAV()
-{
-	if (SoundEnabled == FALSE) goto leave;
-
-#if (defined(DJGPP_NO_SOUND_SUPPORT) || defined(LINUX_NO_SOUND_SUPPORT)) && !defined(ALLEGRO_H)
-	messageBox("Sound is not enabled with this version.", mfOKButton);
-#else
-	strcpy( WAVName, "*.wav" );
-
-	if (execDialog(new TFileDialog("*.wav", "Select WAV File",
-			"~N~ame", fdOpenButton, 100), WAVName) != cmCancel)
-		snd_LoadWAV();
-#endif
-leave: ;
-}
-
-void TEditorApp::playWAV()
-{
-#if (defined(DJGPP_NO_SOUND_SUPPORT) || defined(LINUX_NO_SOUND_SUPPORT)) && !defined(ALLEGRO_H)
-	messageBox("Sound is not enabled with this version.", mfOKButton);
-#else
-	snd_PlayWAV();
-#endif
-}
-
-void TEditorApp::stopWAV()
-{
-#if (defined(DJGPP_NO_SOUND_SUPPORT) || defined(LINUX_NO_SOUND_SUPPORT)) && !defined(ALLEGRO_H)
-	messageBox("Sound is not enabled with this version.", mfOKButton);
-#else
-	snd_StopWAV();
-#endif
-}
-
-void TEditorApp::selectMID()
-{
-	if (SoundEnabled == FALSE) goto leave;
-
-#ifdef NO_MIDI_MUSIC
-	messageBox("MIDI music is not enabled with this version.", mfOKButton);
-#else
-	strcpy( MIDName, "*.mid" );
-
-	if (execDialog(new TFileDialog("*.mid", "Select MIDI File",
-			"~N~ame", fdOpenButton, 100), MIDName) != cmCancel)
-		snd_LoadMID();
-#endif
-leave: ;
-}
-
-void TEditorApp::playMID()
-{
-#ifdef NO_MIDI_MUSIC
-	messageBox("MIDI music is not enabled with this version.", mfOKButton);
-#else
-	snd_PlayMID();
-#endif
-}
-
-void TEditorApp::stopMID()
-{
-#ifdef NO_MIDI_MUSIC
-	messageBox("MIDI music is not enabled with this version.", mfOKButton);
-#else
-	snd_StopMID();
-#endif
-}
-
 int main(int argc, char *argv[])
 {
 	if (argc >= 2) // command line parameters?
@@ -623,7 +506,13 @@ int main(int argc, char *argv[])
 	register_microsoft_converters();
 	register_ini_converters();
 
-	snd_Init();
+#ifdef __WIN32__
+   SetConsoleTitle("OSPlus Text Editor");
+#endif
+
+#ifdef REAL_DOS
+   detect_os();
+#endif
 
 	// Detect compiler
 #ifdef __BORLANDC__  // Not the best way of doing things, but it works
@@ -831,7 +720,6 @@ int main(int argc, char *argv[])
 	TEditorApp editorApp;
 	editorApp.run();
 
-	snd_Exit();
 	return 0;
 #if defined(__LINUX__) && defined(ALLEGRO_H)
 } END_OF_MAIN();

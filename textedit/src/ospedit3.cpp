@@ -87,34 +87,13 @@ TMenuBar *TEditorApp::initMenuBar(TRect r) // Another messy function...
       *new TMenuItem("~D~OS Shell", cmDosShell, kbAltD, hcNoContext, "Alt-D") +
 #endif
       *new TMenuItem("~C~alculator", cmCalcCmd, kbNoKey)
-#if SOUND_SUPPORT == 0
-      ;
-#else
-      +
-      newLine() +
-      *new TMenuItem("~S~elect WAV...", cmSelectWAV, kbNoKey) +
-      *new TMenuItem("~P~lay WAV",	cmPlayWAV, kbNoKey) +
-      *new TMenuItem("S~t~op WAV", cmStopWAV, kbNoKey)
-#if defined(__MSDOS__) && defined(__BORLANDC__)
-  #ifndef SAVE_RESTORE_DESKTOP
-      ;
-  #else
-      +
-  #endif
-#else
-      + newLine() +
-      *new TMenuItem("S~e~lect MID...", cmSelectMID, kbNoKey) +
-      *new TMenuItem("Pla~y~ MID", cmPlayMID, kbNoKey) +
-      *new TMenuItem("Stop M~I~D", cmStopMID, kbNoKey)
 #ifdef SAVE_RESTORE_DESKTOP
       + newLine() +
       *new TMenuItem("Sa~v~e Desktop", cmSaveDesktop, kbNoKey) +
       *new TMenuItem("Res~t~ore Desktop", cmRestoreDesktop, kbNoKey);
 #else
       ;
-  #endif
 #endif
-#endif // SOUND_SUPPORT == 0
 
    TSubMenu& sub1 = *new TSubMenu("~F~ile", kbAltF) +
       *new TMenuItem("~N~ew", cmNew, kbNoKey) +
