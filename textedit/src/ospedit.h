@@ -52,8 +52,8 @@ extern char __os_ver[50];
 
 		extern char __bc_compiler_ver[50];
 	#elif defined(__MINGW32__)
-		#define BUILD_VERSION	  "MinGW32 version (Win32)"
-		#define OSP_COMPILER	  "MinGW32"
+		#define BUILD_VERSION	  "MinGW version (Win32)"
+		#define OSP_COMPILER	  "MinGW"
 		#define OSP_COMPILER_VER  __gcc_ver
 
 		extern char __gcc_ver[50];
