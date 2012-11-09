@@ -93,7 +93,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 
 	#include "calc.h"
 
-	#define REAL_DOS
+	#define __REALDOS__
 #endif
 
 #if defined(__MSDOS__)
@@ -140,14 +140,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 	#include <conio.h>
 #endif
 
-#ifndef MAXPATH
-	#ifdef PATH_MAX
-		#define MAXPATH PATH_MAX
-	#else
-		#define MAXPATH  200
-	#endif
-#endif
-
 #include "convert.h"
 
 typedef int BOOL;
@@ -158,7 +150,7 @@ typedef int BOOL;
 #endif
 
 bool IsInitialFile = False;          // was file specified on command line?
-char initialfile[200];               // file name on cmd line
+char initialfile[PATH_MAX];               // file name on cmd line
 
 TEditWindow *clipWindow;
 
@@ -221,7 +213,7 @@ TEditorApp::TEditorApp() :
 				 ),
 	 TApplication()
 {
-	char szBuf[200], errortxt[200];
+	char szBuf[PATH_MAX], errortxt[200];
 
 	TCommandSet ts;
 	ts.enableCmd(cmSave);
@@ -271,8 +263,8 @@ TEditorApp::TEditorApp() :
 
 void TEditorApp::fileOpen()
 {
-	char fileName[MAXPATH];
-	char szBuf[200], errortxt[200];
+	char fileName[PATH_MAX];
+	char szBuf[PATH_MAX], errortxt[200];
 
 	strcpy( fileName, "*" );
 
@@ -320,7 +312,7 @@ void TEditorApp::dosShell()
 	puts("Type `exit' to return to OSPlus Text Editor\n");
 	system(getenv("SHELL"));
 #else
-	#if defined(__MSVC__) || defined(__MINGW32__)
+	#if defined(__WIN32__)
 		system("cls");
 	#else
 		clrscr();
@@ -430,10 +422,10 @@ void TEditorApp::aboutBox(void)
 
 	aboutBox->options |= ofCentered;
 
-#if defined(__DJGPP__) || defined(__LINUX__) || defined(__WIN32__)
-	deskTop->execView(aboutBox);
-#else
+#ifdef __REALDOS__
 	executeDialog(aboutBox);
+#else
+	deskTop->execView(aboutBox);
 #endif
 }
 
@@ -448,10 +440,10 @@ void TEditorApp::aboutProg()
 	aboutBox->build_version = new TStaticText(TRect(2, 15, 49, 16), bldtxt);
 	aboutBox->insert(aboutBox->build_version);
 
-#if defined(__DJGPP__) || defined(__LINUX__)  || defined(__WIN32__)
-	deskTop->execView(aboutBox);
-#else
+#ifdef __REALDOS__
 	executeDialog(aboutBox);
+#else
+	deskTop->execView(aboutBox);
 #endif
 }
 
@@ -461,10 +453,10 @@ void TEditorApp::verInfo()
 
 	verInfoBox->options |= ofCentered;
 
-#if defined(__DJGPP__) || defined(__LINUX__) || defined(__WIN32__)
-	deskTop->execView(verInfoBox);
-#else
+#ifdef __REALDOS__
 	executeDialog(verInfoBox);
+#else
+	deskTop->execView(verInfoBox);
 #endif
 }
 
@@ -474,10 +466,10 @@ void TEditorApp::cnvInfo()
 
 	cnvInfoBox->options |= ofCentered;
 
-#if defined(__DJGPP__) || defined(__LINUX__) || defined(__WIN32__)
-	deskTop->execView(cnvInfoBox);
-#else
+#ifdef __REALDOS__
 	executeDialog(cnvInfoBox);
+#else
+	deskTop->execView(cnvInfoBox);
 #endif
 }
 
@@ -508,7 +500,7 @@ int main(int argc, char *argv[])
    SetConsoleTitle("OSPlus Text Editor");
 #endif
 
-#ifdef REAL_DOS
+#if defined(__REALDOS__) || defined(__DJGPP__)
    detect_os();
 #endif
 

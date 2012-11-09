@@ -15,6 +15,10 @@
 
 #include "ospver.h"
 
+#ifndef PATH_MAX
+	#define PATH_MAX  255
+#endif
+
 #ifndef RES_INFO_ONLY
 
 extern char __tv_ver[50];
@@ -133,14 +137,6 @@ private:
    void aboutProg();
    void verInfo();
    void cnvInfo();
-
-   void selectWAV();
-   void playWAV();
-   void stopWAV();
-
-   void selectMID();
-   void playMID();
-   void stopMID();
 
    void retrieveDesktop();
    void saveDesktop();

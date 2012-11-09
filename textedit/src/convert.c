@@ -38,20 +38,15 @@
 	#include <windows.h>
 #endif
 
-#ifndef MAXPATH
-	#ifdef PATH_MAX
-		#define MAXPATH PATH_MAX
-	#else
-		#define MAXPATH  255
-	#endif
-#endif
+#define VERSION_INFORMATION_ONLY // Don't include the C++ class information
+#include "ospedit.h"
 
 #include "convert.h"
 
 static CONVERTER_INFO *converter_type_list = NULL;
 static int num_converters = 0;
 
-static char app_path[MAXPATH];
+static char app_path[PATH_MAX];
 
 void get_app_path(int argc, char *argv[])
 {
@@ -95,8 +90,6 @@ void register_converter_file_type(char *ext, char *load_fn, char *params, char *
 
 		iter->title = strdup(title);
 		iter->next = NULL;
-
-//		fprintf(stderr, "Added '%d' '%s' '%s' '%s' '%s'\n", iter->id, iter->load_fn, iter->ext, iter->params, iter->title, iter->next);
 	}
 }
 
@@ -141,11 +134,11 @@ void register_microsoft_converters()
 	FILETIME ignore;
 	int i = 0;
 	char extensions[255];
-	char path[MAXPATH];
+	char path[PATH_MAX];
 	char *pos, *lastpos;
 	char ext_tmp[255];
 	char tmplen;
-	char short_path[MAXPATH];
+	char short_path[PATH_MAX];
 	char name[255];
 	char name2[260];
 
@@ -185,8 +178,6 @@ void register_microsoft_converters()
 
 						if (strcmp(extensions, "*") != 0)
 						{
-//		fprintf(stderr, "Here: '%s' '%s' '%s'\n", subkey_name, path, short_path);
-
 							len = sizeof(name);
 							ret = RegQueryValueEx(hSubKey, "Name", NULL, NULL, name, &len);
 
@@ -296,7 +287,7 @@ int convert_text_file(char *filename_in, char *filename_out, char *error_out, in
 		{
 			if (iter->load_fn)
 			{
-				char filename_out2[MAXPATH], error_out2[255];
+				char filename_out2[PATH_MAX], error_out2[255];
 
 				ret = convert_file(filename_in, filename_out, iter->load_fn, iter->params, error_out);
 
@@ -338,7 +329,7 @@ int convert_file(char *fn_in, char *fn_out, char *converter, char *error_out)
 	HINSTANCE hInstDLL;
 	int (*ConvertProc)(char *src, char *dest, char *error);
 	char error_buf[200];
-	char tmp_dest[MAX_PATH];
+	char tmp_dest[PATH_MAX];
 	int ret;
 
 	hInstDLL = LoadLibrary(converter);
@@ -384,7 +375,7 @@ int convert_file(char *fn_in, char *fn_out, char *converter, char *params, char 
 {
 	char tmp_dest[200];
 	char error_out_rtf[200];
-	char converter_path[MAXPATH];
+	char converter_path[PATH_MAX];
 	int tmpret=0, tmpret2;
 
 	// Generate temporary filename
@@ -396,15 +387,14 @@ int convert_file(char *fn_in, char *fn_out, char *converter, char *params, char 
 	get_converter_path(converter_path, sizeof(converter_path), converter);
 
 #ifdef __LINUX__
-	char tmp[200];   // TODO: possibly still needs a bit of work for Linux version
+	char tmp[PATH_MAX*4];   // TODO: possibly still needs a bit of work for Linux version
 
 	if (params == NULL)
-		sprintf(tmp, "./%s \"%s\" \"%s\"", converter, fn_in, tmp_dest);
+		sprintf(tmp, "%s \"%s\" \"%s\"", converter_path, fn_in, tmp_dest);
 	else
-		sprintf(tmp, "./%s \"%s\" \"%s\" \"%s\"", converter, params, fn_in, tmp_dest);
+		sprintf(tmp, "%s \"%s\" \"%s\" \"%s\"", converter_path, params, fn_in, tmp_dest);
 	
 	tmpret2 = WEXITSTATUS(system(tmp));
-//	fprintf(stderr, "execute of `%s' returned '%d'\n", tmp, tmpret2);
 	
 	if (tmpret2 == 0)
 		tmpret2 = ERROR_CNV_OK;

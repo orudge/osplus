@@ -164,7 +164,7 @@ void TEditorApp::outOfMemory()
 typedef char *_charPtr;
 typedef TPoint *PPoint;
 
-#if !defined(__DJGPP__) && !defined(__LINUX__) && !defined(__WIN32__)
+#ifdef __REALDOS__
     #pragma warn -rvl
 #endif
 
@@ -244,6 +244,6 @@ ushort doEditDialog(int dialog, ...)
    }
 }
 
-#if !defined(__DJGPP__) && !defined(__LINUX__) && !defined(__WIN32__)
+#ifdef __REALDOS__
    #pragma warn .rvl
 #endif
