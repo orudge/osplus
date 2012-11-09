@@ -22,11 +22,10 @@ RHTVLIB  = libtv.lib
 .SUFFIXES: .cc .c .obj
 
 OBJS_ =  +aboutdlg.obj +aboutosp.obj +cnvinfo.obj +config.obj +convert.obj +ospedit1.obj +ospedit2.obj +ospedit3.obj\
-            +sound.obj +verinfo.obj +unicode.obj
+            +verinfo.obj +unicode.obj
 
 OBJS_2 = obj\w32msvc\aboutdlg.obj obj\w32msvc\aboutosp.obj obj\w32msvc\cnvinfo.obj obj\w32msvc\config.obj obj\w32msvc\convert.obj obj\w32msvc\ospedit1.obj\
-            obj\w32msvc\ospedit2.obj obj\w32msvc\ospedit3.obj obj\w32msvc\sound.obj\
-            obj\w32msvc\verinfo.obj obj\w32msvc\unicode.obj
+            obj\w32msvc\ospedit2.obj obj\w32msvc\ospedit3.obj obj\w32msvc\verinfo.obj obj\w32msvc\unicode.obj
 
 OBJS = $(OBJS_:+=obj\w32msvc\)
 
