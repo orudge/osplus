@@ -16,8 +16,8 @@ TASM    = TASM
 # IDE macros
 #
 
-BCC_LIB = D:\BC45\LIB
-BCC_INC = D:\BC45\INCLUDE
+BCC_LIB = $(BCC_LIB)
+BCC_INC = $(BCC_INC)
 
 #
 # Options
@@ -67,37 +67,35 @@ ospedit : BCCDOS.CFG $(Dep_ospedit)
   echo MakeNode 
 
 Dep_OSPEDIT = \
+   OBJ\REALDOS\realdos.obj\
    OBJ\REALDOS\config.obj\
    OBJ\REALDOS\unicode.obj\
    OBJ\REALDOS\cnvinfo.obj\
    OBJ\REALDOS\convert.obj\
    OBJ\REALDOS\verinfo.obj\
    OBJ\REALDOS\aboutosp.obj\
-   OBJ\REALDOS\gemsnd.obj\
    OBJ\REALDOS\aboutdlg.obj\
    OBJ\REALDOS\calc.obj\
    OBJ\REALDOS\ospedit1.obj\
    OBJ\REALDOS\ospedit2.obj\
-   OBJ\REALDOS\ospedit3.obj\
-   OBJ\REALDOS\sound.obj
+   OBJ\REALDOS\ospedit3.obj
 
 BIN\REALDOS\ospedit.exe : $(Dep_OSPEDIT)
   $(TLINK)   @&&|
  /v $(IDE_LFLAGSDOS) $(LEAT_OSPEDIT) $(LNIEAT_OSPEDIT) +
 $(BCC_LIB)\c0l.obj+
+OBJ\REALDOS\realdos.obj+
 OBJ\REALDOS\config.obj+
 OBJ\REALDOS\unicode.obj+
 OBJ\REALDOS\cnvinfo.obj+
 OBJ\REALDOS\convert.obj+
 OBJ\REALDOS\verinfo.obj+
 OBJ\REALDOS\aboutosp.obj+
-OBJ\REALDOS\gemsnd.obj+
 OBJ\REALDOS\aboutdlg.obj+
 OBJ\REALDOS\calc.obj+
 OBJ\REALDOS\ospedit1.obj+
 OBJ\REALDOS\ospedit2.obj+
-OBJ\REALDOS\ospedit3.obj+
-OBJ\REALDOS\sound.obj
+OBJ\REALDOS\ospedit3.obj
 $<,$*
 $(BCC_LIB)\tv.lib+
 $(BCC_LIB)\bidsl.lib+
@@ -105,6 +103,11 @@ $(BCC_LIB)\emu.lib+
 $(BCC_LIB)\mathl.lib+
 $(BCC_LIB)\cl.lib
 
+|
+
+OBJ\REALDOS\realdos.obj :  src\realdos.c
+  $(BCCDOS) -P- -c @&&|
+ $(CEAT_OSPEDIT) $(CNIEAT_OSPEDIT) -o$@ src\realdos.c
 |
 
 OBJ\REALDOS\config.obj :  src\config.c
@@ -137,11 +140,6 @@ OBJ\REALDOS\aboutosp.obj :  SRC\aboutosp.cpp
  $(CEAT_OSPEDIT) $(CNIEAT_OSPEDIT) -o$@ SRC\aboutosp.cpp
 |
 
-OBJ\REALDOS\gemsnd.obj :  SRC\gemsnd.c
-  $(BCCDOS) -P- -c @&&|
- $(CEAT_OSPEDIT) $(CNIEAT_OSPEDIT) -o$@ SRC\gemsnd.c
-|
-
 OBJ\REALDOS\aboutdlg.obj :  SRC\aboutdlg.cpp
   $(BCCDOS) -c @&&|
  $(CEAT_OSPEDIT) $(CNIEAT_OSPEDIT) -o$@ SRC\aboutdlg.cpp
@@ -165,11 +163,6 @@ OBJ\REALDOS\ospedit2.obj :  SRC\ospedit2.cpp
 OBJ\REALDOS\ospedit3.obj :  SRC\ospedit3.cpp
   $(BCCDOS) -c @&&|
  $(CEAT_OSPEDIT) $(CNIEAT_OSPEDIT) -o$@ SRC\ospedit3.cpp
-|
-
-OBJ\REALDOS\sound.obj :  SRC\sound.c
-  $(BCCDOS) -P- -c @&&|
- $(CEAT_OSPEDIT) $(CNIEAT_OSPEDIT) -o$@ SRC\sound.c
 |
 
 Dep_TXTRTF = \
