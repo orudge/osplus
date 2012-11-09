@@ -240,8 +240,8 @@ ushort doEditDialog(int dialog, ...)
             r.move(0, TProgram::deskTop->size.y - r.b.y - 2);
 
          va_end(arg);
-	   return messageBoxRect(r, "Replace this occurence?", mfYesNoCancel | mfInformation);
-   }
+		return messageBoxRect(r, "Replace this occurrence?", mfYesNoCancel | mfInformation);
+	}
 }
 
 #ifdef __REALDOS__
