@@ -45,4 +45,4 @@ fi
 if [ ! -x "$WINELOADER" ]; then WINELOADER="wine"; fi
 
 # and try to start the app
-exec "$WINELOADER" $debugmsg -- "$apppath" "$@"
+exec "$WINELOADER" $debugmsg "$apppath" "$@"
