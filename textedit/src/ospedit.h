@@ -31,17 +31,10 @@ extern char __os_ver[50];
 	#define BUILD_VERSION     "Borland C++ version (DOS)"
 	#define OSP_COMPILER      "Borland C++"
 	#define OSP_COMPILER_VER  __bc_compiler_ver
-	#define SOUND_SUPPORT     1
 
 	extern char __bc_compiler_ver[50];
 #elif defined(__DJGPP__)
-	#ifdef DJGPP_NO_SOUND_SUPPORT
-		#define BUILD_VERSION   "DJGPP version (DOS), no sound"
-		#define SOUND_SUPPORT   0
-	#else
-		#define BUILD_VERSION   "DJGPP version (DOS), with sound"
-		#define SOUND_SUPPORT   1
-	#endif
+	#define BUILD_VERSION   "DJGPP version (DOS)"
 
 	#define OSP_COMPILER          "DJGPP"
 	#define OSP_COMPILER_VER      __dj_compiler_ver
@@ -52,14 +45,12 @@ extern char __os_ver[50];
 		#define BUILD_VERSION     "Borland C++ version (Win32)"
 		#define OSP_COMPILER      "Borland C++"
 		#define OSP_COMPILER_VER  __bc_compiler_ver
-		#define SOUND_SUPPORT     1
 
 		extern char __bc_compiler_ver[50];
 	#elif defined(__MINGW32__)
 		#define BUILD_VERSION	  "MinGW32 version (Win32)"
 		#define OSP_COMPILER	  "MinGW32"
 		#define OSP_COMPILER_VER  __gcc_ver
-		#define SOUND_SUPPORT     1
 
 		extern char __gcc_ver[50];
 	#else
@@ -71,19 +62,12 @@ extern char __os_ver[50];
 
 		#define OSP_COMPILER	  "Microsoft Visual C++"
 		#define OSP_COMPILER_VER  __msvc_compiler_ver
-		#define SOUND_SUPPORT     1
 
 		#define __MSVC__  1
 		extern char __msvc_compiler_ver[50];
 	#endif
 #elif defined(__LINUX__)
-	#ifdef LINUX_NO_SOUND_SUPPORT
-		#define BUILD_VERSION   "Linux version, no sound"
-		#define SOUND_SUPPORT   0
-	#else
-		#define BUILD_VERSION   "Linux version, with sound"
-		#define SOUND_SUPPORT   1
-	#endif
+	#define BUILD_VERSION   "Linux version"
 
 	#define OSP_COMPILER      "GNU GCC"
 	#define OSP_COMPILER_VER  __gcc_ver

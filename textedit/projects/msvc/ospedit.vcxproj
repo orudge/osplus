@@ -188,7 +188,6 @@
     <ClCompile Include="..\..\src\ospedit1.cpp" />
     <ClCompile Include="..\..\src\ospedit2.cpp" />
     <ClCompile Include="..\..\src\ospedit3.cpp" />
-    <ClCompile Include="..\..\src\sound.c" />
     <ClCompile Include="..\..\src\unicode.c" />
     <ClCompile Include="..\..\src\verinfo.cpp" />
   </ItemGroup>
@@ -202,6 +201,7 @@
     <ClInclude Include="..\..\src\cnvinfo.h" />
     <ClInclude Include="..\..\src\config.h" />
     <ClInclude Include="..\..\src\convert.h" />
+    <ClInclude Include="..\..\src\ospedit.h" />
     <ClInclude Include="..\..\src\ospver.h" />
     <ClInclude Include="..\..\src\sound.h" />
     <ClInclude Include="..\..\src\unicode.h" />

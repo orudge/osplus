@@ -45,7 +45,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 #include "ospedit.h"
 
 TVerInfoDlg::TVerInfoDlg() :
-		 TDialog(TRect(15, 2, 65, 21), "Version Information"),
+		 TDialog(TRect(15, 2, 65, 20), "Version Information"),
 		 TWindowInit(TVerInfoDlg::initFrame)
 
 {
@@ -88,25 +88,19 @@ TVerInfoDlg::TVerInfoDlg() :
  TVVer = new TStaticText(TRect(25, 10, 48, 11), OSP_TV_VER);
  insert(TVVer);
 
- control = new TStaticText(TRect(2, 11, 24, 12), "Allegro version:");
+ control = new TStaticText(TRect(2, 12, 24, 13), "Operating System:");
  insert(control);
 
- AllegroVer = new TStaticText(TRect(25, 11, 48, 12), OSP_ALLEG_VER);
- insert(AllegroVer);
-
- control = new TStaticText(TRect(2, 13, 24, 14), "Operating System:");
- insert(control);
-
- OS = new TStaticText(TRect(25, 13, 48, 14), OSP_OS);
+ OS = new TStaticText(TRect(25, 12, 48, 13), OSP_OS);
  insert(OS);
 
- control = new TStaticText(TRect(2, 14, 24, 15), "OS Version:");
+ control = new TStaticText(TRect(2, 13, 24, 14), "OS Version:");
  insert(control);
 
- OSVer = new TStaticText(TRect(25, 14, 48, 15), OSP_OS_VER);
+ OSVer = new TStaticText(TRect(25, 13, 48, 14), OSP_OS_VER);
  insert(OSVer);
 
- control = new TButton(TRect(19, 16, 29, 18), "O~K~", cmOK, bfDefault);
+ control = new TButton(TRect(19, 15, 29, 17), "O~K~", cmOK, bfDefault);
  insert(control);
 
  selectNext(False);

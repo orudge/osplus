@@ -39,9 +39,6 @@
     <ClCompile Include="..\..\src\ospedit3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\sound.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\verinfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -83,6 +80,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\verinfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ospedit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

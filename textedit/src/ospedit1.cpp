@@ -92,18 +92,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 	#include <strstrea.h>
 
 	#include "calc.h"
+
+	#define REAL_DOS
 #endif
 
-#if !defined(ALLEGRO_H) && !defined(__WIN32__) && !defined(__LINUX__)
-	#define REAL_DOS // real-mode DOS
+#if defined(__MSDOS__)
 	#include "realdos.h"
 #endif
 
-#if defined(__MSDOS__) && !defined(ALLEGRO_H)
-	#include "realdos.h"
-#endif
-
-#if defined(__LINUX__) && !defined(ALLEGRO_H)
+#if defined(__LINUX__)
 	extern "C" {
 		extern char *strlwr(char *str);
 		extern char *strupr(char *str);
@@ -176,7 +173,6 @@ TEditWindow *clipWindow;
 #endif
 
 char __tv_ver[50];
-char __alleg_ver[50];
 char __os[50];
 char __os_ver[50];
 
@@ -585,21 +581,7 @@ int main(int argc, char *argv[])
 	sprintf(__gcc_ver, "%d.%d.%d", __GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__);
 #endif
 
-#ifdef ALLEGRO_H	// Allegro version
-	#ifdef ALLEGRO_VERSION_STR
-		strcpy(__alleg_ver, ALLEGRO_VERSION_STR);
-	#else
-		#ifdef ALLEGRO_VERSION && ALLEGRO_SUB_VERSION
-			sprintf(__alleg_ver, "%d.%d", ALLEGRO_VERSION, ALLEGRO_SUB_VERSION);
-		#else
-			strcpy(__alleg_ver, "Unknown");
-		#endif
-	#endif
-#else
-	strcpy(__alleg_ver, "Not applicable");
-#endif
-
-#if defined(ALLEGRO_H) || defined(__MSDOS__)	 // OS running on
+#if defined(__MSDOS__)	 // OS running on
 	char *s;
 
 	switch (os_type)
@@ -646,7 +628,7 @@ int main(int argc, char *argv[])
 			else if (VerInfo.dwMajorVersion == 4 && VerInfo.dwMinorVersion == 10)
 				strcpy(__os, "Windows 98");
 			else if (VerInfo.dwMajorVersion == 4 && (VerInfo.dwMinorVersion == 90 || VerInfo.dwMinorVersion == 9)) // not 100% sure which
-				strcpy(__os, "Windows ME");																								 // - W98 was a bit odd
+				strcpy(__os, "Windows Me");																								 // - W98 was a bit odd
 			else
 				strcpy(__os, "Windows 9x");
 		}
@@ -662,6 +644,8 @@ int main(int argc, char *argv[])
 				strcpy(__os, "Windows Vista");
 			else if (VerInfo.dwMajorVersion == 6 && VerInfo.dwMinorVersion == 1)
 				strcpy(__os, "Windows 7");
+			else if (VerInfo.dwMajorVersion == 6 && VerInfo.dwMinorVersion == 2)
+				strcpy(__os, "Windows 8");
 			else
 				strcpy(__os, "Windows NT"); // dunno what MS will invent in the future  ;)
 		}
@@ -689,7 +673,9 @@ int main(int argc, char *argv[])
 #endif
 
 #ifdef __MSVC__
-	#if (_MSC_VER == 1600)
+	#if (_MSC_VER == 1700)
+		sprintf(__msvc_compiler_ver, "11.0 (%d)", _MSC_VER);
+	#elif (_MSC_VER == 1600)
 		sprintf(__msvc_compiler_ver, "10.0 (%d)", _MSC_VER);
 	#elif (_MSC_VER == 1500)
 		sprintf(__msvc_compiler_ver, "9.0 (%d)", _MSC_VER);
@@ -714,7 +700,7 @@ int main(int argc, char *argv[])
 #ifdef _WIN64
 	strcat(__msvc_compiler_ver, " (x64)");
 #else
-	strcat(__msvc_compiler_ver, " (i386)");
+	strcat(__msvc_compiler_ver, " (x86)");
 #endif
 
 #endif
@@ -723,11 +709,7 @@ int main(int argc, char *argv[])
 	editorApp.run();
 
 	return 0;
-#if defined(__LINUX__) && defined(ALLEGRO_H)
-} END_OF_MAIN();
-#else
 }
-#endif
 
 #ifdef SAVE_RESTORE_DESKTOP
 //
