@@ -48,7 +48,7 @@ typedef int BOOL;
 
 #ifndef MAXPATH
 	#ifdef PATH_MAX
-      #define MAXPATH PATH_MAX
+		#define MAXPATH PATH_MAX
    #else
       #define MAXPATH  200
    #endif
@@ -59,7 +59,7 @@ int os_type = 0;
 /* detect_os:
  *  Operating system autodetection routine. Nicked from Allegro.
  */
-static void detect_os(void)
+void detect_os(void)
 {
 	union REGS r;
 	char *p;

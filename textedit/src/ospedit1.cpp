@@ -94,9 +94,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 	#include "calc.h"
 
 	#define __REALDOS__
-#endif
-
-#if defined(__MSDOS__)
 	#include "realdos.h"
 #endif
 
@@ -142,11 +139,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 
 #include "convert.h"
 
-typedef int BOOL;
+typedef char BOOL;
 
 #ifndef FALSE
 	#define FALSE False
 	#define TRUE  True
+#endif
+
+#ifdef __REALDOS__
+	typedef char bool;
 #endif
 
 bool IsInitialFile = False;          // was file specified on command line?
@@ -501,7 +502,7 @@ int main(int argc, char *argv[])
 #endif
 
 #if defined(__REALDOS__) || defined(__DJGPP__)
-   detect_os();
+	detect_os();
 #endif
 
 	// Detect compiler
@@ -593,7 +594,7 @@ int main(int argc, char *argv[])
 		case OSTYPE_LINUX:       s = "Linux";                  break;
 		case OSTYPE_FREEBSD:     s = "FreeBSD";                break;
 		case OSTYPE_UNIX:        s = "Unix";                   break;
-#ifndef REAL_DOS // BCC isn't liking these for some reason :/
+#ifndef __REALDOS__ // BCC isn't liking these for some reason :/
 		case OSTYPE_BEOS:        s = "BeOS";                   break;
 		case OSTYPE_QNX:         s = "QNX";                    break;
 		case OSTYPE_MACOS:       s = "MacOS";                  break;
