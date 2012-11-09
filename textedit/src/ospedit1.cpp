@@ -262,14 +262,20 @@ TEditorApp::TEditorApp() :
 	}
 }
 
+#ifdef __REALDOS__
+	#define ALL_FILES		"*.*"
+#else
+	#define ALL_FILES		"*"
+#endif
+
 void TEditorApp::fileOpen()
 {
 	char fileName[PATH_MAX];
 	char szBuf[PATH_MAX], errortxt[200];
 
-	strcpy( fileName, "*" );
+	strcpy( fileName, ALL_FILES );
 
-	if (execDialog(new TFileDialog("*", "Open File",
+	if (execDialog(new TFileDialog(ALL_FILES, "Open File",
 				"~N~ame", fdOpenButton, 100), fileName) != cmCancel)
 	{
 		int ret;
@@ -282,7 +288,7 @@ void TEditorApp::fileOpen()
 		{
 			messageBox(mfError | mfOKButton, errortxt);
 		}
-		
+
 		TProgram::deskTop->remove( qm );
 		destroy(qm);
 
@@ -498,7 +504,7 @@ int main(int argc, char *argv[])
 	register_ini_converters();
 
 #ifdef __WIN32__
-   SetConsoleTitle("OSPlus Text Editor");
+	SetConsoleTitle("OSPlus Text Editor");
 #endif
 
 #if defined(__REALDOS__) || defined(__DJGPP__)
