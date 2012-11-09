@@ -44,6 +44,7 @@ typedef struct CONVERTER_INFO
    struct CONVERTER_INFO *next;
 } CONVERTER_INFO;
 
+void get_app_path(int argc, char *argv[]);
 int convert_file(char *fn_in, char *fn_out, char *converter, char *params, char *error_out);
 void register_converter_file_type(char *ext, char *load_fn, char *params, char *title);
 void register_microsoft_converters();

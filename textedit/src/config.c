@@ -141,6 +141,36 @@ char *get_filename(AL_CONST char *path)
    return (char *)path + uoffset(path, pos);
 }
 
+/* replace_filename:
+ *  Replaces filename in path with different one.
+ *  It does not append '/' to the path.
+ */
+char *replace_filename(char *dest, AL_CONST char *path, AL_CONST char *filename, int size)
+{
+   char tmp[1024];
+   int pos, c;
+   ASSERT(dest);
+   ASSERT(path);
+   ASSERT(filename);
+   ASSERT(size >= 0);
+
+   pos = ustrlen(path);
+
+   while (pos>0) {
+      c = ugetat(path, pos-1);
+      if ((c == '/') || (c == OTHER_PATH_SEPARATOR) || (c == DEVICE_SEPARATOR))
+	 break;
+      pos--;
+   }
+
+   ustrzncpy(tmp, sizeof(tmp), path, pos);
+   ustrzcat(tmp, sizeof(tmp), filename);
+
+   ustrzcpy(dest, size, tmp);
+
+   return dest;
+}
+
 /* file_size:
  *  Returns the size of a file, in bytes.
  *  If the file does not exist or an error occurs, it will return zero

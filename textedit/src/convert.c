@@ -51,6 +51,18 @@
 static CONVERTER_INFO *converter_type_list = NULL;
 static int num_converters = 0;
 
+static char app_path[MAXPATH];
+
+void get_app_path(int argc, char *argv[])
+{
+	strcpy(app_path, argv[0]);
+}
+
+char *get_converter_path(char *new_path, size_t len, char *filename)
+{
+	return(replace_filename(new_path, app_path, filename, len));
+}
+
 /* register_converter_file_type:
  *  Registers a new converter.
  */
@@ -372,12 +384,16 @@ int convert_file(char *fn_in, char *fn_out, char *converter, char *params, char 
 {
 	char tmp_dest[200];
 	char error_out_rtf[200];
+	char converter_path[MAXPATH];
 	int tmpret=0, tmpret2;
 
 	// Generate temporary filename
 	tmpnam(tmp_dest);
 
 	strcpy(fn_out, tmp_dest);
+
+	// Ensure converter path is correct
+	get_converter_path(converter_path, sizeof(converter_path), converter);
 
 #ifdef __LINUX__
 	char tmp[200];   // TODO: possibly still needs a bit of work for Linux version
@@ -395,11 +411,11 @@ int convert_file(char *fn_in, char *fn_out, char *converter, char *params, char 
 #else
 	if (params == NULL)
 	{
-		tmpret2 = spawnl(P_WAIT, converter, converter, fn_in, tmp_dest, NULL);
+		tmpret2 = spawnl(P_WAIT, converter_path, converter_path, fn_in, tmp_dest, NULL);
 	}
 	else
 	{
-		tmpret2 = spawnl(P_WAIT, converter, converter, params, fn_in, tmp_dest, NULL);
+		tmpret2 = spawnl(P_WAIT, converter_path, converter_path, params, fn_in, tmp_dest, NULL);
 	}
 #endif
 

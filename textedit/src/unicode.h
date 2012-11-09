@@ -81,6 +81,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 #define U_UTF8          AL_ID('U','T','F','8')
 #define U_CURRENT       AL_ID('c','u','r','.')
 
+char *get_filename(AL_CONST char *path);
+char *replace_filename(char *dest, AL_CONST char *path, AL_CONST char *filename, int size);
+
 AL_FUNC(void, set_uformat, (int type));
 AL_FUNC(int, get_uformat, (void));
 AL_FUNC(void, register_uformat, (int type, AL_METHOD(int, u_getc, (AL_CONST char *s)), AL_METHOD(int, u_getx, (char **s)), AL_METHOD(int, u_setc, (char *s, int c)), AL_METHOD(int, u_width, (AL_CONST char *s)), AL_METHOD(int, u_cwidth, (int c)), AL_METHOD(int, u_isok, (int c)), int u_width_max));

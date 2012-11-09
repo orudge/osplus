@@ -617,6 +617,7 @@ int main(int argc, char *argv[])
 	}
 
 	// Register converters
+	get_app_path(argc, argv);
 	register_converter_file_type("rtf", "txtrtf.cnv", NULL, "Rich Text Format");
 	register_converter_file_type("wri", "txtwrite.cnv", NULL, "Windows Write");
 	register_microsoft_converters();
