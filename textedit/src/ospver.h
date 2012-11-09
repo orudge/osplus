@@ -1,6 +1,6 @@
 /*************************************************************/
 /* OSPlus - Open Source version                              */
-/* Copyright (c) Owen Rudge 2000-2005. All Rights Reserved.  */
+/* Copyright (c) Owen Rudge 2000-2012. All Rights Reserved.  */
 /*************************************************************/
 /* OSPlus Text Editor - Standalone                           */
 /* OSPEDIT.EXE                                               */
@@ -17,7 +17,7 @@
 #define OSP_VERSION_STR            "2.00"
 
 #define OSP_TXT_MAJOR_VERSION      2
-#define OSP_TXT_MINOR_VERSION      1
-#define OSP_TXT_REVISION_VERSION   2
-#define OSP_TXT_VERSION_STR        "2.1.2"
-#define OSP_TXT_BUILD_DATE         "20091212"
+#define OSP_TXT_MINOR_VERSION      2
+#define OSP_TXT_REVISION_VERSION   0
+#define OSP_TXT_VERSION_STR        "2.2"
+#define OSP_TXT_BUILD_DATE         "20121109"

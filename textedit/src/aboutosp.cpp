@@ -1,6 +1,6 @@
 /*************************************************************/
 /* OSPlus - Open Source version                              */
-/* Copyright (c) Owen Rudge 2000-2009. All Rights Reserved.  */
+/* Copyright (c) Owen Rudge 2000-2012. All Rights Reserved.  */
 /*************************************************************/
 /* OSPlus Text Editor - Standalone                           */
 /* OSPEDIT.EXE                                               */
@@ -51,10 +51,10 @@ TAboutOSPlus::TAboutOSPlus() :
      "\n"
      "Version 2.0\n"
      "\n"
-     "Copyright (c) Owen Rudge 2000-2009 ");
+     "Copyright (c) Owen Rudge 2000-2012 ");
  insert(control);
 
- control = new TStaticText(TRect(2, 8, 48, 10), "This program is licensed und"
+ control = new TStaticText(TRect(2, 8, 48, 10), "This program is licenced und"
      "er the GNU General Public License.");
  insert(control);
 

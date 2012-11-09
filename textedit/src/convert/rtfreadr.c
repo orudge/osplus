@@ -1,6 +1,6 @@
 /*************************************************************/
 /* OSPlus - Open Source version                              */
-/* Copyright (c) Owen Rudge 2000-2005. All Rights Reserved.  */
+/* Copyright (c) Owen Rudge 2000-2012. All Rights Reserved.  */
 /*************************************************************/
 /* OSPlus RTF Converter                                      */
 /* TXTRTF.CNV                                                */

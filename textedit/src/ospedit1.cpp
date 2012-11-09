@@ -1,6 +1,6 @@
 /*************************************************************/
 /* OSPlus - Open Source version                              */
-/* Copyright (c) Owen Rudge 2000-2009. All Rights Reserved.  */
+/* Copyright (c) Owen Rudge 2000-2012. All Rights Reserved.  */
 /*************************************************************/
 /* OSPlus Text Editor - Standalone                           */
 /* OSPEDIT.EXE                                               */
@@ -51,6 +51,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
  * 31/12/2004: Added GCC ver for DJGPP (orudge)
  * 28/03/2005: Fixed deletion bug (orudge)
  * 12/12/2009: Add support for detecting Windows Vista/7, 64-bit (orudge)
+ * 
+ * As of 2011 this is no longer being updated; please refer to the Subversion log instead.
  */
 
 #define Uses_MsgBox
