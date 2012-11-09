@@ -41,20 +41,8 @@ RHTV_SLIBS    = -lrhtv -lstdcxx
 
 EXE_NAME      = ospedit.exe
 
-ifeq ($(WITH_ALLEG),1 )
-OBJ_DIR = obj/djgppsnd
-BIN_DIR = bin/djgppsnd
-
-CFLAGS     +=  -DSOUND_SUPPORT=1 -DWITH_ALLEG=1
-CPPFLAGS   +=  -DSOUND_SUPPORT=1 -DWITH_ALLEG=1
-LD_LIBS += -lalleg
-else
 OBJ_DIR = obj/djgpp
 BIN_DIR = bin/djgpp
-
-CPPFLAGS        += -DDJGPP_NO_SOUND_SUPPORT=1 -DSOUND_SUPPORT=0
-CFLAGS          += -DLINUX_NO_SOUND_SUPPORT=1 -DSOUND_SUPPORT=0
-endif
 
 ECHO            = @echo
 RENAME_TXTRTF   = mv $(BIN_DIR)/txtrtf.exe $(BIN_DIR)/txtrtf.cnv
@@ -81,8 +69,6 @@ BIN_DIR       = bin/mingw32
 ECHO          = @echo
 RM            = rm
 
-LD_LIBS       = -lwinmm
-
 endif
 
 #### *NIX ####
@@ -96,27 +82,15 @@ RHTV_SLIBS    = `rhtv-config --slibs`
 
 EXE_NAME      = ospedit
 
-ifeq ($(WITH_ALLEG),1)
-OBJ_DIR = obj/linuxsnd
-BIN_DIR = bin/linuxsnd
-
-CFLAGS     +=  -DSOUND_SUPPORT=1 -DWITH_ALLEG=1
-CPPFLAGS   +=  -DSOUND_SUPPORT=1 -DWITH_ALLEG=1
-RHTV_SLIBS += `allegro-config --libs`
-else
 OBJ_DIR = obj/linux
 BIN_DIR = bin/linux
-
-CFLAGS          += -DLINUX_NO_SOUND_SUPPORT=1 -DSOUND_SUPPORT=0
-CPPFLAGS        += -DLINUX_NO_SOUND_SUPPORT=1 -DSOUND_SUPPORT=0
-endif
 
 ECHO          = echo
 RM            = rm
 
-LD_LIBS       = 
-
 endif
+
+LD_LIBS       = 
 
 CFLAGS    += $(RHTV_CFLAGS) $(RHTV_INCLUDE)
 CPPFLAGS  += $(RHTV_CPPFLAGS) $(RHTV_INCLUDE)
@@ -132,9 +106,13 @@ $(OBJ_DIR)/convert.o \
 $(OBJ_DIR)/ospedit1.o \
 $(OBJ_DIR)/ospedit2.o \
 $(OBJ_DIR)/ospedit3.o \
-$(OBJ_DIR)/sound.o \
 $(OBJ_DIR)/verinfo.o \
 $(OBJ_DIR)/unicode.o
+
+ifeq ($(COMPILER),djgpp )
+OBJ_LIST += \
+$(OBJ_DIR)/djgpp.o
+endif
 
 EXE_LIST = \
 $(BIN_DIR)/$(EXE_NAME) \
