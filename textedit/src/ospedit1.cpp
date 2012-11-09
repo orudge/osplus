@@ -175,7 +175,7 @@ typedef int BOOL;
 	#define TRUE  True
 #endif
 
-BOOL IsInitialFile = False;          // was file specified on command line?
+bool IsInitialFile = False;          // was file specified on command line?
 char initialfile[200];               // file name on cmd line
 
 extern "C" char WAVName[MAXPATH];    // file name of WAV

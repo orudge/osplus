@@ -733,7 +733,7 @@ char *uconvert(AL_CONST char *s, int type, char *buf, int newtype, int size)
  *  backward from the end of the string (-1 returns an offset to the
  *  last character).
  */
-int uoffset(AL_CONST char *s, int index)
+int uoffset(AL_CONST char *s, size_t index)
 {
    AL_CONST char *orig = s;
    AL_CONST char *last;
@@ -757,7 +757,7 @@ int uoffset(AL_CONST char *s, int index)
 /* ugetat:
  *  Returns the character from the specified index within the string.
  */
-int ugetat(AL_CONST char *s, int index)
+int ugetat(AL_CONST char *s, size_t index)
 {
    return ugetc(s + uoffset(s, index));
 }
@@ -1786,9 +1786,9 @@ int ustrsizez(AL_CONST char *s)
  *  The raw Unicode-aware version of ANSI strcpy() is defined as:
  *   #define ustrcpy(dest, src) ustrzcpy(dest, INT_MAX, src)
  */
-char *ustrzcpy(char *dest, int size, AL_CONST char *src)
+char *ustrzcpy(char *dest, size_t size, AL_CONST char *src)
 {
-   int pos = 0;
+   size_t pos = 0;
    int c;
 
    size -= ucwidth(0);
@@ -1878,9 +1878,9 @@ int ustrcmp(AL_CONST char *s1, AL_CONST char *s2)
  *  The raw Unicode-aware version of ANSI strncpy() is defined as:
  *   #define ustrncpy(dest, src, n) ustrzncpy(dest, INT_MAX, src, n)
  */
-char *ustrzncpy(char *dest, int size, AL_CONST char *src, int n)
+char *ustrzncpy(char *dest, size_t size, AL_CONST char *src, size_t n)
 {
-   int pos = 0, len = 0;
+   size_t pos = 0, len = 0;
    int ansi_oddness = FALSE;
    int c;
 

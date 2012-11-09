@@ -145,10 +145,11 @@ char *get_filename(AL_CONST char *path)
  *  Replaces filename in path with different one.
  *  It does not append '/' to the path.
  */
-char *replace_filename(char *dest, AL_CONST char *path, AL_CONST char *filename, int size)
+char *replace_filename(char *dest, AL_CONST char *path, AL_CONST char *filename, size_t size)
 {
    char tmp[1024];
-   int pos, c;
+   size_t pos;
+   int c;
    ASSERT(dest);
    ASSERT(path);
    ASSERT(filename);

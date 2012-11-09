@@ -145,7 +145,7 @@ static int print_footnote (struct dosword *wd, int fcRef, int type);
 static int read_sect (struct dosword *wd);
 static int print_section (struct dosword *wd, int section_no);
 static int wri_object (struct dosword *wd, const unsigned char *data, int size);
-static void translate_char (struct dosword *wd, unsigned char *ch, int len,
+static void translate_char (struct dosword *wd, unsigned char *ch, size_t len,
 	int fc, int fSpecial);
 
 enum { lvl_error = 0, lvl_warning, lvl_info };
@@ -167,7 +167,7 @@ static void our_fprintf (struct dosword *wd, const char *format, ...)
     char *p = NULL;
 
     if (!wd->print) {
-	p = malloc (0x4000);
+	p = (char *) malloc (0x4000);
 	if (p == NULL) {
 	    report (wd, lvl_error, "Out of memory");
 	    exit (1);
@@ -180,7 +180,7 @@ static void our_fprintf (struct dosword *wd, const char *format, ...)
 	size = vsnprintf (wd->print, wd->print_len, format, ap);
 	if ((size != -1) && (size < wd->print_len)) break;
 	wd->print_len *= 2;
-	p = realloc (wd->print, wd->print_len);
+	p = (char *) realloc (wd->print, wd->print_len);
 	if (p == NULL) {
 	    report (wd, lvl_error, "Out of memory");
 	    exit (1);
@@ -323,11 +323,11 @@ static int read_fib (struct dosword *wd)
 
 static int read_ffntb (struct dosword *wd)
 {
-    int	page, font_count, cbFfn, sane, i, ffid;
+    int	page, font_count, cbFfn, sane, ffid;
     unsigned char byt[2];
     unsigned char *ffn, *p;
     char string[256];
-    size_t ffn_length, ffn_size;
+    size_t ffn_length, ffn_size, i;
 
     ffn = NULL;
     ffn_size = 0;
@@ -455,7 +455,7 @@ file_ellol:
 }
 
 static void translate_char (struct dosword *wd, unsigned char *p, 
-	int len, int fc, int fSpecial)
+	size_t len, int fc, int fSpecial)
 {
     int i;
     unsigned char ch;

@@ -82,7 +82,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 #define U_CURRENT       AL_ID('c','u','r','.')
 
 char *get_filename(AL_CONST char *path);
-char *replace_filename(char *dest, AL_CONST char *path, AL_CONST char *filename, int size);
+char *replace_filename(char *dest, AL_CONST char *path, AL_CONST char *filename, size_t size);
 
 AL_FUNC(void, set_uformat, (int type));
 AL_FUNC(int, get_uformat, (void));
@@ -109,8 +109,8 @@ AL_FUNCPTR(int, usetc, (char *s, int c));
 AL_FUNCPTR(int, uwidth, (AL_CONST char *s));
 AL_FUNCPTR(int, ucwidth, (int c));
 AL_FUNCPTR(int, uisok, (int c));
-AL_FUNC(int, uoffset, (AL_CONST char *s, int index));
-AL_FUNC(int, ugetat, (AL_CONST char *s, int index));
+AL_FUNC(int, uoffset, (AL_CONST char *s, size_t index));
+AL_FUNC(int, ugetat, (AL_CONST char *s, size_t index));
 AL_FUNC(int, usetat, (char *s, int index, int c));
 AL_FUNC(int, uinsert, (char *s, int index, int c));
 AL_FUNC(int, uremove, (char *s, int index));
@@ -121,11 +121,11 @@ AL_FUNC(int, uisdigit, (int c));
 AL_FUNC(int, ustrsize, (AL_CONST char *s));
 AL_FUNC(int, ustrsizez, (AL_CONST char *s));
 AL_FUNC(char *, _ustrdup, (AL_CONST char *src, AL_METHOD(void *, malloc_func, (size_t))));
-AL_FUNC(char *, ustrzcpy, (char *dest, int size, AL_CONST char *src));
+AL_FUNC(char *, ustrzcpy, (char *dest, size_t size, AL_CONST char *src));
 AL_FUNC(char *, ustrzcat, (char *dest, int size, AL_CONST char *src));
 AL_FUNC(int, ustrlen, (AL_CONST char *s));
 AL_FUNC(int, ustrcmp, (AL_CONST char *s1, AL_CONST char *s2));
-AL_FUNC(char *, ustrzncpy, (char *dest, int size, AL_CONST char *src, int n));
+AL_FUNC(char *, ustrzncpy, (char *dest, size_t size, AL_CONST char *src, size_t n));
 AL_FUNC(char *, ustrzncat, (char *dest, int size, AL_CONST char *src, int n));
 AL_FUNC(int, ustrncmp, (AL_CONST char *s1, AL_CONST char *s2, int n));
 AL_FUNC(int, ustricmp, (AL_CONST char *s1, AL_CONST char *s2));
