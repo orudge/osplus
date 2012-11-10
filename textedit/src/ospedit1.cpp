@@ -115,6 +115,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 	#include <windows.h>
 #endif
 
+#if defined(__DJGPP__)
+	#include <sys/exceptn.h>
+#endif
+
 #include "ospedit.h"
 #include "aboutdlg.h"
 #include "aboutosp.h"
@@ -489,6 +493,10 @@ int main(int argc, char *argv[])
 
 #ifdef __WIN32__
 	SetConsoleTitle("OSPlus Text Editor");
+#endif
+
+#if defined(__DJGPP__)
+	__djgpp_set_ctrl_c(0);
 #endif
 
 #if defined(__REALDOS__) || defined(__DJGPP__)
