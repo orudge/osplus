@@ -97,30 +97,30 @@ TMenuBar *TEditorApp::initMenuBar(TRect r) // Another messy function...
 
    TSubMenu& sub1 = *new TSubMenu("~F~ile", kbAltF) +
       *new TMenuItem("~N~ew", cmNew, kbNoKey) +
-      *new TMenuItem("~O~pen...", cmOpen, kbF3) +
-      *new TMenuItem("~C~lose", cmClose, kbAltF3, hcNoContext, "Alt-F3") +
+      *new TMenuItem("~O~pen...", cmOpen, kbCtrlO, hcNoContext, "Ctrl-O") +
+      *new TMenuItem("~C~lose", cmClose, kbCtrlF4, hcNoContext, "Ctrl-F4") +
       newLine() +
-      *new TMenuItem("~S~ave", cmSave, kbF2, hcNoContext, "F2") +
+      *new TMenuItem("~S~ave", cmSave, kbCtrlS, hcNoContext, "Ctrl-S") +
       *new TMenuItem("S~a~ve As...", cmSaveAs, kbNoKey) +
       newLine() +
       *new TMenuItem("C~h~ange Directory...", cmChangeDrct, kbNoKey) +
       newLine() +
-      *new TMenuItem("E~x~it", cmQuit, kbAltX, hcNoContext, "Alt-X");
+      *new TMenuItem("E~x~it", cmQuit, kbCtrlQ, hcNoContext, "Ctrl-Q");
 
    TSubMenu& sub2 = *new TSubMenu("~E~dit", kbAltE) +
-      *new TMenuItem("~U~ndo", cmUndo, kbNoKey) +
+      *new TMenuItem("~U~ndo", cmUndo, kbCtrlZ, hcNoContext, "Ctrl-Z") +
       newLine() +
-      *new TMenuItem("Cu~t~", cmCut, kbShiftDel, hcNoContext, "Shift-Del") +
-      *new TMenuItem("~C~opy", cmCopy, kbCtrlIns, hcNoContext, "Ctrl-Ins") +
-      *new TMenuItem("~P~aste", cmPaste, kbShiftIns,	hcNoContext, "Shift-Ins") +
+      *new TMenuItem("Cu~t~", cmCut, kbCtrlX, hcNoContext, "Ctrl-X") +
+      *new TMenuItem("~C~opy", cmCopy, kbCtrlC, hcNoContext, "Ctrl-C") +
+      *new TMenuItem("~P~aste", cmPaste, kbCtrlV,	hcNoContext, "Ctrl-V") +
       *new TMenuItem("~S~how Clipboard", cmShowClip, kbNoKey) +
       newLine() +
       *new TMenuItem("~C~lear", cmClear, kbCtrlDel, hcNoContext, "Ctrl-Del");
 
    TSubMenu& sub3 = *new TSubMenu("~S~earch", kbAltS) +
-      *new TMenuItem("~F~ind...", cmFind, kbNoKey) +
-      *new TMenuItem("~R~eplace...", cmReplace, kbNoKey) +
-      *new TMenuItem("Find ~N~ext", cmSearchAgain, kbNoKey);
+      *new TMenuItem("~F~ind...", cmFind, kbCtrlF, hcNoContext, "Ctrl-F") +
+      *new TMenuItem("~R~eplace...", cmReplace, kbCtrlH, hcNoContext, "Ctrl-H") +
+      *new TMenuItem("Find ~N~ext", cmSearchAgain, kbF3, hcNoContext, "F3");
 
    TSubMenu& sub4 = *new TSubMenu( "~W~indows", kbAltW) +
       *new TMenuItem("~S~ize/move",cmResize, kbCtrlF5, hcNoContext, "Ctrl-F5") +
@@ -129,7 +129,7 @@ TMenuBar *TEditorApp::initMenuBar(TRect r) // Another messy function...
 	*new TMenuItem("C~a~scade", cmCascade, kbNoKey) +
 	*new TMenuItem("~N~ext", cmNext, kbF6, hcNoContext, "F6") +
 	*new TMenuItem("~P~revious", cmPrev, kbShiftF6, hcNoContext, "Shift-F6") +
-      *new TMenuItem("~C~lose", cmClose, kbAltF3, hcNoContext, "Alt-F3");
+      *new TMenuItem("~C~lose", cmClose, kbCtrlF4, hcNoContext, "Ctrl-F4");
 
    TSubMenu& sub5 = *new TSubMenu("~H~elp", kbAltH) +
       *new TMenuItem("~V~ersion Information...", cmVerInfo, kbNoKey) +
@@ -146,9 +146,9 @@ TStatusLine *TEditorApp::initStatusLine(TRect r)
    r.a.y = r.b.y-1;
    return new TStatusLine( r,
    *new TStatusDef(0, 0xFFFF) +
-      *new TStatusItem("~F2~ Save", kbF2,	cmSave) +
-      *new TStatusItem("~F3~ Open", kbF3, cmOpen) +
-      *new TStatusItem("~Alt-F3~ Close",	kbAltF3, cmClose) +
+      *new TStatusItem("~Ctrl-S~ Save", kbCtrlS,	cmSave) +
+      *new TStatusItem("~Ctrl-O~ Open", kbCtrlO, cmOpen) +
+      *new TStatusItem("~Ctrl-F3~ Close",	kbCtrlF3, cmClose) +
       *new TStatusItem("~F5~ Zoom", kbF5, cmZoom) +
       *new TStatusItem("~F6~ Next", kbF6, cmNext) +
       *new TStatusItem("~F10~ Menu", kbF10, cmMenu) +
