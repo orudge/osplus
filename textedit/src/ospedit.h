@@ -147,6 +147,8 @@ public:
    static TStatusLine *initStatusLine( TRect );
    virtual void outOfMemory();
 
+   void OpenFile(char *filename);
+
 private:
 
    TEditWindow *openEditor( const char *fileName, Boolean visible );

@@ -156,9 +156,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 	typedef char bool;
 #endif
 
-bool IsInitialFile = False;          // was file specified on command line?
-char initialfile[PATH_MAX];               // file name on cmd line
-
 TEditWindow *clipWindow;
 
 #ifdef __BORLANDC__
@@ -213,6 +210,30 @@ TEditWindow *TEditorApp::openEditor(const char *fileName, Boolean visible)
 	return (TEditWindow *)p;
 }
 
+void TEditorApp::OpenFile(char *filename)
+{
+	QuickMessage *qm = new QuickMessage("");
+	char szBuf[PATH_MAX], errortxt[200];
+	int ret;
+
+	TProgram::deskTop->insert(qm);
+
+	ret = convert_text_file(filename, szBuf, errortxt, 0);
+
+	if ((!(ret & ERROR_CNV_OK)) && (ret != -2))
+	{
+		messageBox(mfError | mfOKButton, errortxt);
+	}
+		
+	TProgram::deskTop->remove( qm );
+	destroy(qm);
+
+	openEditor(szBuf, True);
+
+	if ((ret != -2) && (ret & CONVERT_DELETE_FILE))
+		unlink(szBuf);
+}
+
 TEditorApp::TEditorApp() :
 	 TProgInit(TEditorApp::initStatusLine,
 					TEditorApp::initMenuBar,
@@ -220,8 +241,6 @@ TEditorApp::TEditorApp() :
 				 ),
 	 TApplication()
 {
-	char szBuf[PATH_MAX], errortxt[200];
-
 	TCommandSet ts;
 	ts.enableCmd(cmSave);
 	ts.enableCmd(cmSaveAs);
@@ -244,28 +263,6 @@ TEditorApp::TEditorApp() :
 		TEditor::clipboard = clipWindow->editor;
 		TEditor::clipboard->canUndo = False;
 	}
-
-	if (IsInitialFile == True)
-	{
-		int ret;
-		QuickMessage *qm = new QuickMessage("");
-		TProgram::deskTop->insert(qm);
-
-		ret = convert_text_file(initialfile, szBuf, errortxt, 0);
-
-		if ((!(ret & ERROR_CNV_OK)) && (ret != -2))
-		{
-			messageBox(mfError | mfOKButton, errortxt);
-		}
-		
-		TProgram::deskTop->remove( qm );
-		destroy(qm);
-
-		openEditor(szBuf, True);
-
-		if ((ret != -2) && (ret & CONVERT_DELETE_FILE))
-			unlink(szBuf);
-	}
 }
 
 #ifdef __REALDOS__
@@ -284,24 +281,7 @@ void TEditorApp::fileOpen()
 	if (execDialog(new TFileDialog(ALL_FILES, "Open File",
 				"~N~ame", fdOpenButton, 100), fileName) != cmCancel)
 	{
-		int ret;
-		QuickMessage *qm = new QuickMessage("");
-		TProgram::deskTop->insert(qm);
-
-		ret = convert_text_file(fileName, szBuf, errortxt, 0);
-
-		if ((!(ret & ERROR_CNV_OK)) && (ret != -2))
-		{
-			messageBox(mfError | mfOKButton, errortxt);
-		}
-
-		TProgram::deskTop->remove( qm );
-		destroy(qm);
-
-		openEditor(szBuf, True);
-
-		if ((ret != -2) && (ret & CONVERT_DELETE_FILE))
-			unlink(szBuf);
+		OpenFile(fileName);
 	}
 }
 
@@ -496,12 +476,6 @@ void TEditorApp::calculator()
 
 int main(int argc, char *argv[])
 {
-	if (argc >= 2) // command line parameters?
-	{
-		strcpy(initialfile, argv[1]);
-		IsInitialFile = True;
-	}
-
 	// Register converters
 	get_app_path(argc, argv);
 	register_converter_file_type("rtf", "txtrtf.cnv", NULL, "Rich Text Format");
@@ -621,7 +595,7 @@ int main(int argc, char *argv[])
 	#elif defined(__APPLE__)
 		strcpy(__os, "Mac OS X");
 	#elif defined(__LINUX__)
-		strcpy(__os, "Linux (presumably)");
+		strcpy(__os, "Linux/Unix");
 	#elif defined(__WIN32__)
 		OSVERSIONINFO VerInfo;
 
@@ -721,6 +695,10 @@ int main(int argc, char *argv[])
 #endif
 
 	TEditorApp editorApp;
+
+	if (argc >= 2) // command line parameters?
+		editorApp.OpenFile(argv[1]);
+
 	editorApp.run();
 
 	return 0;
