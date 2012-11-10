@@ -143,19 +143,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 
 #include "convert.h"
 
-#ifndef __WIN32__
-	typedef char BOOL;
-#endif
-
-#ifndef FALSE
-	#define FALSE False
-	#define TRUE  True
-#endif
-
-#ifdef __REALDOS__
-	typedef char bool;
-#endif
-
 TEditWindow *clipWindow;
 
 #ifdef __BORLANDC__
@@ -274,7 +261,6 @@ TEditorApp::TEditorApp() :
 void TEditorApp::fileOpen()
 {
 	char fileName[PATH_MAX];
-	char szBuf[PATH_MAX], errortxt[200];
 
 	strcpy( fileName, ALL_FILES );
 
