@@ -185,6 +185,7 @@
     <ClCompile Include="..\..\src\cnvinfo.cpp" />
     <ClCompile Include="..\..\src\config.c" />
     <ClCompile Include="..\..\src\convert.c" />
+    <ClCompile Include="..\..\src\fold.c" />
     <ClCompile Include="..\..\src\ospedit1.cpp" />
     <ClCompile Include="..\..\src\ospedit2.cpp" />
     <ClCompile Include="..\..\src\ospedit3.cpp" />

@@ -197,6 +197,17 @@ TEditWindow *TEditorApp::openEditor(const char *fileName, Boolean visible)
 	return (TEditWindow *)p;
 }
 
+#ifdef __REALDOS__
+	typedef char bool;
+
+	#define false	0
+	#define true	1
+#endif
+
+extern "C" {
+	extern bool fold_file (char const *filename, char const *output, size_t width);
+}
+
 void TEditorApp::OpenFile(char *filename)
 {
 	QuickMessage *qm = new QuickMessage("");
@@ -211,9 +222,13 @@ void TEditorApp::OpenFile(char *filename)
 	{
 		messageBox(mfError | mfOKButton, errortxt);
 	}
-		
+	
 	TProgram::deskTop->remove( qm );
 	destroy(qm);
+
+#if 0 /* TODO */
+	fold_file (szBuf, output, 78);
+#endif
 
 	openEditor(szBuf, True);
 

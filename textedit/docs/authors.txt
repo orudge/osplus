@@ -1,9 +1,10 @@
 AUTHORS
 =======
 
-Owen Rudge <owen at owenrudge dot net> - Just about everything not written by someone else
-Heinz Rath <heinz.rath at gmx.at>      - Real-mode sound drivers
-Sean Young <sean at mess.org>          - Windows Write converter
+Owen Rudge <owen at owenrudge dot net>  - Just about everything not written by someone else
+Heinz Rath <heinz.rath at gmx.at>       - Real-mode sound drivers
+Sean Young <sean at mess.org>           - Windows Write converter
+David MacKenzie <djm at gnu.ai.mit.edu> - Line wrapping functionality (fold.c)
 
 Thanks also to the authors of the Allegro (http://alleg.sf.net/) project, some code
 of which has been used in OSPlus Text Editor.

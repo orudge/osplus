@@ -1,6 +1,23 @@
 WISHLIST
 ========
 
-- MP3/Ogg Vorbis player for DJGPP, Linux and Win32 ports maybe
+- Finish word wrap feature
+- Convert line endings from UNIX to DOS (if necessary)
 
 - General improvements to make OSPlus Text Editor better :)
+
+Other thoughts:
+
+- Check the DJGPP, BCC Win32 builds still build
+- Create a version that uses DOS HX extender to use ms converters?
+  - or just run the Windows version using HX and build a wrapper if necessary?
+
+- Rationalise mingw32/w32msvc/win32 directories
+
+  - djgpp
+  - linux
+  - realdos
+  - win32
+  - win64
+
+- Finish docs, makefile, etc for Mac OS X version
