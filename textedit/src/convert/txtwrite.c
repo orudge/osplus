@@ -58,7 +58,7 @@
 #include <errno.h>
 #include "convert.h"
 
-#if defined(__DJGPP__) || defined(__BORLANDC__) || (_MSC_VER < 1500)  // DJGPP + Borland C++ don't have snprintf/vsnprintf
+#if defined(__DJGPP__) || defined(__BORLANDC__) || (defined(_MSC_VER) && (_MSC_VER < 1500))  // DJGPP + Borland C++ don't have snprintf/vsnprintf
 
 int snprintf(char *str, size_t n, const char *fmt, ...);
 int vsnprintf(char *str, size_t size, const char *format, va_list ap);

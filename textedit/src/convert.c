@@ -376,7 +376,7 @@ int convert_file(char *fn_in, char *fn_out, char *converter, char *params, char 
 	char tmp_dest[200];
 	char error_out_rtf[200];
 	char converter_path[PATH_MAX];
-	int tmpret=0, tmpret2;
+	int tmpret=0, tmpret2, tmpret3;
 
 	// Generate temporary filename
 	tmpnam(tmp_dest);
@@ -394,7 +394,8 @@ int convert_file(char *fn_in, char *fn_out, char *converter, char *params, char 
 	else
 		sprintf(tmp, "%s \"%s\" \"%s\" \"%s\"", converter_path, params, fn_in, tmp_dest);
 	
-	tmpret2 = WEXITSTATUS(system(tmp));
+	tmpret3 = system(tmp);
+	tmpret2 = WEXITSTATUS(tmpret3);
 	
 	if (tmpret2 == 0)
 		tmpret2 = ERROR_CNV_OK;
