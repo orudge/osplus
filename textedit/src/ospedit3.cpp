@@ -166,6 +166,10 @@ typedef TPoint *PPoint;
 
 #ifdef __REALDOS__
     #pragma warn -rvl
+
+	#define ALL_FILES		"*.*"
+#else
+	#define ALL_FILES		"*"
 #endif
 
 ushort doEditDialog(int dialog, ...)
@@ -213,7 +217,7 @@ ushort doEditDialog(int dialog, ...)
 
       case edSaveAs:
          va_start( arg, dialog );
-         return execDialog(new TFileDialog("*.*", "Save file as", "~N~ame", fdOKButton, 101),
+         return execDialog(new TFileDialog(ALL_FILES, "Save file as", "~N~ame", fdOKButton, 101),
                va_arg(arg, _charPtr));
 
       case edFind:
