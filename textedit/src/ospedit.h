@@ -92,6 +92,9 @@ extern char __os_ver[50];
 
 	extern char __gcc_ver[50];
 #elif defined(__LINUX__)
+	#define __STDC_LIMIT_MACROS
+	#include <stdint.h>
+
 	#if UINTPTR_MAX == 0xFFFFFFFFFFFFFFFF
 		#define BUILD_VERSION	"Linux version (64-bit)"
 	#else
