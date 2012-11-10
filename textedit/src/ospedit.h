@@ -50,7 +50,12 @@ extern char __os_ver[50];
 
 		extern char __bc_compiler_ver[50];
 	#elif defined(__MINGW32__)
-		#define BUILD_VERSION	  "MinGW version (Win32)"
+		#ifdef _WIN64
+			#define BUILD_VERSION     "MinGW version (Win64)"
+		#else
+			#define BUILD_VERSION     "MinGW version (Win32)"
+		#endif
+
 		#define OSP_COMPILER	  "MinGW"
 		#define OSP_COMPILER_VER  __gcc_ver
 
@@ -68,8 +73,30 @@ extern char __os_ver[50];
 		#define __MSVC__  1
 		extern char __msvc_compiler_ver[50];
 	#endif
+#elif defined(__APPLE__)
+	#include <stdint.h>
+
+	#if UINTPTR_MAX == 0xFFFFFFFFFFFFFFFF
+		#define BUILD_VERSION	"Mac OS X version (64-bit)"
+	#else
+		#define BUILD_VERSION	"Mac OS X version (32-bit)"
+	#endif
+
+	#ifdef __llvm__
+		#define OSP_COMPILER	"LLVM"
+	#else
+		#define OSP_COMPILER	"GNU GCC"
+	#endif
+	
+	#define OSP_COMPILER_VER	__gcc_ver
+
+	extern char __gcc_ver[50];
 #elif defined(__LINUX__)
-	#define BUILD_VERSION   "Linux version"
+	#if UINTPTR_MAX == 0xFFFFFFFFFFFFFFFF
+		#define BUILD_VERSION	"Linux version (64-bit)"
+	#else
+		#define BUILD_VERSION	"Linux version (32-bit)"
+	#endif
 
 	#define OSP_COMPILER      "GNU GCC"
 	#define OSP_COMPILER_VER  __gcc_ver

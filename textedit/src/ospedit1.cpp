@@ -69,6 +69,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 #define Uses_TStaticText
 #define Uses_TButton
 
+#ifdef __APPLE__
+	#include <CoreServices/CoreServices.h>
+#endif
+
 #ifdef SAVE_RESTORE_DESKTOP
 	#define Uses_fpstream
 #endif
@@ -614,6 +618,8 @@ int main(int argc, char *argv[])
 #else // Got to do it the hard way
 	#ifdef __MSDOS__
 		strcpy(__os, "DOS");
+	#elif defined(__APPLE__)
+		strcpy(__os, "Mac OS X");
 	#elif defined(__LINUX__)
 		strcpy(__os, "Linux (presumably)");
 	#elif defined(__WIN32__)
@@ -669,6 +675,14 @@ int main(int argc, char *argv[])
 		sprintf(__os_ver, "%ld.%ld (%s)", VerInfo.dwMajorVersion, VerInfo.dwMinorVersion, VerInfo.szCSDVersion);
 	else
 		sprintf(__os_ver, "%ld.%ld", VerInfo.dwMajorVersion, VerInfo.dwMinorVersion);
+#elif defined(__APPLE__)
+	SInt32 major, minor, revision;
+		
+	Gestalt(gestaltSystemVersionMajor, &major);
+	Gestalt(gestaltSystemVersionMinor, &minor);
+	Gestalt(gestaltSystemVersionBugFix, &revision);
+
+	sprintf(__os_ver, "%d.%d.%d", major, minor, revision);
 #else
 	sprintf(__os_ver, "Unknown");
 #endif
