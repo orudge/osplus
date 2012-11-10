@@ -22,12 +22,10 @@
 #ifndef RES_INFO_ONLY
 
 extern char __tv_ver[50];
-extern char __alleg_ver[50];
 extern char __os[50];
 extern char __os_ver[50];
 
 #define OSP_TV_VER     __tv_ver
-#define OSP_ALLEG_VER  __alleg_ver
 #define OSP_OS         __os
 #define OSP_OS_VER     __os_ver
 

@@ -125,13 +125,13 @@ const char * const TVerInfoDlg::name = "TVerInfoDlg";
 void TVerInfoDlg::write( opstream& os )
 {
  TDialog::write( os );
- os << Compiler << BuildDate << CompilerVer << BuildTime << TVVer << AllegroVer << OS << OSVer;
+ os << Compiler << BuildDate << CompilerVer << BuildTime << TVVer << OS << OSVer;
 }
 
 void *TVerInfoDlg::read( ipstream& is )
 {
  TDialog::read( is );
- is >> Compiler >> BuildDate >> CompilerVer >> BuildTime >> TVVer >> AllegroVer >> OS >> OSVer;
+ is >> Compiler >> BuildDate >> CompilerVer >> BuildTime >> TVVer >> OS >> OSVer;
  return this;
 }
 

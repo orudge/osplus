@@ -58,7 +58,6 @@ public:
     TStaticText *CompilerVer;
     TStaticText *BuildTime;
     TStaticText *TVVer;
-    TStaticText *AllegroVer;
     TStaticText *OS;
     TStaticText *OSVer;
 

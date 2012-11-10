@@ -49,8 +49,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 
 //#include <windows.h>
 
-#ifndef WITH_ALLEG
-
 #include <limits.h>
 #include <string.h>
 #include <stdarg.h>
@@ -3064,5 +3062,3 @@ int uszprintf(char *buf, int size, AL_CONST char *format, ...)
 
    return ret;
 }
-
-#endif

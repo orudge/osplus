@@ -22,10 +22,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 
-#ifdef WITH_ALLEG
-   #include <allegro.h>
-#else
-
 #include <stdarg.h>
 
 #ifndef TRUE 
@@ -169,4 +165,3 @@ typedef struct UTYPE_INFO
 } UTYPE_INFO;
 
 AL_FUNC(UTYPE_INFO *, _find_utype, (int type));
-#endif

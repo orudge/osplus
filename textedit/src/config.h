@@ -22,10 +22,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 
-#ifdef WITH_ALLEG
-	#include <allegro.h>
-#else
-
 void set_config_file(AL_CONST char *filename);
 AL_CONST char *get_config_string(AL_CONST char *section, AL_CONST char *name, AL_CONST char *def);
 int get_config_int(AL_CONST char *section, AL_CONST char *name, int def);
@@ -35,5 +31,3 @@ void set_config_string(AL_CONST char *section, AL_CONST char *name, AL_CONST cha
 void set_config_int(AL_CONST char *section, AL_CONST char *name, int val);
 void set_config_hex(AL_CONST char *section, AL_CONST char *name, int val);
 void set_config_float(AL_CONST char *section, AL_CONST char *name, float val);
-
-#endif
