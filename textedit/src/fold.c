@@ -129,7 +129,7 @@ adjust_column (size_t column, char c)
   return column;
 }
 
-static bool isblank(char c)
+static bool fold_isblank(char c)
 {
 	if ((c == ' ') || (c == '\t'))
 		return true;
@@ -200,7 +200,7 @@ fold_file (char const *filename, char const *output, size_t width)
 	      while (logical_end)
 		{
 		  --logical_end;
-		  if (isblank (to_uchar (line_out[logical_end])))
+		  if (fold_isblank (to_uchar (line_out[logical_end])))
 		    {
 		      found_blank = true;
 		      break;
