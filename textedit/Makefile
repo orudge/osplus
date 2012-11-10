@@ -172,6 +172,7 @@ WINE_CC        = winegcc
 WINE_WINEBUILD = winebuild
 CP             = cp
 MV             = mv
+CHMOD          = chmod
 
 $(OBJ_DIR)/msconv.o : src/convert/msconv.c
 	$(WINE_CC) -c $(CFLAGS) $(WINE_CEXTRA) -c $< -o $@
@@ -181,6 +182,7 @@ $(BIN_DIR)/msconv.cnv.exe.so: $(OBJ_DIR)/msconv.o
 
 $(BIN_DIR)/msconv.cnv: src/convert/msconv.wine
 	$(CP) $< $@
+	$(CHMOD) +x $@
 endif
 endif
 
