@@ -58,7 +58,7 @@ typedef int BOOL;
  *  Operating system autodetection routine.
  */
 #ifdef __MSDOS__
-static void detect_os(void)
+void detect_os(void)
 {
    __dpmi_regs r;
    char buf[16];

@@ -98,6 +98,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 	#include "calc.h"
 
 	#define __REALDOS__
+#endif
+
+#if defined(__REALDOS__) || defined(__DJGPP__)
 	#include "realdos.h"
 #endif
 
