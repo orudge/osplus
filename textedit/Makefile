@@ -103,6 +103,7 @@ $(OBJ_DIR)/aboutosp.o \
 $(OBJ_DIR)/config.o \
 $(OBJ_DIR)/cnvinfo.o \
 $(OBJ_DIR)/convert.o \
+$(OBJ_DIR)/fold.o \
 $(OBJ_DIR)/ospedit1.o \
 $(OBJ_DIR)/ospedit2.o \
 $(OBJ_DIR)/ospedit3.o \

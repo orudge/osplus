@@ -67,6 +67,7 @@ ospedit : BCCDOS.CFG $(Dep_ospedit)
   echo MakeNode 
 
 Dep_OSPEDIT = \
+   OBJ\REALDOS\fold.obj\
    OBJ\REALDOS\realdos.obj\
    OBJ\REALDOS\config.obj\
    OBJ\REALDOS\unicode.obj\
@@ -84,6 +85,7 @@ BIN\REALDOS\ospedit.exe : $(Dep_OSPEDIT)
   $(TLINK)   @&&|
  /v $(IDE_LFLAGSDOS) $(LEAT_OSPEDIT) $(LNIEAT_OSPEDIT) +
 $(BCC_LIB)\c0l.obj+
+OBJ\REALDOS\fold.obj+
 OBJ\REALDOS\realdos.obj+
 OBJ\REALDOS\config.obj+
 OBJ\REALDOS\unicode.obj+
@@ -103,6 +105,11 @@ $(BCC_LIB)\emu.lib+
 $(BCC_LIB)\mathl.lib+
 $(BCC_LIB)\cl.lib
 
+|
+
+OBJ\REALDOS\fold.obj :  src\fold.c
+  $(BCCDOS) -P- -c @&&|
+ $(CEAT_OSPEDIT) $(CNIEAT_OSPEDIT) -o$@ src\fold.c
 |
 
 OBJ\REALDOS\realdos.obj :  src\realdos.c

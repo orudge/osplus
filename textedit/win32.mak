@@ -33,10 +33,10 @@ LDFLAGS   = $(DYNRTLDFLAGS) $(LDDEBUGFLAGS) /Gn /x
 .SUFFIXES: .cc .c .obj
 
 OBJS_ =  +aboutdlg.obj +aboutosp.obj +cnvinfo.obj +config.obj +convert.obj +ospedit1.obj +ospedit2.obj +ospedit3.obj\
-            +verinfo.obj +unicode.obj
+            +verinfo.obj +unicode.obj +fold.obj
 
 OBJS_2 = obj\win32\aboutdlg.obj obj\win32\aboutosp.obj obj\win32\config.obj obj\win32\cnvinfo.obj obj\win32\convert.obj obj\win32\ospedit1.obj\
-            obj\win32\ospedit2.obj obj\win32\ospedit3.obj obj\win32\verinfo.obj obj\win32\unicode.obj
+            obj\win32\ospedit2.obj obj\win32\ospedit3.obj obj\win32\verinfo.obj obj\win32\unicode.obj obj\win32\fold.obj
 
 OBJS = $(OBJS_:+=obj\win32\)
 
