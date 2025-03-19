@@ -13,10 +13,6 @@ The real-mode DOS version of the Text Editor requires:
   dialogs. Note that the .dlg files are actually quite outdated now, so you may
   be better off simply modifying the source files.
 
-- Heinz Rath's sound drivers available from www.geocities.com/heinz_rath/ if
-  you want to be able to play WAV files from the Text Editor. These are not
-  required for building.
-
 TO BUILD
 ========
 

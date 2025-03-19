@@ -4,22 +4,16 @@ Version 2.1.1
 Copyright (c) Owen Rudge 2000-2005
 ==================================
 
-Thanks for downloading the DJGPP version of OSPlus Text Editor 2.1.1! This
-has evolved a fair bit since it was closed source, and now includes features such
-as sound support and file format conversion.
-
-This version of OSPlus Text Editor does not include sound support. To play WAV and
-MIDI files, download the DJGPP with Allegro binary, which should be available at the
-same place you downloaded this.
+Thanks for downloading the DJGPP version of OSPlus Text Editor 2.1.1! OSPlus
+Text Editor is a friendly text editor for DOS, with a multi-window text user
+interface, support for reading RTF and Windows Write files, and more.
 
 DOWNLOADING THE SOURCE CODE
 ===========================
 
-You can download the source code of OSPlus Text Editor 2.1.1 from the Files
-section of the SourceForge project at http://sourceforge.net/projects/osplus/.
-You can also get the latest sources of OSPlus Text Editor from CVS. You can also download
-ZIPs from http://osplus.sourceforge.net/. Please go to the SourceForge address
-for information on CVS access (and a web-based CVS browser).
+You can download the source code of OSPlus Text Editor 2.1.1 from the OSPlus
+GitHub repository at https://github.com/orudge/osplus. You can also download
+ZIPs from http://osplus.sourceforge.net/.
 
 You can download older versions of OSPlus and find out much more information
 at www.osplus.co.uk.
@@ -32,7 +26,7 @@ Open Source site: http://osplus.sourceforge.net/
 
 If you have any questions or comments, please e-mail me at owen[at]owenrudge[dot]net.
 I've probably forgotton something important from the Readme, so if you notice
-anything missing, e-mail me! ;-)
+anything missing, e-mail me!
 
 Happy hacking!
 

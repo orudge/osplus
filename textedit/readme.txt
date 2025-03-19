@@ -1,27 +1,25 @@
 OSPlus Text Editor - Open Source Version
-Version 2.1.1
+Version 2.1.2
 
-Copyright (c) Owen Rudge 2000-2005
+Copyright (c) Owen Rudge 2000-2025
 ==================================
 
-Thanks for downloading the source code to the OSPlus Text Editor! This has
-evolved a fair bit since it was closed source, and now includes features such
-as sound support and file format conversion.
+Thanks for downloading the source code to the OSPlus Text Editor! OSPlus
+Text Editor is a friendly text editor originally written for DOS, but now
+available on a number of different platforms.
 
-There are a number of different builds for the Text Editor, which are:
+Supported platforms are:
 
 - Borland C++ 4.x (real mode DOS)
 - DJGPP (protected mode DOS)
-- DJGPP with Allegro (protected mode DOS, sound support)
 - Linux
-- Linux with Allegro (sound support)
+- macOS
 - Win32 (Borland C++ Builder, or free C++ tools)
-- Win32 (Microsoft Visual C++)
-- Win32 (MinGW32)
+- Win32, Win64 (Microsoft Visual C++)
+- Win32, Win64 (MinGW32 / mingw-w64)
 
-There has recently been some directory reorganisation and the new system is a
-lot cleaner and more logical. You will find documentation on building the Text
-Editor in the docs/build directory.
+You can find documentation on building the Text Editor in the docs/build
+directory.
 
 A NOTE ABOUT WIN32 CONVERTERS
 =============================
@@ -29,16 +27,14 @@ A NOTE ABOUT WIN32 CONVERTERS
 The Win32 and Linux versions of OSPlus Text Editor have the capability of using
 Microsoft text converters (supplied with Microsoft Office, etc) to convert a
 variety of text formats, including Microsoft Word format, into plain text.
-(In fact, the converts convert to RTF, and that output is then passed through
-the OSPlus RTF converter). The Win32 version does this by default, reading a list
-of converters from the Windows Registry. On Linux, WINE must be installed and
-the --with-wine option must be passed to the configure script. Also, the converter
-DLL pack must be downloaded and installed - see the OSPlus web site (www.osplus.co.uk)
+The Win32 version does this by default, reading a list of converters from the
+Windows Registry. On Linux, Wine must be installed and the --with-wine option
+must be passed to the configure script. Also, the converter DLL pack must be
+downloaded and installed - see the OSPlus web site (www.osplus.co.uk)
 for more information on that.
 
 At the moment, it is not possible to disable the use of Win32 converters on the
-Windows version without editing the source code. The next version will have a
-configuration option to disable or alter the behaviour of this.
+Windows version without editing the source code.
 
 DIRECTORY LAYOUT
 ================
@@ -61,6 +57,8 @@ docs/                   - Documentation
 docs/build/             - Build documentation
 obj/                    - Object files
 
+projects/msvc/          - Microsoft Visual C++ project files
+
 src/about.dlg           - About Text Editor dialog (requires Dialog Designer)
 src/aboutdlg.cpp        - About Text Editor dialog source code
 src/aboutdlg.h          - About Text Editor source header
@@ -75,26 +73,22 @@ src/config.c            - Configuration file routines
 src/config.h            - Configuration file routines - header
 src/convert.c           - File conversion routines
 src/convert.h           - Header for file conversion routines
-src/djgpp.c             - DJGPP/Linux (Allegro)-specific sound routines
-src/gemsnd.c            - GEM Sound Driver bindings (BC version)
-src/gemsnd.h            - GEM Sound Driver bindings header
-src/libc.c              - libc emulation functions for Linux without Allegro
+src/djgpp.c             - DJGPP-specific routines
+src/inc_tv.h            - Header to include the main Turbo Vision header file
+src/libc.c              - libc emulation functions for Linux
 src/ospedit.h           - OSPlus Text Editor header
 src/ospedit.rc          - Resource file for Win32 version
 src/ospedit1.cpp        - Main source code
 src/ospedit2.cpp        - Main source code
 src/ospedit3.cpp        - Main source code
 src/ospver.h            - OSPlus Text Editor version information header
-src/realdos.c           - Borland C++-specific sound-related routines
+src/realdos.c           - Borland C++-specific routines
 src/realdos.h           - DOS-specific functions header file
-src/sound.c             - High-level sound routines
-src/sound.h             - High-level sound routines (header)
 src/unicode.c           - Unicode routines (used by config.c)
 src/unicode.h           - Unicode routines - header file
 src/verinfo.cpp         - Version information dialog source code
 src/verinfo.dlg         - Version information dialog
 src/verinfo.h           - Version information dialog - header file
-src/win32.c             - Win32-specific sound routines
 
 src/convert/msconv.c    - Microsoft converter layer
 src/convert/msconv.rc   - Microsoft converter layer resource script for Win32
@@ -110,17 +104,17 @@ src/convert/txtwrite.rc - Resource file for Win32 version of txtwrite
 CONTACT INFORMATION
 ===================
 
-Web site:         http://www.osplus.co.uk/
+Web site:         https://www.osplus.co.uk/
 Open Source site: http://osplus.sourceforge.net/
 
 If you have any questions or comments, please e-mail me at owen[at]owenrudge[dot]net.
 I've probably forgotton something important from the Readme, so if you notice
-anything missing, e-mail me! ;-)
+anything missing, e-mail me!
 
 Happy hacking!
 
 -- 
-Owen Rudge, 31st March 2005
+Owen Rudge, 19th March 2025
 http://www.owenrudge.net/
 
 For other contact methods, see http://www.owenrudge.net/contact

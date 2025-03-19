@@ -11,11 +11,6 @@ To build the Linux version of the Text Editor, you need:
 
 - A DOS emulator such as dosemu or a DOS machine to run Dialog Designer if you wish.
 
-For the version with sound support, you also need:
-
-- Allegro 4.0. Available from http://alleg.sourceforge.net/. Earlier WIPs should work,
-  but 3.12 will not (as it is DOS only anyway).
-
 To make use of Win32 file converters, you will also require:
 
 - Wine, available from http://www.winehq.org/. OSPlus Text Editor has been tested with wine 20041201,
@@ -28,16 +23,14 @@ To build this version, simply run:
 
    ./configure linux
 
-For a version with sound support, append `--with-alleg', and if you have Wine installed, append
-`--with-wine'.
+If you have Wine installed and want Win32 converter support, append `--with-wine'.
 
 You can then simply run:
 
    make
 
-to build OSPlus Text Editor. The object files for the version with sound will be placed in
-obj/linuxsnd, and the binaries will be placed in bin/linuxsnd. The version without sound will
-store files in obj/linux and bin/linux respectively.
+to build OSPlus Text Editor. The object files will be placed in obj/linux, and the binaries will be
+placed in bin/linux.
 
 If you have the UPX executable compressor installed (see http://upx.sf.net/), you can
 then compress the executables, reducing their sizes significantly, by running:

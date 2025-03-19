@@ -5,7 +5,7 @@
 /* OSPlus Text Editor - Standalone                           */
 /* OSPEDIT.EXE                                               */
 /*************************************************************/
-/* About dialog for Text Editor                              */
+/* Header to include the Turbo Vision header file            */
 /*************************************************************/
 
 /* This program is free software; you can redistribute it and/or

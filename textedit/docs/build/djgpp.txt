@@ -13,12 +13,6 @@ To build the DJGPP version of the Text Editor, you need:
   dialogs. Note that the .dlg files are actually quite outdated now, so you may
   be better off simply modifying the source files.
 
-If you want sound support in your copy of the Text Editor, you also need:
-
-- Allegro 4.0 or better, available from http://alleg.sourceforge.net/. The Text
-  Editor may still build with Allegro 3.12, but this hasn't been tested
-  recently, and 4.0 contains many important and useful updates anyway.
-
 TO BUILD
 ========
 
@@ -32,11 +26,9 @@ the appropriate values for your Turbo Vision installation. Typing:
 
 should output the appropriate data to your screen.
 
-You should then run the configure.bat file with the 'djgpp' parameter. If you have
-the Allegro games library installed for sound support, add --with-alleg. For example:
+You should then run the configure.bat file with the 'djgpp' parameter:
 
-   configure djgpp                  [without sound]
-   configure djgpp --with-alleg     [with sound]
+   configure djgpp
 
 You can then simply run:
 
