@@ -1,0 +1,10 @@
+bccdos.cfg
+makefile.cfg
+MAKE0000.@@@
+.vs
+Debug
+Release
+*.user
+ipch
+*.sdf
+*.suo
