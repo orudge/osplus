@@ -23,77 +23,30 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
  *
  * 19/05/2001: Updated copyright information to reflect Open Source version (orudge)
  * 05/01/2002: Cleaned up indentation (orudge)
+ * 19/03/2025: Replaced with version from SET's Turbo Vision (orudge)
 */
 
-#define Uses_TRect
-#define Uses_TEvent
-#define Uses_TButton
-#define Uses_TKeys
-#define Uses_TDrawBuffer
-#define Uses_TStreamableClass
-#define Uses_TStreamable
-#define Uses_TView
-#define Uses_TDialog
-#include <tvision\tv.h>
-__link( RView )
-__link( RDialog )
-__link( RButton )
+/*------------------------------------------------------------*/
+/*                                                            */
+/*   Turbo Vision 1.0                                         */
+/*   Copyright (c) 1991 by Borland International              */
+/*                                                            */
+/*   Calc.cpp:  TCalcDisplay member functions                 */
+/*                                                            */
+/*------------------------------------------------------------*/
 
-#include <string.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include <strstrea.h>
-#include <iomanip.h>
+/*
+  Modified by Salvador Eduardo Tropea <salvador@inti.gov.ar>
+  <set@ieee.org> <set@computer.org>
+  I ported it from TV 1.03.
+  SET: Added locale support for the decimal point.
+ */
 
 #include "calc.h"
 
-
 #define cpCalcPalette   "\x13"
 
-
-//
-// TCalcDisplay functions
-//
-
-const char * const TCalcDisplay::name = "TCalcDisplay";
-
-void TCalcDisplay::write( opstream& os )
-{
-   TView::write( os );
-   os.writeBytes(&status, sizeof(status));
-   os.writeString(number);
-   os.writeByte(sign);
-   os.writeByte(operate);
-   os.writeBytes(&operand, sizeof(operand));
-}
-
-
-void *TCalcDisplay::read( ipstream& is )
-{
-   TView::read( is );
-   number = new char[DISPLAYLEN];
-   is.readBytes(&status, sizeof(status));
-   is.readString(number, DISPLAYLEN);
-   sign = is.readByte();
-   operate = is.readByte();
-   is.readBytes(&operand, sizeof(operand));
-   return this;
-}
-
-
-TStreamable *TCalcDisplay::build()
-{
-   return new TCalcDisplay( streamableInit );
-}
-
-
-TStreamableClass RCalcDisplay( TCalcDisplay::name,
-                               TCalcDisplay::build,
-                               __DELTA(TCalcDisplay)
-                             );
-
-
-TCalcDisplay::TCalcDisplay(TRect& r) : TView ( r )
+TCalcDisplay::TCalcDisplay(TRect& r) : TView(r)
 {
    options |= ofSelectable;
    eventMask = (evKeyboard | evBroadcast);
@@ -103,50 +56,49 @@ TCalcDisplay::TCalcDisplay(TRect& r) : TView ( r )
 
 TCalcDisplay::~TCalcDisplay()
 {
-   delete number;
+   delete[] number;
 }
 
 TPalette& TCalcDisplay::getPalette() const
 {
-   static TPalette palette( cpCalcPalette, sizeof(cpCalcPalette)-1 );
+   static TPalette palette(cpCalcPalette, sizeof(cpCalcPalette) - 1);
    return palette;
 }
 
-
 void TCalcDisplay::handleEvent(TEvent& event)
 {
+   static char keys[] = { 'C','\x8','%','_','7','8','9','/','4','5','6','*','1','2','3','-','0','.','=','+' };
    TView::handleEvent(event);
 
-   switch(event.what)
+   switch (event.what)
    {
       case evKeyboard:
-         calcKey(event.keyDown.charScan.charCode);
+         calcKey(event.keyDown.charScan.charCode, event.keyDown.keyCode);
          clearEvent(event);
          break;
       case evBroadcast:
-         if (event.message.command == cmCalcButton)
+         if (event.message.command >= cmCalcButton &&
+             event.message.command <= cmCalcButton + 19)
          {
-            calcKey( ((TButton *) event.message.infoPtr)->title[0]);
+            calcKey(keys[event.message.command - cmCalcButton], 0);
             clearEvent(event);
          }
          break;
    }
 }
 
-
 void TCalcDisplay::draw()
 {
-   char color = getColor(1);
-   short i;
+   TColorAttr color = getColor(1);
+   int i;
    TDrawBuffer buf;
 
-   i = (short)(size.x - strlen(number) - 2);
-   buf.moveChar(0, ' ', color, (short)size.x);
-   buf.moveChar(i, sign, color, (short)1 );
-   buf.moveStr((short)(i+1), number, color);
-   writeLine(0, 0, (short)size.x, 1, buf);
+   i = size.x - strlen(number) - 2;
+   buf.moveChar(0, ' ', color, size.x);
+   buf.moveChar(i, sign, color, 1);
+   buf.moveStr(i + 1, number, color);
+   writeLine(0, 0, size.x, 1, buf);
 }
-
 
 void TCalcDisplay::error()
 {
@@ -154,7 +106,6 @@ void TCalcDisplay::error()
    strcpy(number, "Error");
    sign = ' ';
 }
-
 
 void TCalcDisplay::clear()
 {
@@ -166,22 +117,21 @@ void TCalcDisplay::clear()
 
 void TCalcDisplay::setDisplay(double r)
 {
-   int  len;
+   size_t len;
    char str[64];
-   ostrstream displayStr( str, sizeof str );
 
    if (r < 0.0)
    {
       sign = '-';
-      displayStr << -r << ends;
+      sprintf(str, "%f", -r);
    }
    else
    {
-      displayStr << r << ends;
+      sprintf(str, "%f", r);
       sign = ' ';
    }
 
-   len = strlen(str) - 1;          // Minus one so we can use as an index.
+   len = strlen(str) - 1; // Minus one so we can use as an index.
 
    if (len > DISPLAYLEN)
       error();
@@ -199,27 +149,43 @@ void TCalcDisplay::checkFirst()
    }
 }
 
-
-void TCalcDisplay::calcKey(unsigned char key)
+void TCalcDisplay::calcKey(unsigned char key, unsigned code)
 {
    char stub[2] = " ";
    double r;
+   char* decPoint = "."; // TODO: localisation support
+
+   switch (code)
+   {
+#ifdef _SET_TVISION
+      case kbBackSpace:
+#else
+      case kbBack:
+#endif
+         key = 8;
+         break;
+      case kbEsc:
+         key = 27;
+         break;
+      case kbEnter: // Added by Mike
+         key = 13;
+         break;
+   }
 
    key = (unsigned char)toupper(key);
 
    if (status == csError && key != 'C')
       key = ' ';
 
-   switch(key)
+   switch (key)
    {
       case '0':   case '1':   case '2':   case '3':   case '4':
       case '5':   case '6':   case '7':   case '8':   case '9':
          checkFirst();
-         if (strlen(number) < 15) 
+         if (strlen(number) < 15)
          {                       // 15 is max visible display length
-            if (strcmp(number, "0") == NULL)
+            if (!strcmp(number, "0"))
                number[0] = '\0';
-
             stub[0] = key;
             strcat(number, stub);
          }
@@ -227,11 +193,8 @@ void TCalcDisplay::calcKey(unsigned char key)
 
       case '.':
          checkFirst();
-         if (strchr(number, '.') == NULL)
-         {
-            stub[0] = '.';
-            strcat(number, stub);
-         }
+         if (strstr(number, decPoint) == NULL)
+             strcat(number, decPoint);
          break;
 
       case 8:
@@ -239,19 +202,14 @@ void TCalcDisplay::calcKey(unsigned char key)
          int len;
 
          checkFirst();
-
          if ((len = strlen(number)) == 1)
             strcpy(number, "0");
          else
-            number[len-1] = '\0';
+            number[len - 1] = '\0';
          break;
 
-      case '_':                   // underscore (keyboard version of +/-)
-      case 241:                   // +/- extended character.
-         if (sign == ' ')
-            sign='-';
-         else
-            sign=' ';
+      case '_': // +-
+         sign = (sign == ' ') ? '-' : ' ';
          break;
 
       case '+':   case '-':   case '*':   case '/':
@@ -304,54 +262,37 @@ void TCalcDisplay::calcKey(unsigned char key)
    drawView();
 }
 
-
-
-static char *keyChar[20] =
-    {    "C", "\x1B",    "%", "\xF1",   // 0x1B is escape, 0xF1 is +/- char.
-         "7",    "8",    "9",    "/",
-         "4",    "5",    "6",    "*",
-         "1",    "2",    "3",    "-",
-         "0",    ".",    "=",    "+"
-    };
-
-
-//
-// TCalculator functions
-//
-
-const char * const TCalculator::name = "TCalculator";
-
-TStreamable *TCalculator::build()
+const char* TCalculator::keyChar[20] =
 {
-    return new TCalculator( streamableInit );
-}
+   "C",   "<-",    "%",   "+-",
+   "7",    "8",    "9",    "/",
+   "4",    "5",    "6",    "*",
+   "1",    "2",    "3",    "-",
+   "0",    ".",    "=",    "+"
+};
 
-
-TStreamableClass RCalculator( TCalculator::name,
-										TCalculator::build,
-                              __DELTA(TCalculator)
-                            );
-
+const char* const TCalculator::name = "TCalculator";
 
 TCalculator::TCalculator() :
-    TDialog( TRect(5, 3, 29, 18), "Calculator" ),
-    TWindowInit( &TCalculator::initFrame )
+    TDialog(TRect(5, 3, 5 + 6 + DISPLAYLEN, 18), "Calculator"),
+    TWindowInit(&TCalculator::initFrame)
 {
-    TView *tv;
+    TView* tv;
     TRect r;
 
     options |= ofFirstClick;
 
-    for(int i = 0; i <= 19; i++)
-        {
-        int x = (i%4)*5+2;
-        int y = (i/4)*2+4;
-        r = TRect( x, y, x+5, y+2 );
+    for (int i = 0; i <= 19; i++)
+    {
+        int x = (i % 4) * 6 + 3;
+        int y = (i / 4) * 2 + 4;
+        r = TRect(x, y, x + 6, y + 2);
 
-        tv = new TButton( r, keyChar[i], cmCalcButton, bfNormal | bfBroadcast );
+        tv = new TButton(r, keyChar[i], cmCalcButton + i, bfNormal | bfBroadcast);
         tv->options &= ~ofSelectable;
-        insert( tv );
-        }
-    r = TRect( 3, 2, 21, 3 );
-    insert( new TCalcDisplay(r) );
+        insert(tv);
+    }
+
+    r = TRect(3, 2, 3 + DISPLAYLEN, 3);
+    insert(new TCalcDisplay(r));
 }

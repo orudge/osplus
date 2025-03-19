@@ -376,7 +376,7 @@ int convert_file(char *fn_in, char *fn_out, char *converter, char *params, char 
 	char tmp_dest[200];
 	char error_out_rtf[200];
 	char converter_path[PATH_MAX];
-	int tmpret=0, tmpret2, tmpret3;
+	int tmpret=0, tmpret2;
 
 	// Generate temporary filename
 	tmpnam(tmp_dest);
@@ -388,6 +388,7 @@ int convert_file(char *fn_in, char *fn_out, char *converter, char *params, char 
 
 #ifdef __LINUX__
 	char tmp[PATH_MAX*4];   // TODO: possibly still needs a bit of work for Linux version
+	int tmpret3;
 
 	if (params == NULL)
 		sprintf(tmp, "%s \"%s\" \"%s\"", converter_path, fn_in, tmp_dest);

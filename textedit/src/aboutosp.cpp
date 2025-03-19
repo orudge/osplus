@@ -28,15 +28,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 
 #define Uses_TEvent
 
-#if defined(__DJGPP__) || defined(__LINUX__) || defined(__WIN32__)
-	#include <tv.h>
-#else
-	#include <tvision\tv.h>
-#endif
-
-#if !defined( __ABOUTOSP_H )
+#include "inc_tv.h"
 #include "aboutosp.h"
-#endif
 
 TAboutOSPlus::TAboutOSPlus() :
        TDialog(TRect(15, 1, 65, 21), "About OSPlus"),
@@ -51,7 +44,7 @@ TAboutOSPlus::TAboutOSPlus() :
      "\n"
      "Version 2.0\n"
      "\n"
-     "Copyright (c) Owen Rudge 2000-2012 ");
+     "Copyright (c) Owen Rudge 2000-2025");
  insert(control);
 
  control = new TStaticText(TRect(2, 8, 48, 10), "This program is licenced und"

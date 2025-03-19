@@ -13,6 +13,10 @@
  * 12/12/2009: Tidy up intendation again
  */
 
+#ifndef __OSPEDIT_H__
+
+#define __OSPEDIT_H__
+
 #include "ospver.h"
 
 #ifndef PATH_MAX
@@ -113,14 +117,30 @@ extern char __os_ver[50];
 
 #ifndef VERSION_INFORMATION_ONLY
 
+// TODO: This should probably not be included app-wide - need to look and figure out the best approach here
+
 class TMenuBar;
 class TStatusLine;
 class TEditWindow;
 class TDialog;
+
+/*
+#define Uses_TApplication
+#define Uses_TEditWindow
+#define Uses_TMenuBar
+#define Uses_TStatusLine
+#define Uses_TDialog
+#define Uses_TStaticText
+#define Uses_TButton
+#define Uses_TScrollBar
+#define Uses_TListBox
+
+#include <tvision/tv.h>*/
+
 class fpstream;
 
 const int
-#if defined(__BORLANDC__) && !defined(__WIN32__) 
+#if !(defined(_SET_TVISION) || defined(__DJGPP__))
   cmChangeDrct     = 102,
   cmShowClip       = 105,
 #endif
@@ -189,3 +209,5 @@ ushort doEditDialog( int dialog, ... );
 #endif // VERSION_INFORMATION_ONLY
 
 #endif // RES_INFO_ONLY
+
+#endif // __OSPEDIT_H__

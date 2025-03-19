@@ -45,9 +45,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 #define Uses_TFileDialog
 #define Uses_TDeskTop
 
-#if defined(__DJGPP__) || defined(__LINUX__) || defined(__WIN32__)
-   #include <tv.h>
+#include "inc_tv.h"
 
+#if defined(__DJGPP__) || defined(__LINUX__) || defined(__WIN32__)
 	#if (__GNUC__ >= 3) || (_MSC_VER >= 1300)
 		#include <strstream>        // yes, it's depreciated, I know
 		using std::strstreambuf;
@@ -58,7 +58,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 		#include <strstream.h>
 	#endif
 #else
-   #include <tvision\tv.h>
    #include <strstrea.h>
 #endif
 
@@ -79,14 +78,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 TMenuBar *TEditorApp::initMenuBar(TRect r) // Another messy function...
 {
    TSubMenu& sub0 = *new TSubMenu("~ð~", kbAltSpace) +
-      *new TMenuItem("~A~bout OSPlus...", cmAbout, kbNoKey) +
+      *new TMenuItem("~A~bout OSPlus...", cmAbout, kbNoKey, hcNoContext, TStringView()) +
       newLine() +
 #ifdef __LINUX__
       *new TMenuItem("S~h~ell", cmDosShell, kbAltD, hcNoContext, "Alt-D") +
 #else
       *new TMenuItem("~D~OS Shell", cmDosShell, kbAltD, hcNoContext, "Alt-D") +
 #endif
-      *new TMenuItem("~C~alculator", cmCalcCmd, kbNoKey)
+      *new TMenuItem("~C~alculator", cmCalcCmd, kbNoKey, hcNoContext, TStringView())
 #ifdef SAVE_RESTORE_DESKTOP
       + newLine() +
       *new TMenuItem("Sa~v~e Desktop", cmSaveDesktop, kbNoKey) +
@@ -95,15 +94,15 @@ TMenuBar *TEditorApp::initMenuBar(TRect r) // Another messy function...
       ;
 #endif
 
-   TSubMenu& sub1 = *new TSubMenu("~F~ile", kbAltF) +
-      *new TMenuItem("~N~ew", cmNew, kbNoKey) +
+   TSubMenu& sub1 = *new TSubMenu("~F~ile", kbAltF, hcNoContext) +
+      *new TMenuItem("~N~ew", cmNew, kbNoKey, hcNoContext, TStringView()) +
       *new TMenuItem("~O~pen...", cmOpen, kbCtrlO, hcNoContext, "Ctrl-O") +
       *new TMenuItem("~C~lose", cmClose, kbCtrlF4, hcNoContext, "Ctrl-F4") +
       newLine() +
       *new TMenuItem("~S~ave", cmSave, kbCtrlS, hcNoContext, "Ctrl-S") +
-      *new TMenuItem("S~a~ve As...", cmSaveAs, kbNoKey) +
+      *new TMenuItem("S~a~ve As...", cmSaveAs, kbNoKey, hcNoContext, TStringView()) +
       newLine() +
-      *new TMenuItem("C~h~ange Directory...", cmChangeDrct, kbNoKey) +
+      *new TMenuItem("C~h~ange Directory...", cmChangeDrct, kbNoKey, hcNoContext, TStringView()) +
       newLine() +
       *new TMenuItem("E~x~it", cmQuit, kbCtrlQ, hcNoContext, "Ctrl-Q");
 
@@ -113,7 +112,7 @@ TMenuBar *TEditorApp::initMenuBar(TRect r) // Another messy function...
       *new TMenuItem("Cu~t~", cmCut, kbCtrlX, hcNoContext, "Ctrl-X") +
       *new TMenuItem("~C~opy", cmCopy, kbCtrlC, hcNoContext, "Ctrl-C") +
       *new TMenuItem("~P~aste", cmPaste, kbCtrlV,	hcNoContext, "Ctrl-V") +
-      *new TMenuItem("~S~how Clipboard", cmShowClip, kbNoKey) +
+      *new TMenuItem("~S~how Clipboard", cmShowClip, kbNoKey, hcNoContext, TStringView()) +
       newLine() +
       *new TMenuItem("~C~lear", cmClear, kbCtrlDel, hcNoContext, "Ctrl-Del");
 
@@ -125,17 +124,17 @@ TMenuBar *TEditorApp::initMenuBar(TRect r) // Another messy function...
    TSubMenu& sub4 = *new TSubMenu( "~W~indows", kbAltW) +
       *new TMenuItem("~S~ize/move",cmResize, kbCtrlF5, hcNoContext, "Ctrl-F5") +
 	*new TMenuItem("~Z~oom", cmZoom, kbF5, hcNoContext, "F5") +
-	*new TMenuItem("~T~ile", cmTile, kbNoKey) +
-	*new TMenuItem("C~a~scade", cmCascade, kbNoKey) +
+	*new TMenuItem("~T~ile", cmTile, kbNoKey, hcNoContext, TStringView()) +
+	*new TMenuItem("C~a~scade", cmCascade, kbNoKey, hcNoContext, TStringView()) +
 	*new TMenuItem("~N~ext", cmNext, kbF6, hcNoContext, "F6") +
 	*new TMenuItem("~P~revious", cmPrev, kbShiftF6, hcNoContext, "Shift-F6") +
       *new TMenuItem("~C~lose", cmClose, kbCtrlF4, hcNoContext, "Ctrl-F4");
 
    TSubMenu& sub5 = *new TSubMenu("~H~elp", kbAltH) +
-      *new TMenuItem("~V~ersion Information...", cmVerInfo, kbNoKey) +
-	*new TMenuItem("~C~onverter Information...", cmCnvInfo, kbNoKey) +
+      *new TMenuItem("~V~ersion Information...", cmVerInfo, kbNoKey, hcNoContext, TStringView()) +
+	*new TMenuItem("~C~onverter Information...", cmCnvInfo, kbNoKey, hcNoContext, TStringView()) +
 	newLine() + 
-      *new TMenuItem("~A~bout Text Editor...", cmAboutApp,	kbAltA);
+      *new TMenuItem("~A~bout Text Editor...", cmAboutApp,kbAltA, hcNoContext);
 
    r.b.y = r.a.y+1;
    return new TMenuBar(r, sub0 + sub1 + sub2 + sub3 + sub4 + sub5);

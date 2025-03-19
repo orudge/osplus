@@ -39,12 +39,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 #define Uses_TButton
 #define Uses_TStaticText
 
-#if defined(__DJGPP__) || defined(__LINUX__) || defined(__WIN32__)
-	#include <tv.h>
-#else
-	#include <tvision\tv.h>
-#endif
-
+#include "inc_tv.h"
 
 class TAboutOSPlus : public TDialog
 {

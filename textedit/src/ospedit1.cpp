@@ -77,11 +77,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 	#define Uses_fpstream
 #endif
 
-#if defined(__DJGPP__) || defined(__LINUX__) || defined(__WIN32__)
+#if defined(__DJGPP__) || defined(__SET_TVISION__)
 	#define Uses_TCalculator
+#endif
 
-	#include <tv.h>
+#include "inc_tv.h"
 
+#if !(defined(__BORLANDC__) && defined(__REALDOS__))
 	#ifndef __WIN32__
 		#include <unistd.h>
 	#endif
@@ -92,12 +94,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 		#include <strstream.h>
 	#endif
 #else
-	#include <tvision\tv.h>
 	#include <strstrea.h>
-
-	#include "calc.h"
-
-	#define __REALDOS__
 #endif
 
 #if defined(__REALDOS__) || defined(__DJGPP__)
@@ -124,6 +121,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 #include "aboutosp.h"
 #include "verinfo.h"
 #include "cnvinfo.h"
+#include "calc.h"
 
 #include <stdlib.h>
 #include <stdarg.h>
@@ -476,11 +474,56 @@ void TEditorApp::cnvInfo()
 
 void TEditorApp::calculator()
 {
-	TCalculator *calc = (TCalculator *) validView(new TCalculator);
+	TCalculator* calc = (TCalculator*)validView(new TCalculator);
 
 	if (calc != 0)
 		deskTop->insert(calc);
 }
+
+#if __WIN32__
+static void identify_windows_version(DWORD platform, DWORD major, DWORD minor, LPSTR csdVersion)
+{
+	if (platform & VER_PLATFORM_WIN32_WINDOWS)
+	{
+		if (major == 4 && minor == 0)
+			strcpy(__os, "Windows 95");
+		else if (major == 4 && minor == 10)
+			strcpy(__os, "Windows 98");
+		else if (major == 4 && (minor == 90 || minor == 9)) // not 100% sure which
+			strcpy(__os, "Windows Me");						// - W98 was a bit odd
+		else
+			strcpy(__os, "Windows 9x");
+	}
+	else if (platform & VER_PLATFORM_WIN32_NT)
+	{
+		if (major == 5 && minor == 0)
+			strcpy(__os, "Windows 2000");
+		else if (major == 5 && minor == 1)
+			strcpy(__os, "Windows XP");
+		else if (major == 5 && minor == 2)
+			strcpy(__os, "Windows Server 2003/XP 64-bit");
+		else if (major == 6 && minor == 0)
+			strcpy(__os, "Windows Vista");
+		else if (major == 6 && minor == 1)
+			strcpy(__os, "Windows 7");
+		else if (major == 6 && minor == 2)
+			strcpy(__os, "Windows 8");
+		else if (major == 6 && minor == 3)
+			strcpy(__os, "Windows 8.1");
+		else if (major == 10 && minor == 0)
+			strcpy(__os, "Windows 10");
+		else if (major == 11 && minor == 0)
+			strcpy(__os, "Windows 11");
+		else
+			strcpy(__os, "Windows NT"); // dunno what MS will invent in the future  ;)
+	}
+
+	if (csdVersion != NULL && strlen(csdVersion) > 0)
+		sprintf(__os_ver, "%ld.%ld (%s)", major, minor, csdVersion);
+	else
+		sprintf(__os_ver, "%ld.%ld", major, minor);
+}
+#endif
 
 int main(int argc, char *argv[])
 {
@@ -562,10 +605,12 @@ int main(int argc, char *argv[])
 	sprintf(__dj_compiler_ver, "%d.%d (GCC %d.%d.%d)", __DJGPP__, __DJGPP_MINOR__, __GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__);
 #endif
 
-#if defined(__BORLANDC__) && defined(__MSDOS__)  // Turbo Vision version
-	strcpy(__tv_ver, "2.0 or higher");
-#elif defined(__DJGPP__) || defined(__LINUX__) || defined(__WIN32__)
+#if defined(_SET_TVISION) || defined(__DJGPP__)
 	strcpy(__tv_ver, TV_VERSION);
+#elif defined(__BORLANDC__) && defined(__MSDOS__)
+	strcpy(__tv_ver, "2.0");
+#else
+	strcpy(__tv_ver, "2.0 (magiblot)");
 #endif
 
 #if defined(__GNUC__) && !defined(__DJGPP__)
@@ -604,43 +649,42 @@ int main(int argc, char *argv[])
 #else // Got to do it the hard way
 	#ifdef __MSDOS__
 		strcpy(__os, "DOS");
-	#elif defined(__APPLE__)
-		strcpy(__os, "Mac OS X");
 	#elif defined(__LINUX__)
 		strcpy(__os, "Linux/Unix");
 	#elif defined(__WIN32__)
-		OSVERSIONINFO VerInfo;
+		NTSTATUS(WINAPI * RtlGetVersion)(LPOSVERSIONINFOEXW) = NULL;
+		HMODULE ntdll = GetModuleHandleA("ntdll");
 
-		VerInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-		GetVersionEx(&VerInfo);
+		if (ntdll != NULL)
+			*(FARPROC*)&RtlGetVersion = GetProcAddress(ntdll, "RtlGetVersion");
 
-		if (VerInfo.dwPlatformId & VER_PLATFORM_WIN32_WINDOWS)
+		if (RtlGetVersion != NULL)
 		{
-			if (VerInfo.dwMajorVersion == 4 && VerInfo.dwMinorVersion == 0)
-				strcpy(__os, "Windows 95");
-			else if (VerInfo.dwMajorVersion == 4 && VerInfo.dwMinorVersion == 10)
-				strcpy(__os, "Windows 98");
-			else if (VerInfo.dwMajorVersion == 4 && (VerInfo.dwMinorVersion == 90 || VerInfo.dwMinorVersion == 9)) // not 100% sure which
-				strcpy(__os, "Windows Me");																								 // - W98 was a bit odd
-			else
-				strcpy(__os, "Windows 9x");
+			OSVERSIONINFOEXW verInfo;
+
+			verInfo.dwOSVersionInfoSize = sizeof(verInfo);
+			RtlGetVersion(&verInfo);
+
+			char* csd_version = NULL;
+
+			if (lstrlenW(verInfo.szCSDVersion) > 0)
+			{
+				int size_needed = WideCharToMultiByte(CP_ACP, 0, verInfo.szCSDVersion, lstrlenW(verInfo.szCSDVersion), NULL, 0, NULL, NULL);
+				csd_version = (char *) malloc(size_needed);
+				WideCharToMultiByte(CP_ACP, 0, verInfo.szCSDVersion, lstrlenW(verInfo.szCSDVersion), csd_version, size_needed, NULL, NULL);
+			}
+
+			identify_windows_version(verInfo.dwPlatformId, verInfo.dwMajorVersion, verInfo.dwMinorVersion, csd_version);
+			free(csd_version);
 		}
-		else if (VerInfo.dwPlatformId & VER_PLATFORM_WIN32_NT)
+		else
 		{
-			if (VerInfo.dwMajorVersion == 5 && VerInfo.dwMinorVersion == 0)
-				strcpy(__os, "Windows 2000");
-			else if (VerInfo.dwMajorVersion == 5 && VerInfo.dwMinorVersion == 1)
-				strcpy(__os, "Windows XP");
-			else if (VerInfo.dwMajorVersion == 5 && VerInfo.dwMinorVersion == 2)
-				strcpy(__os, "Windows Server 2003/XP 64-bit");
-			else if (VerInfo.dwMajorVersion == 6 && VerInfo.dwMinorVersion == 0)
-				strcpy(__os, "Windows Vista");
-			else if (VerInfo.dwMajorVersion == 6 && VerInfo.dwMinorVersion == 1)
-				strcpy(__os, "Windows 7");
-			else if (VerInfo.dwMajorVersion == 6 && VerInfo.dwMinorVersion == 2)
-				strcpy(__os, "Windows 8");
-			else
-				strcpy(__os, "Windows NT"); // dunno what MS will invent in the future  ;)
+			OSVERSIONINFO verInfo;
+
+			verInfo.dwOSVersionInfoSize = sizeof(verInfo);
+			GetVersionExA(&verInfo);
+
+			identify_windows_version(verInfo.dwPlatformId, verInfo.dwMajorVersion, verInfo.dwMinorVersion, verInfo.szCSDVersion);
 		}
 	#endif
 #endif
@@ -657,24 +701,36 @@ int main(int argc, char *argv[])
 
 	sprintf(__os_ver, "DOS %d.%d", dmajor, dminor);
 #elif defined(__WIN32__)
-	if (strlen(VerInfo.szCSDVersion) != 0)
-		sprintf(__os_ver, "%ld.%ld (%s)", VerInfo.dwMajorVersion, VerInfo.dwMinorVersion, VerInfo.szCSDVersion);
-	else
-		sprintf(__os_ver, "%ld.%ld", VerInfo.dwMajorVersion, VerInfo.dwMinorVersion);
+	// Handled in identify_windows_version
 #elif defined(__APPLE__)
 	SInt32 major, minor, revision;
-		
+
 	Gestalt(gestaltSystemVersionMajor, &major);
 	Gestalt(gestaltSystemVersionMinor, &minor);
 	Gestalt(gestaltSystemVersionBugFix, &revision);
 
 	sprintf(__os_ver, "%d.%d.%d", major, minor, revision);
+
+	if (major < 16)
+		strcpy(__os, "Mac OS X");
+	else
+		strcpy(__os, "macOS");
 #else
 	sprintf(__os_ver, "Unknown");
 #endif
 
 #ifdef __MSVC__
-	#if (_MSC_VER == 1700)
+	#if (_MSC_VER >= 1930)
+		sprintf(__msvc_compiler_ver, "17+ (%d)", _MSC_VER);
+	#elif (_MSC_VER >= 1920 && _MSC_VER < 1930)
+		sprintf(__msvc_compiler_ver, "16 (%d)", _MSC_VER);
+	#elif (_MSC_VER >= 1910 && _MSC_VER < 1920)
+		sprintf(__msvc_compiler_ver, "15 (%d)", _MSC_VER);
+	#elif (_MSC_VER == 1900)
+		sprintf(__msvc_compiler_ver, "14.0 (%d)", _MSC_VER);
+	#elif (_MSC_VER == 1800)
+		sprintf(__msvc_compiler_ver, "12.0 (%d)", _MSC_VER);
+	#elif (_MSC_VER == 1700)
 		sprintf(__msvc_compiler_ver, "11.0 (%d)", _MSC_VER);
 	#elif (_MSC_VER == 1600)
 		sprintf(__msvc_compiler_ver, "10.0 (%d)", _MSC_VER);

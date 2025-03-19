@@ -1,11 +1,11 @@
 /*************************************************************/
 /* OSPlus - Open Source version                              */
-/* Copyright (c) Owen Rudge 2000-2005. All Rights Reserved.  */
+/* Copyright (c) Owen Rudge 2000-2025. All Rights Reserved.  */
 /*************************************************************/
 /* OSPlus Text Editor - Standalone                           */
 /* OSPEDIT.EXE                                               */
 /*************************************************************/
-/* Configuration file routines (from Allegro)                */
+/* About dialog for Text Editor                              */
 /*************************************************************/
 
 /* This program is free software; you can redistribute it and/or
@@ -22,20 +22,14 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 
-#ifndef __OSP_CONFIG_H__
-
-#define __OSP_CONFIG_H__
-
-#include "unicode.h"
-
-void set_config_file(AL_CONST char *filename);
-AL_CONST char *get_config_string(AL_CONST char *section, AL_CONST char *name, AL_CONST char *def);
-int get_config_int(AL_CONST char *section, AL_CONST char *name, int def);
-int get_config_hex(AL_CONST char *section, AL_CONST char *name, int def);
-float get_config_float(AL_CONST char *section, AL_CONST char *name, float def);
-void set_config_string(AL_CONST char *section, AL_CONST char *name, AL_CONST char *val);
-void set_config_int(AL_CONST char *section, AL_CONST char *name, int val);
-void set_config_hex(AL_CONST char *section, AL_CONST char *name, int val);
-void set_config_float(AL_CONST char *section, AL_CONST char *name, float val);
-
+#if defined(__BORLANDC__) && defined(__REALDOS__)
+	#include <tvision\tv.h>
+#else
+	/* DJGPP requires the SET version of Turbo Vision; this can optionally be used on Win32, Linux, macOS, etc */
+	#if defined(__DJGPP__) || defined(_SET_TVISION)
+		#include <tv.h>
+	#else
+		/* The modern magiblot port of Turbo Vision */
+		#include <tvision/tv.h>
+	#endif
 #endif

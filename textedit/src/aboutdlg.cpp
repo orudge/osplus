@@ -34,18 +34,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 
 #define Uses_TEvent
 
-#if defined(__DJGPP__) || defined(__LINUX__) || defined(__WIN32__)
-   #include <tv.h>
-#else
-   #include <tvision\tv.h>
-#endif
-
-#include <stdio.h>
-
-#if !defined( __ABOUTDLG_H )
-   #include "aboutdlg.h"
-#endif
-
+#include "inc_tv.h"
+#include "aboutdlg.h"
 #include "ospver.h"
 
 TAboutDialog::TAboutDialog() :
@@ -54,18 +44,17 @@ TAboutDialog::TAboutDialog() :
 
 {
    TView *control;
-   char tmpbuf[200];
 
    options |= ofCenterX | ofCenterY;
 
-   sprintf(tmpbuf, "OSPlus Text Editor\n"
+   const char *dlgText = "OSPlus Text Editor\n"
        "Open Source\n"
        "\n"
-       "Version %s, Build %s\n"
+       "Version " OSP_TXT_VERSION_STR  " Build " OSP_TXT_BUILD_DATE "\n"
        "\n"
-       "Copyright (c) Owen Rudge 2000-2012", OSP_TXT_VERSION_STR, OSP_TXT_BUILD_DATE);
+       "Copyright (c) Owen Rudge 2000-2025";
 
-   control = new TStaticText(TRect(2, 1, 48, 7), tmpbuf);
+   control = new TStaticText(TRect(2, 1, 48, 7), dlgText);
    insert(control);
 
    control = new TStaticText(TRect(2, 8, 48, 10), "This program is licenced und"

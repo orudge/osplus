@@ -39,11 +39,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 #define Uses_string
 #define Uses_snprintf
 
-#if defined(__DJGPP__) || defined(__LINUX__) || defined(__WIN32__)
-	#include <tv.h>
-#else
-	#include <tvision\tv.h>
-#endif
+#include "inc_tv.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -53,10 +49,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
    #define _USERENTRY
 #endif
 
-#if !defined( __CNVINFO_H )
 #include "cnvinfo.h"
-#endif
-
 #include "convert.h"
 
 typedef struct {

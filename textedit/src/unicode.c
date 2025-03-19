@@ -47,8 +47,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
  *      See readme.txt for copyright information.
  */
 
-//#include <windows.h>
-
 #include <limits.h>
 #include <string.h>
 #include <stdarg.h>
