@@ -70,7 +70,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 #define Uses_TButton
 
 #ifdef __APPLE__
+	#define Boolean __apple_Boolean
 	#include <CoreServices/CoreServices.h>
+	#undef Boolean
 #endif
 
 #ifdef SAVE_RESTORE_DESKTOP
@@ -101,7 +103,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. */
 	#include "realdos.h"
 #endif
 
-#if defined(__LINUX__)
+#if defined(__LINUX__) && defined(__SET_TVISION__)
 	extern "C" {
 		extern char *strlwr(char *str);
 		extern char *strupr(char *str);

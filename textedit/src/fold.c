@@ -29,6 +29,8 @@
 
 	#define false	0
 	#define true	1
+#else
+	#include <stdbool.h>
 #endif
 
 /* If nonzero, try to break on whitespace. */

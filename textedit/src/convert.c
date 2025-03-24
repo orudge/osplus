@@ -38,6 +38,10 @@
 	#include <windows.h>
 #endif
 
+#ifdef __APPLE__
+	#include <unistd.h>
+#endif
+
 #define VERSION_INFORMATION_ONLY // Don't include the C++ class information
 #include "ospedit.h"
 
